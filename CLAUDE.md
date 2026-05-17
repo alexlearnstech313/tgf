@@ -626,16 +626,44 @@ This isn't about authorship tracking. It's about not trusting AI-generated patte
 
 ## §17 Citation Verification
 
-The "authoritative sources only" discipline requires that citations are real and current. Skills cite specific source identifiers (OWASP ASVS V3.1.1, NIST SP 800-63B §5.1.1.2, RFC 8446 §4.4) that must be verifiable against published sources.
+The "authoritative sources only" discipline (§1) requires that every governance rule traces to a verifiable, current citation. Skills cite specific source identifiers — `OWASP ASVS 5.0 V6.2.2`, `NIST SP 800-63B §5.1.1.2`, `RFC 8725 §3.1`, `MITRE ATLAS AML.T0051` — that resolve to real rules in published documents. The full operating discipline is locked in `docs/DECISIONS.md` → `DEC-2026-05-17-004`. The six clauses summarized here.
 
-Citation discipline:
+### Live verification at skill-creation time
 
-- Skill build process verifies citations against actual sources
-- Skills include source versions and dates
-- Major source revisions trigger skill refresh (OWASP ASVS 4 to 5, NIST publication updates)
-- `/tgf:verify-citation` lets users look up specific cited rules
-- Citation accuracy is checked, not assumed
+When a skill is generated or refreshed, the sources in its §2 Authoritative Sources table are fetched from their canonical URLs and cited rules are verified to exist. The skill's frontmatter records `last-generated` (when verification ran) and `refresh-recommended` (when re-verification is due). Skills that fail verification don't ship — they go back for source correction or skill refresh.
 
-When a skill applies a rule, the citation is available for users to verify. The framework's authority chain is auditable rather than assumed.
+*Plain-language impact:* the framework's authority chain is real, not fabricated. AI confidently producing a citation that doesn't exist is a documented failure mode; live verification catches it before the skill ships.
 
-This makes the difference between authority that's claimed and authority that's real. Without verification, the framework risks producing confident-sounding but fabricated citations. With verification, the framework's claims about authority are checkable.
+### Rule-level citation precision
+
+Citations name the specific rule, control, or section — not the framework generally. "OWASP recommends" is not a citation. `OWASP ASVS 5.0 V6.2.2` is. The precision lets users verify the claim, lets the audit be checkable, and prevents citation drift over time.
+
+*Plain-language impact:* you can look up any TGF rule and find it in the cited source. Authority that can't be verified is authority that's claimed, not held.
+
+### Fetched content treated as untrusted input
+
+Sources fetched during skill creation may contain prompt injection or other adversarial material — indirect prompt injection is `OWASP LLM01:2025`, the #1 documented LLM risk and a catalogued MITRE ATLAS technique. The framework extracts only structured data from fetched content (rule numbers, rule text, version metadata, dates) and ignores any instructions embedded in pages. Cross-source verification (NIST ↔ ISO crosswalks, OWASP ↔ multiple references) catches discrepancies.
+
+*Plain-language impact:* an attacker who compromises a documentation page can't inject malicious rules into TGF skills. Every fetched page is treated as suspect.
+
+### No developer-machine downloads
+
+Research happens via Claude's web tools on Anthropic's infrastructure. The developer's filesystem receives only synthesized citations and rules written by Claude — not raw fetched content, scripts, executables, or click-through URLs. Watering-hole and supply-chain attacks targeting documentation fetches don't reach the developer's environment.
+
+*Plain-language impact:* you can run TGF without worrying that the framework's own research pulls malicious content onto your laptop. Defense in depth applies to TGF itself.
+
+### Paywalled sources cited by reference
+
+Standards behind paywalls (notably ISO/IEC 27001:2022 and 27002:2022) are cited by reference: control ID, title, version. Operational rule text comes from freely-available authoritative mappings — NIST ↔ ISO crosswalks (a *crosswalk* maps one standard's controls to another's), OWASP ↔ ISO references — with attribution. Reproducing paywalled standard text directly in skill files is not permitted regardless of license access.
+
+*Plain-language impact:* the framework respects standards licensing without sacrificing rigor. ISO citations are real references; operational guidance comes from open mappings.
+
+### Comparative framework research separated from citation
+
+Research on public Claude Code frameworks (Superpowers, great_cto, and others) informs design patterns. It does not serve as rule-source for skills. Comparative references appear in design rationale documents — `DECISIONS.md`, `DESIGN-RATIONALE.md`, session logs — never in skill §2 Authoritative Sources tables.
+
+*Plain-language impact:* TGF doesn't pretend another project's README is a primary source. Patterns borrowed get credited as patterns; rules cited stay grounded in OWASP, NIST, ISO, MITRE, and RFCs.
+
+### When verification fails
+
+A skill whose cited rule cannot be verified — source moved, deprecated, rule renumbered, citation was originally incorrect — goes back for refresh, not silently kept. The skill gets flagged stale. `/tgf:verify-citation` runs verification on demand; periodic refresh catches drift on cadence (quarterly for fast-moving domains like supply-chain and AI security; annually for stable frameworks). Citation rot is a defect, not an acceptable accumulation.
