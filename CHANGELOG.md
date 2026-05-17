@@ -19,3 +19,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Directory structure for skills, hooks (seven lifecycle events), stack-baselines, commands, and docs
 - Initial `DECISIONS.md` capturing framework name, Path A scope, and Phase 0 architectural decisions
 - Initial `ROADMAP.md` with 16-phase build plan and current status
+- `DEC-2026-05-17-004`: authoritative source verification + no-downloads constraint during skill creation. Locks the discipline before Phase 2 research begins. Skills citing authoritative frameworks (OWASP, NIST, ISO, MITRE, RFCs) must verify rule-level citations against live sources at creation/refresh time, with research performed via Claude's web tools — no fetched content touches the developer filesystem except as synthesized output.
+- `security-ai-research-integrity` added to Phase 8 scope (operationalizes DEC-004; fires when meta-skills fetch external content for skill generation or domain research).

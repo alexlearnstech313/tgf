@@ -20,7 +20,7 @@ The Governance Framework v1 — 16-phase build plan. Path A scope (full v1 with 
 | 5 | Activity Skills (6) | ⬜ Not started |
 | 6 | Foundation Security Skills (11) | ⬜ Not started |
 | 7 | Extended Security Skills (22) | ⬜ Not started |
-| 8 | AI-Specific Security Skills (7+1 adversarial) | ⬜ Not started |
+| 8 | AI-Specific Security Skills (8+1 adversarial) | ⬜ Not started |
 | 9 | Operations & Quality Skills (7) | ⬜ Not started |
 | 10 | Compliance Regulatory Skills (5) | ⬜ Not started |
 | 11 | Meta-Skills (5) | ⬜ Not started |
@@ -115,7 +115,7 @@ Skills every project needs regardless of stack:
 
 CIA triad, architectural (defense-in-depth, secure-architecture, zero-trust, least-privilege, assumed-breach), IAM-OAuth-OIDC, data layer (encryption, classification), application (api, webhooks, cors-csp, file-uploads), threat management (threat-modeling, attack-surface), operations (incident-response, detection-monitoring, vulnerability-management), privacy (data-handling, consent).
 
-### Phase 8 — AI-Specific Security Skills (7 + 1 Adversarial-AI)
+### Phase 8 — AI-Specific Security Skills (8 + 1 Adversarial-AI)
 
 - `security-ai-prompt-injection`
 - `security-ai-output-handling`
@@ -124,6 +124,7 @@ CIA triad, architectural (defense-in-depth, secure-architecture, zero-trust, lea
 - `security-ai-excessive-agency`
 - `security-ai-sensitive-info`
 - `security-ai-model-governance`
+- `security-ai-research-integrity` (operationalizes DEC-2026-05-17-004 — fires when meta-skills fetch external content for skill generation or domain research)
 - `security-adversarial-ai` (framework's own resistance to manipulation)
 
 ### Phase 9 — Operations & Quality Skills (7)
