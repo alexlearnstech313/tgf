@@ -1,0 +1,10 @@
+{
+  "name": "tgf-marketplace",
+  "description": "The Governance Framework — AI-augmented development governance grounded in OWASP, NIST, ISO, and MITRE standards.",
+  "plugins": [
+    {
+      "name": "tgf",
+      "source": "."
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+# Vendor Log
+
+Out-of-codebase actions required. Things that can't be fixed by editing files — vendor dashboard configuration, key rotation, DNS changes, third-party service setup.
+
+> Tracked separately from `ERROR-LOG.md` because these need to happen but aren't code changes. They affect the project's security posture and operational state even though they don't show in `git log`.
+
+---
+
+## Open
+
+| ID | Severity | Vendor | Action | Discovered | Status |
+|----|----------|--------|--------|------------|--------|
+
+## Completed
+
+| ID | Vendor | Action | Completed | Notes |
+|----|--------|--------|-----------|-------|
+
+---
+
+## Entry Template
+
+```
+### VND-YYYY-MM-DD-NNN
+
+**Severity:** Critical | High | Medium | Low
+**Vendor / Platform:** [e.g., Supabase Dashboard, Stripe Dashboard, AWS Console, Cloudflare]
+**Discovered:** YYYY-MM-DD
+**Action required:** [Specific configuration change needed.]
+**Why:** [What this addresses — what risk it mitigates or feature it enables.]
+**Verification:** [How to confirm the action was taken correctly.]
+**Status:** Open | Completed
+**Completed (when done):** YYYY-MM-DD by [who]
+```
+
+---
+
+*Last updated: YYYY-MM-DD*

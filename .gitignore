@@ -1,0 +1,20 @@
+# TGF's own operational state — telemetry, evolution proposals,
+# and session logs from TGF's own development.
+.tgf/
+.sessions/
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# Local environment
+.env
+.env.local

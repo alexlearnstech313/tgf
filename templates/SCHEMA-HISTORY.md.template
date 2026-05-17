@@ -1,0 +1,48 @@
+# Schema History
+
+> Durable institutional knowledge about this project's database structure. Major decisions, rationale, and operational characteristics.
+>
+> Schema is the most expensive thing to change in a system. Decisions made early constrain everything for the project's life. This file is the antidote to "why is this column nullable?" six months later.
+
+---
+
+## Major Decisions
+
+[Schema-level architectural decisions — table structure, relationships, normalization choices, partition strategy. Full ADRs live in `DECISIONS.md`; this is the schema-focused subset with operational detail.]
+
+---
+
+## Tables
+
+### `table_name`
+
+- **Purpose:** [What this table holds and why it exists.]
+- **Key relationships:** [Foreign keys and what they connect to.]
+- **Performance characteristics:** [Observed read/write patterns, expected scale.]
+- **Indexes:** [What's indexed and why.]
+- **RLS / access control:** [Row-level security policies or equivalent access constraints.]
+- **Retention policy:** [How long data is kept; archival approach if applicable.]
+
+---
+
+## Migration Patterns Established
+
+[Conventions for how schema changes happen in this project. Examples:]
+
+- **Backward-compatible patterns:** Add columns nullable first, populate in separate migration, make non-null in a third migration.
+- **Type changes:** Through new column rather than alter; copy data; cut over; drop old.
+- **Dropping columns:** Soft-deprecate first (stop writing, stop reading), then drop after a deprecation window.
+- **Lock duration awareness:** [Conventions about acceptable lock duration in production; off-hours migration windows if applicable.]
+
+## Schema Decisions Log
+
+| Date | Decision | Migration File | Rationale |
+|------|----------|----------------|-----------|
+
+## Performance Notes
+
+[Observed performance characteristics, slow queries identified, optimization decisions, index changes made and why.]
+
+---
+
+*Last updated: YYYY-MM-DD*

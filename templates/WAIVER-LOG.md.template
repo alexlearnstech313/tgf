@@ -1,0 +1,50 @@
+# Waiver Log
+
+Formally accepted risks. Findings that won't be fixed, with rationale and a revisit date.
+
+> Waivers are conscious risk acceptance, not casual dismissals. Every waiver has a rationale and a revisit date.
+>
+> **Compliance bright lines (regulatory, contractual, certification) are NOT waivable.** See `PROJECT-CONTEXT.md` → Compliance Posture → "Compliance bright lines" for items that override the standard waiver process.
+
+---
+
+## Active Waivers
+
+| ID | Severity | Description | Waived | Revisit | Rationale (brief) |
+|----|----------|-------------|--------|---------|-------------------|
+
+## Expired Waivers (Past Revisit Date)
+
+Waivers whose revisit dates have passed — these need re-evaluation.
+
+| ID | Severity | Description | Waived | Original Revisit | Status |
+|----|----------|-------------|--------|------------------|--------|
+
+## Resolved Waivers (No Longer Applicable)
+
+Waivers that were superseded by code changes, scope reductions, or risk reassessment.
+
+| ID | Description | Resolved | Notes |
+|----|-------------|----------|-------|
+
+---
+
+## Entry Template
+
+```
+### WVR-YYYY-MM-DD-NNN
+
+**Severity (of underlying finding):** Critical | High | Medium | Low
+**Underlying finding:** [Reference to ERR-ID if applicable, or describe the finding inline.]
+**Waived:** YYYY-MM-DD
+**Revisit:** YYYY-MM-DD (suggested cadence: 90 days for High, 180 days for Medium, 365 days for Low)
+**Rationale:** [Why we're accepting this risk rather than fixing it. Be specific. "We'll get to it later" is not a rationale.]
+**Compensating controls (if any):** [What else mitigates the risk this waiver creates.]
+**Decision maker:** [Who accepted the risk — usually the project's stakeholder.]
+**Status:** Active | Expired | Resolved
+**Resolution (when closed):** [What changed — fixed, scope reduced, risk reassessed, etc.]
+```
+
+---
+
+*Last updated: YYYY-MM-DD*

@@ -1,0 +1,41 @@
+# Roadmap
+
+[Project Name] — milestone tracking and forward planning.
+
+> ROADMAP is living documentation reflecting current state, not aspirational state. Items here are committed to. Milestones with target dates that slip get explicit revision, not silent extension. Update at session close when phase status changes or milestones progress.
+
+---
+
+## Current Focus
+
+[What's being worked on right now. One to three sentences.]
+
+## Active Milestones
+
+| ID | Milestone | Target | Confidence | Status |
+|----|-----------|--------|------------|--------|
+| M1 | [Description] | YYYY-MM-DD | high \| medium \| low | not started \| in progress \| blocked |
+
+## Completed Milestones
+
+| ID | Milestone | Completed | Notes |
+|----|-----------|-----------|-------|
+| M0 | Project initialized | YYYY-MM-DD | PROJECT-CONTEXT.md generated; framework installed |
+
+## Deferred / Cut
+
+| ID | Milestone | Deferred Date | Rationale |
+|----|-----------|---------------|-----------|
+
+---
+
+## Slip History
+
+When a milestone's target date slips, log it here with rationale. Three slips on the same milestone without progress is signal to deeper-review whether the milestone belongs in scope at all.
+
+| ID | Original Target | New Target | Slip Date | Rationale |
+|----|-----------------|------------|-----------|-----------|
+
+---
+
+*Last updated: YYYY-MM-DD*

@@ -1,0 +1,49 @@
+# Error Log
+
+Active issues being worked. Findings from reviews, audits, and debugging sessions that need addressing.
+
+> **Severity scale:**
+> - **Critical** — exploitable now, data loss possible, auth/authz broken
+> - **High** — exploitable with effort, significant business risk
+> - **Medium** — quality/maintainability issue, latent risk, minor security concern
+> - **Low** — style, optimization, defense-in-depth improvement
+>
+> Every finding gets fixed, formally waived in `WAIVER-LOG.md`, or escalated to `VENDOR-LOG.md`. No silent skipping.
+
+---
+
+## Open
+
+| ID | Severity | Source | Description | Owner | Target | Status |
+|----|----------|--------|-------------|-------|--------|--------|
+
+## Resolved
+
+| ID | Severity | Description | Resolved Date | Resolution |
+|----|----------|-------------|---------------|------------|
+
+---
+
+## Entry Template
+
+Copy this template for each new entry.
+
+```
+### ERR-YYYY-MM-DD-NNN
+
+**Severity:** Critical | High | Medium | Low
+**Source:** [Stage 5 Phase X review / Baseline audit phase Y / Debugging / User report / etc.]
+**Discovered:** YYYY-MM-DD
+**Rule violated (if applicable):** [Citation, e.g., `OWASP ASVS V3.1.1`]
+**Description:** [What's wrong — concrete and specific.]
+**Impact:** [Plain-language consequence — what could happen.]
+**Location:** [File:line, or area of codebase.]
+**Remediation:** [What needs to be done.]
+**Target resolution:** YYYY-MM-DD
+**Status:** Open | In Progress | Blocked | Resolved
+**Resolution (when closed):** [What was done.]
+```
+
+---
+
+*Last updated: YYYY-MM-DD*

@@ -1,0 +1,270 @@
+---
+name: skill-name-here
+description: |
+  Concrete description of when this skill applies. Describes what the change
+  is doing at the code/architecture level, not what words appear in the prompt.
+applies-when:
+  paths-include:
+    - path/glob/**
+  imports-include:
+    - library-or-package-name
+  operations-include:
+    - operation description (e.g., "password hashing or verification")
+  data-flows-include:
+    - data flow pattern (e.g., "external input crossing trust boundary")
+disqualifying-when:
+  - documentation-only changes
+  - test fixture additions
+  - dependency version bumps without code changes
+sources:
+  - Source 1 (with version and date verified)
+  - Source 2 (with version and date verified)
+last-generated: YYYY-MM-DD
+refresh-recommended: YYYY-MM-DD
+self-evolution:
+  anti-patterns-observed: []
+  triggers-refined: []
+  ai-failures-documented: []
+---
+
+# [Skill Name]
+
+<!-- SECTION: overview -->
+## §1 Overview
+
+High-level summary of what this skill governs and why it matters. Plain language. Two to five sentences. Should make sense to a non-expert reading the skill cold.
+<!-- /SECTION: overview -->
+
+<!-- SECTION: sources -->
+## §2 Authoritative Sources
+
+| Source ID | Reference | Version | Date Verified |
+|-----------|-----------|---------|---------------|
+| EXAMPLE-1 | [Full source name with link if public](https://example.org) | X.Y | YYYY-MM-DD |
+| EXAMPLE-2 | NIST SP 800-NNN | Rev N | YYYY-MM-DD |
+| EXAMPLE-3 | OWASP ASVS 5.0 Chapter X | 5.0 | YYYY-MM-DD |
+| EXAMPLE-4 | ISO/IEC 27002:2022 control X.Y | 2022 | YYYY-MM-DD |
+
+Sources MUST be authoritative — official standards, NIST/OWASP/ISO/MITRE publications, RFCs, vendor primary documentation. Blog posts, Stack Overflow, and Medium articles are NOT acceptable as primary sources. Source IDs are referenced throughout the rules and anti-patterns sections to maintain the citation chain.
+<!-- /SECTION: sources -->
+
+<!-- SECTION: discovery -->
+## §3 Discovery Commands
+
+Copy-pasteable commands to capture codebase state before applying this skill's rules. Used by Stage 1 (Research) to ground the framework in current reality.
+
+```bash
+# Example: find files this skill would govern
+grep -rn "pattern-of-interest" src/
+
+# Example: check current dependency state
+cat package.json | jq '.dependencies | keys[]'
+
+# Example: detect existing patterns
+grep -rn "specific-function-or-import" .
+```
+<!-- /SECTION: discovery -->
+
+<!-- SECTION: principles -->
+## §4 Universal Principles
+
+Plain-language overview of what this skill enforces and why. Three to seven principles, each one to two sentences. These are the "why" behind the numbered rules. A developer reading just this section should understand what the skill's about and why it exists.
+
+- **Principle 1:** [Statement.]
+- **Principle 2:** [Statement.]
+- **Principle 3:** [Statement.]
+<!-- /SECTION: principles -->
+
+<!-- SECTION: rules -->
+## §5 Numbered Rules
+
+Minimum 5 rules. Each rule cites a specific source with rule-level identifier (e.g., OWASP ASVS V3.1.1, NIST SP 800-63B §5.1.1.2). Each rule includes plain-language impact statement so non-experts can act on findings.
+
+<!-- RULE: 5.1 -->
+### Rule 5.1: [Concise rule title]
+
+**Statement:** [The rule itself, one to three sentences.]
+
+**Citation:** [Source ID + specific rule reference, e.g., `EXAMPLE-1 §3.1.1`]
+
+**Impact:** [Plain-language explanation of what failure looks like. Avoid jargon. State what could go wrong if the rule isn't followed.]
+<!-- /RULE: 5.1 -->
+
+<!-- RULE: 5.2 -->
+### Rule 5.2: [Concise rule title]
+
+**Statement:** [The rule.]
+
+**Citation:** [Source ID + specific rule reference]
+
+**Impact:** [Plain-language consequence.]
+<!-- /RULE: 5.2 -->
+
+<!-- RULE: 5.3 -->
+### Rule 5.3: [Concise rule title]
+
+**Statement:** [The rule.]
+
+**Citation:** [Source ID + specific rule reference]
+
+**Impact:** [Plain-language consequence.]
+<!-- /RULE: 5.3 -->
+
+<!-- RULE: 5.4 -->
+### Rule 5.4: [Concise rule title]
+
+**Statement:** [The rule.]
+
+**Citation:** [Source ID + specific rule reference]
+
+**Impact:** [Plain-language consequence.]
+<!-- /RULE: 5.4 -->
+
+<!-- RULE: 5.5 -->
+### Rule 5.5: [Concise rule title]
+
+**Statement:** [The rule.]
+
+**Citation:** [Source ID + specific rule reference]
+
+**Impact:** [Plain-language consequence.]
+<!-- /RULE: 5.5 -->
+
+<!-- Add more rules as needed. Five is the minimum. -->
+<!-- /SECTION: rules -->
+
+<!-- SECTION: anti-patterns -->
+## §6 Anti-Patterns
+
+Minimum 8 anti-patterns. Each is a concrete example of what to reject — what AI training data tends to produce, what inexperienced developers do, what looks plausible but fails. Each anti-pattern violates a specific rule and points to its canonical replacement.
+
+<!-- ANTI-PATTERN: AP-1 -->
+### AP-1: [Anti-pattern title]
+
+**Pattern:**
+
+```language
+// Example of what to reject — concrete code that demonstrates the failure
+```
+
+**Violates:** Rule 5.1
+
+**Why it fails:** [Attack scenario, failure mode, or specific consequence. Be concrete — name the CVE class, the data exposure, the specific exploitation path.]
+
+**Source:** [Citation — CVE class, NIST control, OWASP rule, etc.]
+
+**Replace with:** Canonical Pattern CP-1
+<!-- /ANTI-PATTERN: AP-1 -->
+
+<!-- ANTI-PATTERN: AP-2 -->
+### AP-2: [Anti-pattern title]
+
+**Pattern:**
+
+```language
+// Concrete code example
+```
+
+**Violates:** Rule 5.X
+
+**Why it fails:** [Specific failure mode.]
+
+**Source:** [Citation]
+
+**Replace with:** Canonical Pattern CP-2
+<!-- /ANTI-PATTERN: AP-2 -->
+
+<!-- Repeat for AP-3 through AP-8 at minimum. Add more as needed. -->
+<!-- /SECTION: anti-patterns -->
+
+<!-- SECTION: canonical-patterns -->
+## §7 Canonical Patterns
+
+Paired with anti-patterns. For every AP-N there is a CP-N showing the correct implementation.
+
+<!-- CANONICAL: CP-1 -->
+### CP-1: [Canonical pattern title]
+
+**Pattern:**
+
+```language
+// Example of correct implementation
+```
+
+**Pairs with:** Anti-pattern AP-1
+
+**Why it works:** [Explanation grounded in the rule and source. Why is this the right way?]
+<!-- /CANONICAL: CP-1 -->
+
+<!-- CANONICAL: CP-2 -->
+### CP-2: [Canonical pattern title]
+
+**Pattern:**
+
+```language
+// Correct implementation
+```
+
+**Pairs with:** Anti-pattern AP-2
+
+**Why it works:** [Explanation.]
+<!-- /CANONICAL: CP-2 -->
+
+<!-- Pair with each anti-pattern. -->
+<!-- /SECTION: canonical-patterns -->
+
+<!-- SECTION: ai-concerns -->
+## §8 AI-Specific Concerns
+
+Failure modes specific to AI-generated code in this domain. Required section. What does training data tend to produce that's wrong? What shortcuts should be watched for? What looks correct to AI confirmation bias but isn't?
+
+Examples of what to capture:
+
+- **Common AI failure:** [Pattern AI tends to produce. Why it's wrong. How TGF catches it.]
+- **Plausible-but-wrong:** [Pattern that looks right to a model but doesn't work / is unsafe in production.]
+- **Confirmation bias trap:** [Where AI tends to verify what was intended rather than what actually happens.]
+
+These should be derived from observed AI behavior, not theoretical concerns. The `self-evolution.ai-failures-documented` frontmatter field accumulates patterns as they're discovered during use.
+<!-- /SECTION: ai-concerns -->
+
+<!-- SECTION: workflow -->
+## §9 Workflow Integration
+
+How this skill participates in the six-stage workflow and the four-pass review.
+
+- **Stage 1 (Research):** [What this skill suggests investigating, if anything.]
+- **Stage 2 (Scope):** [How this skill informs change tier determination, if applicable.]
+- **Stage 3 (Plan with Governance):** [What rules this skill contributes to the implementation plan when it applies.]
+- **Stage 4 (Implement):** [How this skill informs the actual code being written.]
+- **Stage 5 Phase 1 (Code Review):** [What this skill checks during craftsmanship review, if applicable.]
+- **Stage 5 Phase 2 (Security Audit):** [Rules this skill enforces during security audit, if applicable.]
+- **Stage 5 Phase 3 (Red Team):** [Adversarial scenarios this skill addresses, if applicable.]
+- **Stage 5 Phase 4 (Holistic Review):** [Integration concerns this skill surfaces, if applicable.]
+- **Stage 6 (Commit):** [What this skill captures in session log or artifact updates.]
+
+Not every skill participates in every stage. Skills that govern code patterns participate in Stages 3-5. Skills that govern memory or planning may participate in Stages 1, 2, and 6.
+<!-- /SECTION: workflow -->
+
+<!-- SECTION: subagent-context -->
+## §10 Subagent Context
+
+Focused content this skill provides when dispatched to a specialized review subagent. Typically:
+
+- The Authoritative Sources table (condensed)
+- The numbered rules (most critical ones)
+- AI-Specific Concerns
+- A pointer to the full skill for deeper consultation
+
+This section is what loads when, say, a Security Auditor subagent needs this skill but doesn't need the full file. Keeps subagent context focused on what it actually needs to do its job.
+
+**Critical rules for subagent use:**
+
+- Rule 5.1: [Brief]
+- Rule 5.3: [Brief]
+- Rule 5.5: [Brief]
+
+**Top AI-specific concerns:**
+
+- [Most common failure mode]
+- [Second most common]
+<!-- /SECTION: subagent-context -->

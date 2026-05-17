@@ -1,0 +1,69 @@
+# Session Log: YYYY-MM-DD-NN — [Brief topic]
+
+> **Gitignored.** Contains working decisions, exploration, and operational context that shouldn't be public. Per-commit entries during the session capture incremental work; this session-close entry summarizes and finalizes.
+>
+> Filename convention: `.sessions/YYYY-MM-DD-session-NN-brief-topic.md`
+
+- **Started:** YYYY-MM-DD HH:MM
+- **Ended:** YYYY-MM-DD HH:MM
+- **Mode:** [exploration | prototype | building | hardening | maintenance]
+- **Change tier (if coding):** [trivial | small | medium | large]
+
+---
+
+## Goals
+
+[What we set out to do this session.]
+
+## Research Notes (Stage 1)
+
+[Files read, prior decisions consulted, artifacts referenced. What context was gathered before changes started.]
+
+## Scope (Stage 2)
+
+[What's in scope this session. What was explicitly out. Change tier rationale if non-trivial.]
+
+## Plan with Governance (Stage 3)
+
+[Skills that evaluated and contributed rules to the plan. Key constraints from skill rules.]
+
+## Implementation Notes (Stage 4)
+
+[Commits made, files changed, decisions made during implementation.]
+
+## Four-Pass Review (Stage 5)
+
+- **Phase 1 (Code Review):** [findings summary or "no findings"]
+- **Phase 2 (Security Audit):** [findings summary]
+- **Phase 3 (Red Team):** [findings summary]
+- **Phase 4 (Holistic):** [spec compliance, codebase fit, regression risk, roadmap alignment, solo-maintainability, decision documentation]
+
+## Findings Logged
+
+- **ERROR-LOG entries:** [list with severity]
+- **VENDOR-LOG entries:** [list with severity]
+- **WAIVER-LOG entries:** [list with severity + rationale summary]
+
+## Commits
+
+[List of commits made this session with brief descriptions and SHAs if useful.]
+
+## Artifact Updates
+
+- **DECISIONS.md:** [Any ADR entries added or amended]
+- **ROADMAP.md:** [Milestone progress, slips, new entries]
+- **PROJECT-CONTEXT.md:** [Material updates]
+- **DOMAIN-CONTEXT.md:** [Material updates]
+- **SCHEMA-HISTORY.md:** [Schema decisions if applicable]
+
+## Open Questions / Deferred
+
+[Things to come back to. Items not resolved this session but worth not forgetting.]
+
+## Next Session Priorities
+
+[What to pick up first next time. Concrete and actionable.]
+
+## Conversational Notes (if applicable)
+
+[Discussion points that didn't go through the workflow but are worth preserving — strategy conversations, design alternatives considered, etc.]

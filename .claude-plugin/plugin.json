@@ -1,0 +1,29 @@
+{
+  "name": "tgf",
+  "displayName": "The Governance Framework",
+  "version": "0.1.0",
+  "description": "Grounds AI-assisted development in industry-authoritative standards (OWASP, NIST, ISO, MITRE). Senior DevSecOps judgment as governance for solo developers and small teams.",
+  "author": {
+    "name": "DynamIQ Learning",
+    "email": "alexlearnstech@gmail.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/alt313/tgf",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alt313/tgf"
+  },
+  "keywords": [
+    "governance",
+    "devsecops",
+    "security",
+    "owasp",
+    "nist",
+    "iso-27001",
+    "mitre",
+    "claude-code",
+    "ai-assisted-development",
+    "compliance",
+    "solo-developer"
+  ]
+}

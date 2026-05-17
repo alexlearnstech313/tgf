@@ -1,0 +1,31 @@
+# Decisions
+
+Architectural decision records (ADRs) for [Project Name]. Newer decisions appear at the top.
+
+Each decision captures: what was decided, when, why, what alternatives were considered, and downstream consequences. Decisions documented here are durable — they survive even when session logs are pruned.
+
+---
+
+*No decisions logged yet.*
+
+---
+
+## Template
+
+Copy this template for each new decision. Use date + sequence number for the ID.
+
+```
+## DEC-YYYY-MM-DD-NNN: Decision title
+
+**Decided:** [The decision itself in one sentence.]
+
+**Date:** YYYY-MM-DD
+
+**Context:** [What problem or question this decision addresses. Why now?]
+
+**Decision:** [The decision in full, with rationale.]
+
+**Alternatives considered:** [Options weighed and why not chosen.]
+
+**Consequences:** [What this commits the project to; trade-offs accepted; downstream effects.]
+```

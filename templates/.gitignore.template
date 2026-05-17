@@ -1,0 +1,71 @@
+# =============================================================================
+# The Governance Framework — protective .gitignore defaults
+# =============================================================================
+#
+# These defaults assume your project repository may become public or be
+# accessed by people outside your team. TGF artifacts contain operational
+# security information valuable to attackers if exposed.
+#
+# Override consciously: uncomment or remove lines below if you want artifact
+# transparency for team-shared or open-source projects.
+
+# -----------------------------------------------------------------------------
+# Always gitignored — contains working decisions, exploration, and ephemeral
+# operational data.
+# -----------------------------------------------------------------------------
+.sessions/
+.tgf/
+
+# -----------------------------------------------------------------------------
+# Operational security artifacts — gitignored by default. Public exposure
+# helps attackers reconnaissance the project.
+# -----------------------------------------------------------------------------
+docs/PROJECT-CONTEXT.md
+docs/DOMAIN-CONTEXT.md
+docs/THREAT-MODEL.md
+docs/BASELINE-AUDIT.md
+docs/ERROR-LOG.md
+docs/VENDOR-LOG.md
+docs/WAIVER-LOG.md
+docs/audits/
+
+# -----------------------------------------------------------------------------
+# Decision and roadmap artifacts — gitignored by default for solo projects.
+# Consider committing for team transparency by commenting out the three lines
+# below.
+# -----------------------------------------------------------------------------
+docs/DECISIONS.md
+docs/ROADMAP.md
+docs/SCHEMA-HISTORY.md
+
+# -----------------------------------------------------------------------------
+# Framework adoption indicators
+# -----------------------------------------------------------------------------
+# CLAUDE.md and .claude/skills/ ARE typically committed so the framework
+# travels with the codebase. Uncomment below ONLY if you want to hide TGF
+# adoption entirely (e.g., for projects where revealing the framework's
+# presence is itself a security concern):
+#
+# CLAUDE.md
+# .claude/
+
+# -----------------------------------------------------------------------------
+# Standard ignores (keep these regardless of TGF policy)
+# -----------------------------------------------------------------------------
+.env
+.env.local
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+dist/
+build/

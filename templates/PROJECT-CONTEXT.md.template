@@ -1,0 +1,98 @@
+# Project Context
+
+> Generated and maintained by the `PROJECT-CONTEXT` meta-skill. Captures what this project is, who it's for, and the operational context that informs TGF's governance decisions.
+>
+> **Default visibility:** gitignored (per `.gitignore.template`). Contains threat surface, compliance posture, and data sensitivity information that shouldn't be public. Commit only after conscious decision.
+
+---
+
+## Identity
+
+- **Project name:** [Name]
+- **Brief description (one sentence):** [What this project does.]
+- **Current stage:** [exploration | prototype | MVP | building | hardening | maintenance]
+
+## Users
+
+- **Primary user(s):** [Who uses this — be specific. Not "developers" but "solo founders building SaaS in their evenings."]
+- **End users (if different from primary user):** [Who's affected by this project — whose data is held, whose experience is shaped.]
+
+## What This Project Does
+
+[One paragraph. Concrete. What problem does it solve? How?]
+
+## Stack
+
+- **Frontend:** [Framework, version]
+- **Backend:** [Framework / runtime, version]
+- **Database:** [System, version]
+- **Auth:** [Provider / library]
+- **Payments (if any):** [Processor]
+- **Hosting:** [Platform]
+- **Observability:** [Tools]
+- **Other notable dependencies (Tier 1 architectural, Tier 2 functional):** [List]
+
+## Mode
+
+**Current mode:** [exploration | prototype | building | hardening | maintenance]
+
+*Mode determines what's in scope for the workflow. Standards within scope are unconditional; what's in scope changes by mode. See `CLAUDE.md` §15.*
+
+## Sensitive Data
+
+This project handles:
+
+- [ ] PII (names, emails, addresses, phone numbers)
+- [ ] PHI (protected health information — HIPAA scope)
+- [ ] PCI cardholder data (direct handling, not via processor like Stripe)
+- [ ] Financial data
+- [ ] Authentication credentials beyond passwords (MFA secrets, OAuth tokens)
+- [ ] Cryptographic keys
+- [ ] Children's data (COPPA scope if US users)
+- [ ] EU resident data (GDPR scope)
+- [ ] California resident data (CCPA scope)
+- [ ] Other regulated data: [specify]
+
+## Compliance Posture
+
+Regulations / standards this project must meet:
+
+- [ ] GDPR
+- [ ] CCPA / CPRA
+- [ ] HIPAA
+- [ ] PCI-DSS (level: [I-IV])
+- [ ] SOC 2 (target tier: [I / II], target controls: [TSC names])
+- [ ] ISO/IEC 27001 (target)
+- [ ] Other: [specify]
+
+**Compliance bright lines (cannot be waived):** [List requirements bound by law/contract/certification. These override the standard waiver process.]
+
+## Threat Model Summary
+
+- **Adversaries (who might target this):** [Be specific. "Attackers" is too vague. "Account takeover via credential stuffing from compromised dumps" is useful.]
+- **What they want:** [Data, money, disruption, leverage.]
+- **Past incidents or near-misses:** [If any.]
+- **Specific concerns:** [Areas where you have known weaknesses or want extra rigor.]
+
+## Architecture Intent
+
+- **Designed flows:** [Brief description of how the system is supposed to work.]
+- **Trust boundaries:** [Where untrusted input enters; where sensitive data lives.]
+- **Areas of known issue:** [Self-disclosed tech debt.]
+- **Areas of pride:** [What you want preserved through future changes.]
+
+## History
+
+- **Project age:** [How long this has existed]
+- **Major evolution:** [Significant pivots, rewrites, or scope changes]
+- **Past architectural decisions worth noting:** [Brief — full ADRs live in `DECISIONS.md`]
+
+## Verbosity Preference
+
+- **Findings detail:** [terse | standard | verbose]
+- **Explanation depth:** [I know the standards | explain in plain language | teach as we go]
+
+---
+
+*Last reviewed: YYYY-MM-DD*
+*Next review: YYYY-MM-DD (quarterly default)*
