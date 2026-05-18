@@ -806,3 +806,198 @@ What these mechanisms prevent:
 
 You don't manage token efficiency. The framework's structure handles it. What you might notice: long sessions stay coherent, complex changes get appropriate review depth, framework-health reports show where the framework's own cost can be tuned (§22).
 
+---
+
+## §20 Agent Orchestration
+
+Complex work decomposes into focused tasks. Each task benefits from a fresh context with the specific skills, artifacts, and references it needs — not the cumulative context of everything that came before. TGF dispatches specialized subagents to handle focused work, then aggregates their outputs at the orchestrator. The pattern reduces context cost (§19), improves review accuracy (fresh context resists confirmation bias from the implementer's view), and parallelizes work that doesn't need to run sequentially.
+
+Phase 0 `DEC-2026-05-17-003` Clause 3 defines seven subagent roles, each with specified context inputs and JSON output schema.
+
+### The seven subagent roles
+
+- **Researcher** — investigates one aspect of the codebase or project artifacts. Dispatched from Stage 1 (Research) for Large-tier changes. Returns structured findings (relevant files, prior decisions, related logs).
+- **Implementer** — executes one decomposed implementation task. Dispatched from Stage 4 (Implement) when Large-tier changes decompose into discrete work. Returns the implementation diff plus skill rules applied.
+- **Code Reviewer** — Phase 1 of four-pass review. Evaluates craftsmanship: type safety, error handling, naming, anti-patterns, test coverage, scale-aware patterns, solo-maintainability.
+- **Security Auditor** — Phase 2 of four-pass review. Applies applicable security skills' rules to the change. Returns findings with citation, severity, and plain-language impact.
+- **Red Team** — Phase 3 of four-pass review. Adversarial perspective: injection scenarios, authorization bypass, race conditions, business logic abuse, failure-mode exploitation.
+- **Holistic Reviewer** — Phase 4 of four-pass review. TGF-specific integration verification: spec compliance, codebase fit, regression risk, forward compatibility, roadmap alignment, solo-maintainability, decision documentation.
+- **Verifier** — empirically exercises AI-generated code per §16. Dispatched conditionally when the change includes AI-generated portions. Returns test execution results, edge cases exercised, plausible-but-wrong patterns checked.
+
+### Cost-aware dispatch
+
+Dispatch scales by change tier (§3, §19):
+
+- **Trivial** — no subagents. Main agent does everything in-line.
+- **Small** — Code Reviewer + Holistic Reviewer (2 subagents).
+- **Medium** — Code Reviewer + Security Auditor + Red Team + Holistic Reviewer (4 subagents in parallel).
+- **Large** — full four-pass review + Researcher subagents for Stage 1 + Implementer subagents for decomposable Stage 4 + Verifier for AI-generated portions (7–10+ subagents across stages).
+
+Orchestration depth matches risk. Trivial changes don't pay for orchestration overhead they don't need. Large changes get the parallel rigor they require.
+
+### Two-stage review per subagent
+
+Each review subagent (Code Reviewer, Security Auditor, Red Team, Holistic Reviewer) runs two passes — a pattern validated in public frameworks including Superpowers:
+
+1. **Spec compliance** — did this implementation match the plan from Stage 3? Did it apply the skill rules that were supposed to apply? Returns "matches plan" or specific deviations.
+2. **Quality** — given that the implementation matches (or doesn't) the plan, is the implementation itself good by the subagent's specialty (craftsmanship for Code Reviewer, security rules for Security Auditor, etc.)?
+
+Spec compliance can pass while quality fails (well-built wrong thing); quality can pass while spec compliance fails (well-built thing that's not what was planned). Both must pass for the review subagent to return ✅.
+
+### Excessive agency mitigation
+
+Subagent dispatch is a documented risk surface — `OWASP LLM06:2025` (Excessive Agency) catalogs damage caused by LLM-driven systems with too much functionality, permission, or autonomy. TGF applies LLM06's prevention strategies:
+
+- **Minimize subagent extensions** — each role has a defined scope; no general-purpose subagents
+- **Limit functions to minimum necessary** — Code Reviewer doesn't get database access; Verifier doesn't get git write
+- **Avoid open-ended extensions** — granular capabilities, not "do whatever"
+- **Restrict permissions to minimum scope** — least-privilege per role
+- **Execute within user's security context** — subagents inherit the user's authorization; they never elevate
+- **Human-in-the-loop for high-impact actions** — irreversible changes always surface to the user; subagents never bypass
+- **Authorization in downstream systems** — subagent findings don't auto-apply; the orchestrator surfaces, the user decides
+- **Secure coding practices** — subagent inputs (the diff, the artifacts) are treated as untrusted (per §17 and DEC-004)
+
+### Adversarial AI considerations
+
+MITRE ATLAS v5.4.0 (February 2026) catalogs agent-targeting techniques. Two are particularly relevant for orchestration:
+
+- **Publish Poisoned AI Agent Tool** — an attacker introduces a malicious tool that subagents might invoke. TGF mitigates by scoping each role to a defined toolset and logging tool use via `PostToolUse` hooks (§18).
+- **Escape to Host** — an attacker leverages a subagent's tool access to escape its intended scope. TGF mitigates via hook-layer denial of out-of-scope operations plus `SubagentStart` and `SubagentStop` lifecycle logging.
+
+Subagent integrity is part of framework integrity. Subagent operations are logged to telemetry (§19) and surfaced in framework health (§22) so anomalous patterns become visible.
+
+### Orchestrator versus subagent authority
+
+Subagents produce *recommendations*, not decisions. The orchestrator (main agent) collects subagent outputs, deduplicates findings, normalizes severity, and surfaces a unified findings list. The user reviews; the user decides.
+
+Subagents never:
+
+- Apply their own findings without orchestrator review
+- Execute irreversible actions (writes to production, deletes, force-pushes)
+- Spawn other subagents with elevated permissions
+- Modify skill content, hooks, or framework configuration
+
+The orchestrator never:
+
+- Suppresses subagent findings the user should see
+- Pretends a subagent finding is its own recommendation (subagent attribution preserved)
+- Bypasses §5 Authority Structure — the user is the stakeholder
+
+### Aggregation
+
+When subagents return outputs, the orchestrator:
+
+1. Deduplicates findings (the same issue caught by Security Auditor and Red Team appears once)
+2. Normalizes severity per §11 (Critical / High / Medium / Low)
+3. Attributes findings to their source subagent for traceability
+4. Surfaces the unified list with plain-language impact per finding
+5. Routes findings per §11 resolution rule (fix / waive in WAIVER-LOG / escalate to VENDOR-LOG)
+
+### Plain-language impact
+
+What orchestration adds that single-agent work cannot:
+
+- **Fresh context for review** — Code Reviewer doesn't share the implementer's mental model; it evaluates the code as the code, not as "what the implementer meant"
+- **Parallel work** — four review phases run simultaneously rather than sequentially; faster review on Medium and Large tier changes
+- **Bounded context cost** — each subagent loads only the skills and artifacts it needs (§19 addressable sections)
+- **Independent verification** — the Verifier subagent runs AI-generated code rather than reasoning about it; empirical results break the AI-confirmation-bias loop (§16)
+
+### Reference
+
+Phase 0 `DEC-2026-05-17-003` Clause 3 defines the seven roles and their JSON output schemas. Phase 11 (Meta-Skills) implements the orchestration meta-skill; Phase 12 (Hook Library) provides `SubagentStart` and `SubagentStop` lifecycle hooks. This section documents the architecture; subsequent phases ship the operations.
+
+---
+
+## §21 Self-Evolving Knowledge
+
+The framework gets better through use. Skills accumulate observations of how they actually fire, what they catch, where they miss. Stack-specific patterns refine as real projects exercise them. AI-specific failure modes emerge as Claude (and other models) hit them in production. The framework needs a mechanism to capture this signal and convert it into improvements — without auto-applying changes that haven't been verified.
+
+Phase 0 `DEC-2026-05-17-003` Clause 4 specifies the evolution data structure (`.tgf/evolution/observations/`, `.tgf/evolution/proposals/{pending,accepted,rejected}/`, `.tgf/evolution/confidence-thresholds.json`). The discipline is bounded by what evolution can and cannot do.
+
+### What can evolve
+
+Four categories of skill content are eligible for evolution through human-reviewed proposals:
+
+- **Anti-patterns** — new failure modes discovered during use get added as anti-patterns with concrete examples
+- **Trigger criteria** — `applies-when` conditions refine as the framework observes false positives (skill fired but didn't apply) and false negatives (should have fired but didn't)
+- **AI-specific concerns** — new AI failure modes (hallucinated APIs, plausible-but-wrong patterns specific to a domain) get documented in skill §8 AI-Specific Concerns
+- **Stack-specific patterns** — generated stack-skill content (e.g., a `nextjs-supabase-stripe` skill) refines as real Next.js + Supabase + Stripe projects exercise it
+
+These four share a property: they are *empirically discoverable* through observation. The framework can credibly propose evolution based on accumulated signal.
+
+### What cannot auto-evolve
+
+Four categories are bounded — changes affecting them require explicit user decisions outside the evolution flow:
+
+- **Numbered rules** — rules cite authoritative sources (§17, DEC-004). Changing a rule means changing the source it cites; that's a citation refresh, not evolution.
+- **Authoritative source citations** — what counts as authoritative is a framework principle. Adding "blog post X" as an authoritative source is not evolution; it's a category change requiring conscious decision.
+- **Framework principles** — §1 Contract, §2 Developer Character, §3 Workflow shape, §5 Authority Structure are not subject to use-driven mutation. They evolve through explicit decisions logged in DECISIONS.md.
+- **Hard refusal list** (§5) — relaxing what the framework refuses to silently produce is a framework boundary change requiring conscious revision, not accumulated proposals.
+
+This boundary prevents the framework from gradually drifting away from its grounding through accumulated proposals.
+
+### Confidence levels
+
+Observations accumulate into proposals. Proposals carry confidence levels per `DEC-2026-05-17-003` Clause 4:
+
+- **Low confidence** — 1–2 observations. Not surfaced for review (might be coincidence).
+- **Medium confidence** — 3–9 observations across distinct sessions. Surfaced for review.
+- **High confidence** — 10+ observations or strong pattern signal. Surfaced for review with priority.
+
+The framework doesn't auto-propose at low confidence. Noise gets filtered before reaching review attention.
+
+### Human review required
+
+`/tgf:review-evolution` surfaces pending proposals from `.tgf/evolution/proposals/pending/`. Each proposal includes:
+
+- The proposed change (concrete diff to a skill file)
+- The evidence (which observations led here, with session attribution)
+- The confidence level and supporting count
+- The category (anti-pattern, trigger refinement, AI concern, stack pattern)
+
+User decides: accept (proposal moves to `accepted/`, change applied to skill), reject (moves to `rejected/` with rationale), or defer (stays pending with note). No proposal applies without explicit user action.
+
+### Data poisoning mitigation
+
+Self-evolution introduces a supply-chain concern: poisoned observations could shape skill content. `OWASP LLM04:2025` (Data and Model Poisoning) is the canonical reference for this risk class. TGF applies its prevention strategies:
+
+- **Track observation origins** — each observation records its session, prompt context, and trigger; observations from anomalous sessions can be flagged
+- **Vet observations before treating as actionable** — confidence thresholds filter low-quality signal before review
+- **Sandbox proposed changes** — `pending/` is a staging area; nothing applies until human review
+- **Monitor for poisoning signs** — statistical anomalies (sudden volume spikes, observations clustered from a single session, observations contradicting other signals) surface in framework health
+- **Cross-source verification** — proposals for citation-related content (rare; mostly out of scope) require source verification per DEC-004
+
+### Evolution input sources
+
+Observations come from four streams:
+
+- **Session log analysis** — recurring patterns across session logs reveal repeated AI failures, common user corrections, frequent skill miscalibrations
+- **Waiver patterns** — when the same finding type gets waived repeatedly across sessions, the rule may be miscalibrated for typical real-world cases (per §11)
+- **Citation refresh outcomes** — when a source update changes a cited rule, downstream skill content may need adjustment
+- **User pushback patterns** — repeated overrides of a specific finding type signal that either the rule needs context-awareness or the user's project has legitimate exception patterns
+
+Each stream feeds the `observations/` directory. Aggregation produces proposals. Review produces accepted changes.
+
+### Cadence
+
+Evolution review cadence ties to §17 citation verification:
+
+- **Fast-moving domains** (supply chain, AI security) — quarterly proposal review recommended
+- **Stable frameworks** (compliance, foundational security) — annual proposal review
+- **Stack-specific skills** — review at major stack version changes (framework v4 → v5, etc.)
+
+`/tgf:framework-health` (§22) surfaces stale proposal queues — proposals pending review past the recommended cadence — so backlog becomes visible.
+
+### Plain-language impact
+
+What self-evolution adds:
+
+- **Real-world signal informs governance** — the framework adapts to what actually happens, not just what was anticipated at design time
+- **Stack-specific patterns improve over time** — the stack skills that ship with v1 evolve as more real projects exercise them
+- **AI failure modes surface as concerns** — new ways AI gets things wrong get captured as documented concerns rather than rediscovered repeatedly
+
+What self-evolution does *not* do:
+
+- **Replace the user's judgment** — proposals surface; the user decides
+- **Drift framework principles** — rules, citations, principles, hard refusals remain bounded
+- **Apply silently** — every change has a paper trail in `proposals/accepted/`
