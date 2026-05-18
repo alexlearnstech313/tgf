@@ -4,7 +4,7 @@ The Governance Framework v1 — 16-phase build plan. Path A scope (full v1 with 
 
 > ROADMAP is living documentation. Items here are committed to. Milestones with target dates that slip get explicit revision, not silent extension. Update at session close when phase status changes or milestones progress.
 
-**Current focus:** Phase 2 — CLAUDE.md (expand to Path A sections §15–§22) + adopter-facing `CLAUDE.md.template`.
+**Current focus:** Phase 2 shipped. Next: Phase 3 — Workflow Specification with Orchestration (detailed workflow document covering per-stage orchestration patterns, subagent dispatch points, hook integration points, and change tier scaling).
 
 ---
 
@@ -14,7 +14,7 @@ The Governance Framework v1 — 16-phase build plan. Path A scope (full v1 with 
 |-------|-------------|--------|
 | 0 | Foundation Architecture Decisions | ✅ Complete |
 | 1 | Foundation / Repo Structure | ✅ Complete |
-| 2 | CLAUDE.md (expanded with §15-§22 for Path A) | 🟡 Partial (~641 line draft exists; missing Path A sections) |
+| 2 | CLAUDE.md (expanded with §15-§22 for Path A) + adopter template | ✅ Complete |
 | 3 | Workflow Specification with Orchestration | ⬜ Not started |
 | 4 | Always-On Skills (3) | ⬜ Not started |
 | 5 | Activity Skills (6) | ⬜ Not started |
@@ -56,20 +56,27 @@ Deliverables (all complete):
 - [x] `LIMITATIONS.md` (placeholder; full version in Phase 15)
 - [x] `git init` + initial commit
 
-### Phase 2 — CLAUDE.md (expanded)
+### Phase 2 — CLAUDE.md (expanded) ✅
 
-Current draft (~641 lines) covers §1–§14. Path A requires §15–§22:
+Phase 2 shipped via four commits, one per logical grouping per the approved Phase 2 plan:
 
-- [ ] §15 Mode-Aware Operation (exploration / prototype / building / hardening / maintenance)
-- [ ] §16 Empirical Verification for AI-Generated Code
-- [ ] §17 Citation Verification
-- [ ] §18 Hooks for Enforcement
-- [ ] §19 Token Efficiency
-- [ ] §20 Agent Orchestration
-- [ ] §21 Self-Evolving Knowledge
-- [ ] §22 Continual Improvement
+- [x] §15 Mode-Aware Operation — already in the post-Phase-1 draft; QC-reviewed during Phase 2 onset, no changes needed
+- [x] §16 Empirical Verification for AI-Generated Code — already in the post-Phase-1 draft; QC-reviewed during Phase 2 onset, no changes needed
+- [x] §17 Citation Verification (46 lines) — expanded from ~15 lines to reflect DEC-2026-05-17-004's six clauses (commit `c9ac67a`)
+- [x] §18 Hooks for Enforcement (71 lines) + DEC-2026-05-17-005 (hook architecture amendment) + hook directory restructure to Claude Code's actual PascalCase event taxonomy + `.claude/git-hooks/` for git-layer enforcement (commit `92c9894`)
+- [x] §19 Token Efficiency (67 lines) — bundled in commit `92c9894`
+- [x] §20 Agent Orchestration (100 lines) — seven subagent roles + cost-aware dispatch + two-stage spec-then-quality review + LLM06 mitigation + MITRE ATLAS adversarial considerations (commit `3a48b0a`)
+- [x] §21 Self-Evolving Knowledge (96 lines) — bounded evolution categories + confidence thresholds + LLM04 data-poisoning mitigation; bundled in commit `3a48b0a`
+- [x] §22 Continual Improvement (67 lines) — three improvement loops feeding each other (citation refresh + evolution proposals + telemetry analysis) (Phase 2 closing commit)
+- [x] Adopter-facing `templates/CLAUDE.md.template` (1091 lines) — mirrors internal CLAUDE.md with header note explaining framework-enforced vs adopter-customize convention + inline ADOPTER-CUSTOMIZE markers at §7/§8/§9
+- [x] `docs/phase-2-plan.md` committed for transparency per Decision 2 of the Phase 2 plan
 
-Plus produce the adopter-facing `CLAUDE.md.template` with placeholders for project-specific content.
+Plan adjustments accumulated during Phase 2 (tactical, logged for audit):
+
+- Universal QC criterion #1 (section anchor present) struck for CLAUDE.md sections — anchors are a skill template feature per Phase 0 `DEC-2026-05-17-003` Clause 1; CLAUDE.md uses simple `## §N` markdown headers
+- Line-target ranges in per-section plans treated as heuristics, not hard requirements; §18 came in at 71 lines vs target 85-115 (content covered all per-section QC criteria; artificial expansion rejected)
+- Adopter template length target (700-800 lines) significantly underestimated; internal CLAUDE.md grew from 641 → 1073 lines during Phase 2, so the template at 1091 lines mirrors that with header additions
+- Adopter template marker convention: header-based explanation + three inline `<!-- ADOPTER-CUSTOMIZE -->` markers at §7/§8/§9 instead of 22 per-section `<!-- FRAMEWORK-ENFORCED -->` markers — same convention, less inline bloat
 
 ### Phase 3 — Workflow Specification with Orchestration
 
@@ -216,13 +223,14 @@ Plus plugin marketplace submission.
 
 | ID | Milestone | Target | Confidence | Status |
 |----|-----------|--------|------------|--------|
-| M2 | Phase 2 complete (CLAUDE.md §15-§22 added + adopter template) | TBD | medium | not started |
-| M3 | Phase 3 complete (workflow specification) | TBD | medium | not started |
+| M3 | Phase 3 complete (workflow specification with orchestration) | TBD | medium | not started |
+| M4 | Phase 4 complete (always-on skills: CODE-QUALITY, SECURITY-CORE, CONTINUITY) | TBD | medium | not started |
 
 ## Completed Milestones
 
 | ID | Milestone | Completed | Notes |
 |----|-----------|-----------|-------|
+| M2 | Phase 2 complete (CLAUDE.md §15-§22 + adopter template + DEC-005) | 2026-05-17 | Four commits: `c9ac67a` §17 · `92c9894` §18+§19+restructure+DEC-005 · `3a48b0a` §20+§21 · closing commit §22+template+closeout |
 | M1 | Phase 1 complete (repo scaffolding, templates, initial commit) | 2026-05-17 | Initial commit on `main` |
 | M0 | Phase 0 architectural decisions locked | 2026-05-17 | See DEC-2026-05-17-003 |
 
