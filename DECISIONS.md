@@ -6,6 +6,54 @@ Each decision captures: what was decided, when, why, what alternatives were cons
 
 ---
 
+## DEC-2026-05-17-005: Hook architecture amendment — use Claude Code's actual event taxonomy
+
+**Decided:** Amend `DEC-2026-05-17-003` Clause 2 (Hook architecture) to use Claude Code's actual hook event names rather than the kebab-case names invented in the original Phase 0 specification. Add a separate `.claude/git-hooks/` directory for git-layer enforcement, distinct from Claude Code's `.claude/hooks/`.
+
+**Date:** 2026-05-17
+
+**Context:** Phase 2 research (Step 1 for §18) fetched Claude Code's hooks documentation and surfaced that the event names listed in `DEC-2026-05-17-003` Clause 2 — `pre-tool-use`, `post-tool-use`, `pre-commit`, `post-commit`, `session-start`, `session-end`, `pre-skill-modification` — were invented before consulting the canonical source. The real taxonomy uses PascalCase names with a richer set (26+ events). Additionally:
+
+- `pre-commit` and `post-commit` are **not** Claude Code events. Commit-time enforcement is implemented either via `PreToolUse` matching `Bash(git commit*)` (Claude Code-side) or via git's native `.git/hooks/` (git-side). These are different enforcement layers.
+- `pre-skill-modification` is not an event. The use case is covered by `InstructionsLoaded`, `FileChanged`, and `ConfigChange`.
+
+Leaving the original spec in place would create documentation/repo divergence (§18 of CLAUDE.md describes the corrected architecture; the repo would show the old kebab-case directory layout) and form a wrong mental model for adopters reading the repo.
+
+**Decision:**
+
+1. **Use Claude Code's actual event names (PascalCase)** for `.claude/hooks/<EventName>/NN-name.sh`. TGF leverages the native Claude Code hook system; TGF does not invent events.
+
+2. **Phase 12 (Hook Library) populates the following event directories** based on identified TGF use cases. Directories exist as empty `.gitkeep` placeholders until Phase 12:
+   - `SessionStart/` — load recent session logs, verify framework state
+   - `SessionEnd/` — generate session log entry
+   - `PreToolUse/` — block dangerous git operations, block secrets in commits, block destructive database operations
+   - `PostToolUse/` — log security-relevant operations, track file changes for telemetry
+   - `SubagentStart/` — log subagent dispatch
+   - `SubagentStop/` — collect subagent results
+   - `FileChanged/` — telemetry, framework integrity checks
+   - `ConfigChange/` — alert on settings changes
+
+3. **Git hooks live in `.claude/git-hooks/`** — a separate directory from Claude Code hooks. TGF provides shell scripts here that an opt-in install script copies into `.git/hooks/`. Git hooks fire regardless of whether the commit was initiated through Claude Code or directly via `git commit`. Use cases: verify session log entry exists, verify tests pass for the change, verify ROADMAP updated for milestone-affecting commits.
+
+4. **All other `DEC-2026-05-17-003` Clause 2 specifications stand** — standardized JSON via stdin, exit code semantics (0 allow, 2 block, other non-blocking), mode-aware profiles configured in `.claude/hooks/profile.json`, three universal hooks always active (`block-dangerous-git`, `block-secrets-commit`, `block-destructive-db`).
+
+5. **The current repo's `.claude/hooks/` directory layout** (which originally contained the kebab-case names from the Phase 0 spec) is corrected in this commit. Empty `.gitkeep` placeholders only; no script content existed in the old directories, so no migration was needed.
+
+**Alternatives considered:**
+
+- **Defer the rename to Phase 12** — rejected. Documentation (§18) and repo state should match; deferring creates "wrong now, fix later" debt that contradicts TGF's discipline.
+- **Edit `DEC-2026-05-17-003` Clause 2 in place** — rejected. ADRs preserve decision history; amending in place erases the trail of why the framework looks the way it does. The original decision and this amendment both stand in the record.
+- **Keep TGF's invented names as a TGF-internal abstraction layered over Claude Code events** — rejected. Adds complexity and confusion with no benefit; Claude Code's names work fine.
+
+**Consequences:**
+
+- §18 Hooks for Enforcement (CLAUDE.md, Phase 2 deliverable) documents the corrected architecture, citing this ADR.
+- Phase 12 (Hook Library) implementation works against the corrected directory structure from the start.
+- Adopters reading the repo see Claude Code event names; no risk of forming a wrong mental model.
+- `DEC-2026-05-17-003` Clause 2 is amended in effect by this ADR. The original Clause 2 remains in DECISIONS.md as historical record; this ADR supersedes it for operational purposes.
+
+---
+
 ## DEC-2026-05-17-004: Authoritative source verification & no-downloads constraint during skill creation
 
 **Decided:** Skills citing authoritative frameworks MUST verify rule-level citations against live sources at creation/refresh time, fetched via Claude's web tools. No fetched content touches the developer filesystem except as synthesized citations and rules written by Claude.

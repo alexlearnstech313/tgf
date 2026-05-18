@@ -667,3 +667,142 @@ Research on public Claude Code frameworks (Superpowers, great_cto, and others) i
 ### When verification fails
 
 A skill whose cited rule cannot be verified — source moved, deprecated, rule renumbered, citation was originally incorrect — goes back for refresh, not silently kept. The skill gets flagged stale. `/tgf:verify-citation` runs verification on demand; periodic refresh catches drift on cadence (quarterly for fast-moving domains like supply-chain and AI security; annually for stable frameworks). Citation rot is a defect, not an acceptable accumulation.
+
+---
+
+## §18 Hooks for Enforcement
+
+Hooks are the framework's enforcement floor — programmatic gates that block actions before they happen. Skills produce findings the framework surfaces for review; hooks deny operations the framework will not allow. Different mechanism, different purpose. Skills are how the framework *advises*; hooks are how the framework *enforces*.
+
+This two-layer enforcement aligns with `NIST SP 800-218 v1.1` (Secure Software Development Framework) — specifically its discipline of practices that reduce vulnerabilities through verification at key lifecycle points. TGF leverages two distinct hook layers.
+
+### Claude Code hooks
+
+Claude Code's native lifecycle hooks fire at specific points in the agent loop: `SessionStart`, `PreToolUse`, `PostToolUse`, `SubagentStart`, `SubagentStop`, `FileChanged`, `ConfigChange`, `SessionEnd`, plus more (Claude Code's hook documentation has the full taxonomy; this section does not duplicate it). TGF does not invent hook events — it uses the actual event names.
+
+Hook scripts live in `.claude/hooks/<EventName>/NN-name.sh` — PascalCase event names matching Claude Code's taxonomy. The numeric prefix orders execution within an event directory.
+
+**Input contract.** Each hook receives a JSON object on stdin with at minimum `session_id`, `cwd`, `permission_mode`, `hook_event_name`, plus event-specific fields (for example `tool_name` and `tool_input` for `PreToolUse`).
+
+**Output contract.**
+
+- **Exit 0** allows the action; optional JSON on stdout sets control fields (`continue`, `decision: block`, `additionalContext`, etc.)
+- **Exit 2** blocks the action; stderr surfaces as the block reason to Claude and to the user
+- **Any other exit code** is a non-blocking error; stderr is logged but the action proceeds
+
+**Input is untrusted.** `tool_input` and other fetched fields may carry attacker-controlled data via indirect prompt injection (`OWASP LLM01:2025`). Hooks must validate inputs and prefer *exec-form* invocation (arguments passed as a list, no shell interpretation) over *shell-form* (string passed to `bash -c`) to prevent command injection through filenames or arguments containing shell metacharacters.
+
+### Git hooks
+
+Claude Code hooks fire only during agent operation. Commits initiated outside the agent (direct `git commit`, IDE git integration, automated tooling) bypass them. For commit-time enforcement that fires regardless of how the commit is initiated, TGF provides git-layer hooks in `.claude/git-hooks/`. An opt-in install script copies these into `.git/hooks/`.
+
+Git hooks enforce repository invariants — verify session log entry exists, verify tests pass for the change, verify ROADMAP updated for milestone-affecting changes, scan staged content for secrets. Distinct scope from Claude Code hooks: broader trigger (any commit, not just agent-initiated) but narrower window (commit time only).
+
+### Mode-aware hook profiles
+
+Hook activation scales with project mode (§15). The profile lives in `.claude/hooks/profile.json` and gates which hooks run for the current mode.
+
+- **Exploration mode** — safety hooks only. Block dangerous git operations, block secrets in commits, block destructive database operations. No workflow hooks (the user is figuring out what to build; workflow enforcement is friction at this stage).
+- **Prototype mode** — safety + basic workflow. Adds: verify session log entry on `SessionEnd`.
+- **Building mode (default)** — safety + workflow + governance. Adds: verify tests pass before commits, verify findings resolved before commits, log security-relevant operations on `PostToolUse`.
+- **Hardening mode** — full profile + stricter governance. Adds: log subagent operations, detect framework integrity changes via `FileChanged` and `ConfigChange`, stricter waiver review.
+- **Maintenance mode** — building profile + regression prevention. Adds: migration safety verification for schema-affecting commits.
+
+### Three universal hooks always active
+
+Three hooks fire regardless of project mode, because the harms they prevent are universal:
+
+- **`block-dangerous-git`** — prevents force push to `main`, hard reset of unmerged work, accidental commits to wrong branch. Fires on `PreToolUse` matching `Bash(git ...)`.
+- **`block-secrets-commit`** — scans staged content for credential patterns (API keys, tokens, private keys, env files) before commits. Fires both on `PreToolUse` matching git commit calls and as a git pre-commit hook.
+- **`block-destructive-db`** — prevents `DROP DATABASE`, unbounded `DELETE`, `TRUNCATE` without explicit acknowledgment. Fires on `PreToolUse` matching database tool calls.
+
+### Hooks and authority
+
+Hooks programmatically express the hard-refusal severity level from §5 Authority Structure. When a hook blocks an action, it surfaces the reason and remediation; the user can override with explicit acknowledgment (the framework respects the user's authority over their own project) but cannot bypass silently. Hook overrides are logged.
+
+Hooks never override skill findings or replace skill discipline. They are the floor — what must not happen — while skills define what should happen and surface what didn't.
+
+### Plain-language impact
+
+What hooks prevent that skill discipline alone cannot:
+
+- **Silent supply-chain attacks** — `block-secrets-commit` catches credentials slipping into git history regardless of which tool wrote them
+- **Accidental destruction** — `block-dangerous-git` catches the muscle-memory `git push --force` to `main`
+- **Governance bypass** — `block-destructive-db` catches `DELETE FROM users;` whether typed by Claude or by hand
+- **Workflow discipline drift** — commit-time verification of session log, tests, and ROADMAP catches "I'll add the log entry later" before it ships
+
+The framework's advice is skills. The framework's floor is hooks. Both exist because either alone is insufficient.
+
+### Reference
+
+Phase 0 `DEC-2026-05-17-003` Clause 2 specified the hook architecture conceptually. `DEC-2026-05-17-005` corrected the event naming to align with Claude Code's actual taxonomy and added the separate `.claude/git-hooks/` layer for git-time enforcement. The current `.claude/hooks/` directory layout reflects the corrected naming.
+
+Phase 12 (Hook Library) populates the universal hooks and reference profiles. This section documents the architecture; Phase 12 ships the scripts.
+
+---
+
+## §19 Token Efficiency
+
+The framework's context window is shared infrastructure. Every loaded skill, every workflow stage, every subagent dispatch consumes tokens that compete with the actual work. Token efficiency is a structural property of how TGF operates — not an optimization, not something the user manages. The framework's design either spends tokens well or it doesn't.
+
+TGF inherits Claude Code's native progressive disclosure (Anthropic's pattern) and extends it with section-level addressability (Phase 0 `DEC-2026-05-17-003` Clause 1).
+
+### Native progressive disclosure
+
+Claude Code loads skills in three stages:
+
+1. **Frontmatter pre-loaded at session start** — name and description from every skill's YAML frontmatter, roughly 100 tokens per skill. This is what makes Claude aware that skills exist without paying for their content.
+2. **SKILL.md body loads when triggered** — when a skill's applicability conditions match the change context, the framework loads the body (capped at 500 lines for performance per Anthropic's authoring guidance).
+3. **Reference files load on demand** — additional files in a skill's directory load only when the body explicitly references them, one level deep maximum (deeper nesting risks partial reads).
+
+The result: a session with 50 available skills costs roughly 5,000 tokens of frontmatter regardless of which skills actually fire. Body content only loads for relevant skills.
+
+### Addressable section loading
+
+TGF extends progressive disclosure with HTML section anchors *within* skill files:
+
+- `<!-- SECTION: section-name -->` brackets at the file level
+- `<!-- RULE: 5.1 -->` brackets at the individual-rule level
+- `<!-- ANTI-PATTERN: AP-1 -->` and `<!-- CANONICAL: CP-1 -->` for example pairs
+
+When a subagent needs only the `security-input-validation` skill's anti-patterns to evaluate a specific change, the framework loads just that section — not the full 500-line skill. Section-level loading reduces context cost for skill-heavy reviews substantially.
+
+This addressability is TGF's extension. Anthropic's spec covers file-level loading; TGF's anchors enable section-level loading on top.
+
+### Path-based pre-filtering
+
+Stage 3 (Plan with Governance) evaluates the change against every applicable skill. A naive implementation would load every skill's `applies-when` conditions to test them. Path-based pre-filtering reduces this:
+
+1. The framework first checks which skills' `applies-when.paths-include` patterns match the changed files. This is cheap — glob matching, no content load.
+2. Only matched skills proceed to full applicability evaluation against `imports-include`, `operations-include`, and `data-flows-include`.
+3. Skills with no path match exit the evaluation without loading their body.
+
+A "fix typo in README" change touches one file, matches few skills, and loads almost nothing. A "refactor authentication middleware" change touches several files, matches security and IAM skills, and loads their content. Cost tracks scope.
+
+### Cost-aware orchestration
+
+Subagent dispatch (§20) scales by change tier (§3):
+
+- **Trivial** — no subagents. Main agent does everything in-line. ~0 subagent cost.
+- **Small** — two review subagents (Code Reviewer + Holistic Reviewer). ~2× per-subagent cost.
+- **Medium** — four review subagents (the full four-pass review). ~4×.
+- **Large** — four review subagents plus Researcher subagents for Stage 1, optional Implementer subagents for Stage 4 decomposition, Verifier for AI-generated code. ~7-10×.
+
+This is cost matched to risk. Trivial changes get trivial orchestration; large changes get the orchestration they need.
+
+### Token telemetry
+
+Per `DEC-2026-05-17-003` Clause 5, the framework logs per-session telemetry to `.tgf/telemetry/sessions/*.json`: workflow_invocations with per-stage token consumption, skills_evaluated (which loaded, which contributed rules, which produced findings), subagents_dispatched, total_tokens, findings_total. The `.tgf/` directory is gitignored — telemetry is local operational data.
+
+`/tgf:framework-health` surfaces quarterly aggregates: skills that consume disproportionate tokens relative to findings produced (signal for over-broad triggers or noise:signal issues), skills that never load (signal for trigger gaps or scope mismatch), expensive workflow stages (signal for orchestration tuning).
+
+### Plain-language impact
+
+What these mechanisms prevent:
+
+- **Death by context overflow** — full skill catalogs loading on every prompt
+- **Pay-for-what-you-don't-use** — skills loading content unrelated to the current change
+- **Silent cost accumulation** — telemetry surfaces expensive operations before they become unsustainable
+
+You don't manage token efficiency. The framework's structure handles it. What you might notice: long sessions stay coherent, complex changes get appropriate review depth, framework-health reports show where the framework's own cost can be tuned (§22).
+
