@@ -4,7 +4,7 @@ The Governance Framework v1 — 16-phase build plan. Path A scope (full v1 with 
 
 > ROADMAP is living documentation. Items here are committed to. Milestones with target dates that slip get explicit revision, not silent extension. Update at session close when phase status changes or milestones progress.
 
-**Current focus:** Phase 2 shipped. Next: Phase 3 — Workflow Specification with Orchestration (detailed workflow document covering per-stage orchestration patterns, subagent dispatch points, hook integration points, and change tier scaling).
+**Current focus:** Phase 3 in progress — `docs/phase-3-plan.md` drafted 2026-05-19, awaiting Checkpoint 1 approval (Decisions A–E) before WORKFLOW.md implementation. Also: `CLAUDE.md` split (extracted §15–§22 to `docs/ARCHITECTURE.md`) shipped 2026-05-19 to clear the 40k-char performance warning.
 
 ---
 
@@ -15,7 +15,7 @@ The Governance Framework v1 — 16-phase build plan. Path A scope (full v1 with 
 | 0 | Foundation Architecture Decisions | ✅ Complete |
 | 1 | Foundation / Repo Structure | ✅ Complete |
 | 2 | CLAUDE.md (expanded with §15-§22 for Path A) + adopter template | ✅ Complete |
-| 3 | Workflow Specification with Orchestration | ⬜ Not started |
+| 3 | Workflow Specification with Orchestration | 🟡 In progress (plan drafted) |
 | 4 | Always-On Skills (3) | ⬜ Not started |
 | 5 | Activity Skills (6) | ⬜ Not started |
 | 6 | Foundation Security Skills (11) | ⬜ Not started |
@@ -78,14 +78,20 @@ Plan adjustments accumulated during Phase 2 (tactical, logged for audit):
 - Adopter template length target (700-800 lines) significantly underestimated; internal CLAUDE.md grew from 641 → 1073 lines during Phase 2, so the template at 1091 lines mirrors that with header additions
 - Adopter template marker convention: header-based explanation + three inline `<!-- ADOPTER-CUSTOMIZE -->` markers at §7/§8/§9 instead of 22 per-section `<!-- FRAMEWORK-ENFORCED -->` markers — same convention, less inline bloat
 
-### Phase 3 — Workflow Specification with Orchestration
+### Phase 3 — Workflow Specification with Orchestration 🟡
 
-Detailed workflow document specifying:
+Detailed workflow document (`docs/WORKFLOW.md`) specifying:
 
 - Per-stage orchestration patterns (when subagents dispatch, what context they get)
-- Subagent dispatch points and contracts
-- Hook integration points throughout
+- Subagent dispatch points and contracts (including JSON output schemas for all seven roles per DEC-003 Clause 3)
+- Hook integration points throughout (input + exit semantics, no script bodies — Phase 12 ships those)
 - Change tier scaling for review depth
+- Mode scaling tables
+- Stage-to-stage handoff contracts and termination conditions
+- Debugging variant adaptation
+- Three worked examples (Trivial / Medium / Large)
+
+**Status (2026-05-19):** Plan drafted at `docs/phase-3-plan.md`. Awaiting Checkpoint 1 approval on five open decisions (TGF context injection mechanism for hooks, schema format, hook section organization, worked-example domain, commit grouping) before WORKFLOW.md implementation begins. Pre-Phase-3 housekeeping shipped same day: `CLAUDE.md` split with §15–§22 extracted to `docs/ARCHITECTURE.md` (commit `a630540`).
 
 ### Phase 4 — Always-On Skills (3)
 
