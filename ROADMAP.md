@@ -4,7 +4,7 @@ The Governance Framework v1 — 16-phase build plan. Path A scope (full v1 with 
 
 > ROADMAP is living documentation. Items here are committed to. Milestones with target dates that slip get explicit revision, not silent extension. Update at session close when phase status changes or milestones progress.
 
-**Current focus:** Phase 3 in progress — WORKFLOW.md commit 1 of 2 landed 2026-05-19 (§1, §2, §4, §5, §6, §9; ~720 lines including worked examples per role and richer hook schema discovered in Step 1 spot-check). Commit 2 ships §3 (Per-Stage Specifications, ~400 lines), §7 (Debugging Variant), §8 (Worked Examples) — the substantive bulk of the document. Also shipped 2026-05-19: `CLAUDE.md` split (`docs/ARCHITECTURE.md`) to clear the 40k-char performance warning; Phase 3 plan + Checkpoint 1 clearance + DEC-006.
+**Current focus:** Phase 3 ✅ Complete (2026-05-19). `docs/WORKFLOW.md` at 911 lines — the operational specification Phases 4–12 build against. Next: Phase 4 — Always-On Skills (3 skills: CODE-QUALITY, SECURITY-CORE, CONTINUITY). Phase 4 is the first phase that produces actual skill content rather than framework structure.
 
 ---
 
@@ -15,7 +15,7 @@ The Governance Framework v1 — 16-phase build plan. Path A scope (full v1 with 
 | 0 | Foundation Architecture Decisions | ✅ Complete |
 | 1 | Foundation / Repo Structure | ✅ Complete |
 | 2 | CLAUDE.md (expanded with §15-§22 for Path A) + adopter template | ✅ Complete |
-| 3 | Workflow Specification with Orchestration | 🟡 In progress (plan drafted) |
+| 3 | Workflow Specification with Orchestration | ✅ Complete |
 | 4 | Always-On Skills (3) | ⬜ Not started |
 | 5 | Activity Skills (6) | ⬜ Not started |
 | 6 | Foundation Security Skills (11) | ⬜ Not started |
@@ -78,7 +78,7 @@ Plan adjustments accumulated during Phase 2 (tactical, logged for audit):
 - Adopter template length target (700-800 lines) significantly underestimated; internal CLAUDE.md grew from 641 → 1073 lines during Phase 2, so the template at 1091 lines mirrors that with header additions
 - Adopter template marker convention: header-based explanation + three inline `<!-- ADOPTER-CUSTOMIZE -->` markers at §7/§8/§9 instead of 22 per-section `<!-- FRAMEWORK-ENFORCED -->` markers — same convention, less inline bloat
 
-### Phase 3 — Workflow Specification with Orchestration 🟡
+### Phase 3 — Workflow Specification with Orchestration ✅
 
 Detailed workflow document (`docs/WORKFLOW.md`) specifying:
 
@@ -91,7 +91,7 @@ Detailed workflow document (`docs/WORKFLOW.md`) specifying:
 - Debugging variant adaptation
 - Three worked examples (Trivial / Medium / Large)
 
-**Status (2026-05-19):** WORKFLOW.md commit 1 of 2 landed. Sections shipped: §1 Purpose and Scope, §2 Conceptual Model (state machine + handoff contract table), §4 Subagent Output Schemas (TypeScript-style interfaces for all 7 roles, each with worked example), §5 Tier and Mode Scaling Tables (with composition rule), §6 Hook Integration Contracts (per-event contracts for 8 events, TGF context injection per DEC-006 with session_id validation, richer `hookSpecificOutput` schema from Step 1 spot-check), §9 Reference. Remaining for commit 2: §3 Per-Stage Specifications (the bulk, ~400 lines), §7 Debugging Variant, §8 Worked Examples. Estimated commit 2 effort: ~3 hours.
+**Status (2026-05-19):** ✅ Shipped. `docs/WORKFLOW.md` at 911 lines across 9 sections; Phase 4–12 build against this specification. Constructed using the TGF workflow itself (dogfooded) — five workflow stages applied across two commits per Checkpoint 1 Decision E, with Stage 5 four-pass review producing concrete fixes on both commits. Three commits shipped Phase 3: `efd25c2` (plan), `61c1614` (Checkpoint 1 clearance + DEC-006), `d47d355` (WORKFLOW.md commit 1/2), and the commit landing this status update (WORKFLOW.md commit 2/2).
 
 ### Phase 4 — Always-On Skills (3)
 
@@ -229,13 +229,13 @@ Plus plugin marketplace submission.
 
 | ID | Milestone | Target | Confidence | Status |
 |----|-----------|--------|------------|--------|
-| M3 | Phase 3 complete (workflow specification with orchestration) | TBD | medium | not started |
 | M4 | Phase 4 complete (always-on skills: CODE-QUALITY, SECURITY-CORE, CONTINUITY) | TBD | medium | not started |
 
 ## Completed Milestones
 
 | ID | Milestone | Completed | Notes |
 |----|-----------|-----------|-------|
+| M3 | Phase 3 complete (workflow specification with orchestration) | 2026-05-19 | `docs/WORKFLOW.md` 911 lines, 9 sections. Four commits: `efd25c2` plan · `61c1614` Checkpoint 1 + DEC-006 · `d47d355` WORKFLOW.md commit 1/2 · closing commit WORKFLOW.md commit 2/2 + closeout. Dogfooded the workflow during construction. Plus pre-Phase-3 housekeeping: `a630540` CLAUDE.md/ARCHITECTURE.md split (cleared 40k-char threshold). |
 | M2 | Phase 2 complete (CLAUDE.md §15-§22 + adopter template + DEC-005) | 2026-05-17 | Four commits: `c9ac67a` §17 · `92c9894` §18+§19+restructure+DEC-005 · `3a48b0a` §20+§21 · closing commit §22+template+closeout |
 | M1 | Phase 1 complete (repo scaffolding, templates, initial commit) | 2026-05-17 | Initial commit on `main` |
 | M0 | Phase 0 architectural decisions locked | 2026-05-17 | See DEC-2026-05-17-003 |
@@ -246,4 +246,4 @@ Plus plugin marketplace submission.
 
 ---
 
-*Last updated: 2026-05-17.*
+*Last updated: 2026-05-19.*

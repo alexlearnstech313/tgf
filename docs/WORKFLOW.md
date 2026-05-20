@@ -93,11 +93,195 @@ The conceptual separation matters: hooks enforce invariants the workflow stage d
 
 ## §3 Per-Stage Specifications
 
-*[Forthcoming — Phase 3 commit 2.](docs/phase-3-plan.md#5-implementation-order)*
+Each subsection specifies one workflow stage: inputs, operations (with mode and tier conditionals), outputs, skill activation points, hook integration points, subagent dispatch points, and failure modes. Refer to §4 for subagent output schemas, §5 for tier and mode scaling matrices, §6 for hook contracts.
 
-This section specifies, for each of the six stages: inputs, operations (with mode and tier conditionals), outputs, skill activation points (referencing §4 schemas), hook integration points (referencing §6 contracts), subagent dispatch points (referencing §4 schemas), and failure modes. Six subsections, ~65 lines each.
+### Stage 1 — Research
 
-Bookmarked here for navigability. Commit 1 lands the contracts and tables this section depends on; commit 2 lands the per-stage spec itself.
+**Purpose:** understand what exists before changing anything. Build the foundation of context that every later stage depends on.
+
+**Inputs:**
+
+- User prompt (the request as stated)
+- Recent session logs (loaded by `SessionStart` hook into `additionalContext`; per §6)
+- `PROJECT-CONTEXT.md` if present (loaded as needed)
+- `ROADMAP.md` for milestone context
+- `ERROR-LOG.md`, `VENDOR-LOG.md`, `WAIVER-LOG.md` for related items
+- `DECISIONS.md` for architectural choices that constrain the work
+
+**Operations:**
+
+For coding work: read relevant files, identify the patterns currently in use, map dependencies and what touches what, check existing logs for related items, check session logs for prior context on this area, check `DECISIONS.md` for constraining choices, check `ROADMAP.md` for milestone fit.
+
+For planning work: review `PROJECT-CONTEXT.md` for current state, review `DOMAIN-CONTEXT.md` for relevant domain knowledge, review `ROADMAP.md` for current milestones and sequencing, review existing planning artifacts (`ARCHITECTURE.md`, `STACK-DECISIONS.md`), identify dependencies between this and other planned work.
+
+**Mode conditionals.** Exploration mode emphasizes this stage (per §5). Building+ does standard research. Maintenance mode adds regression-risk research (what else in the codebase exercises this area?).
+
+**Tier conditionals.** Trivial skips Stage 1 entirely (no codebase context to gather). Small/Medium does inline research by the orchestrator. Large may dispatch Researcher subagents (per §4) to investigate distinct aspects in parallel.
+
+**Outputs:** `research_findings` per §2 handoff table.
+
+**Skill activation:** no skills typically activate in Stage 1 itself (skills evaluate in Stage 3). `CONTINUITY` (always-on) ensures session log context is loaded; `PROJECT-CONTEXT` (meta-skill) may activate if PROJECT-CONTEXT is missing or stale.
+
+**Hook integration:** `SessionStart` fires once at session begin (loads recent session logs, initializes `.tgf/state/sessions/{session_id}.json`). `PreToolUse` fires for each file read or grep — read-only tool calls expected, no blocks expected in normal Stage 1 work.
+
+**Subagent dispatch:** Researcher (per §4) dispatched at Large tier only, in parallel for distinct research questions. Typical Large-tier dispatch: 1–3 Researchers, each scoped to a different aspect (codebase patterns, prior decisions, related logs).
+
+**Failure modes:**
+
+- *Insufficient context surfaced.* Stage produces incomplete `research_findings`; remediation: loop within Stage 1 with refined queries before advancing.
+- *Missing PROJECT-CONTEXT for non-trivial work.* Stage halts and escalates to user; recommend `/tgf:project-context` first.
+- *Stale session logs misleading.* Memory discipline (CLAUDE.md "Before recommending from memory" section) requires verification of cited facts against current code; flag stale claims rather than treating as authoritative.
+
+### Stage 2 — Scope
+
+**Purpose:** define what's changing and what isn't. Bound the work so review can evaluate against a clear contract.
+
+**Inputs:** `research_findings` from Stage 1.
+
+**Operations:**
+
+For coding work: identify files to modify, the change being made, explicitly out-of-scope items, change tier (Trivial/Small/Medium/Large per `CLAUDE.md` §3 rubric), trust boundaries affected, dependencies touched, `ROADMAP.md` milestone advanced.
+
+For planning work: identify questions being answered, decisions needing to be made, items deferred to later planning sessions, artifacts to be produced or updated, `ROADMAP.md` changes resulting.
+
+**Mode conditionals.** Mode-agnostic; scope is a structural step.
+
+**Tier conditionals.** Tier *determination* happens here (the rubric is applied to the scope). Trivial-tier work flagged for skip of Stages 3 and most of Stage 5.
+
+**Outputs:** `scope_definition` per §2 handoff table. The orchestrator writes `change_tier` to `.tgf/state/sessions/{session_id}.json` at this point (per DEC-006), making it visible to subsequent hooks.
+
+**Skill activation:** none. Scoping is meta-work.
+
+**Hook integration:** none specific. (If the orchestrator writes the state file via a tool call, `PreToolUse`/`PostToolUse` fire for that write — not a Stage 2-specific concern.)
+
+**Subagent dispatch:** none.
+
+**Failure modes:**
+
+- *Scope unclear.* Loop back to Stage 1 with research questions targeting the ambiguity.
+- *Scope too large for single workflow invocation.* Surface for decomposition recommendation; user may split into multiple workflow invocations or accept the size with Large tier handling.
+- *Trust boundary identification incomplete.* Stage 5 Security Auditor and Red Team will surface gaps; flag for revisiting at that point rather than blocking Stage 2.
+
+### Stage 3 — Plan with Governance
+
+**Purpose:** evaluate every applicable skill against the scoped change and produce the governance plan that Stage 4 implements against.
+
+**Inputs:** `scope_definition` from Stage 2.
+
+**Operations:**
+
+Apply path-based pre-filtering (per `ARCHITECTURE.md` §19) to identify candidate skills cheaply. For each candidate, load `applies-when` conditions and evaluate against `scope_definition` (paths, imports, operations, data flows). Skills matching contribute their rules; skills not matching stay silent. Synthesize matching skills' rules into a coherent governance plan: required patterns, anti-patterns to avoid, test requirements, hook integration points the implementation will trigger, expected findings categories.
+
+**Mode conditionals.** Mode gates the skill catalog (per §5). Exploration loads always-on only by default. Building+ loads the full catalog per applies-when matching. Compliance skills load only when scope warrants per `PROJECT-CONTEXT.md`.
+
+**Tier conditionals.** Trivial skips Stage 3 entirely. Small loads only path-matched skills. Medium loads path + import + operation-matched. Large loads full evaluation including data-flow-matched.
+
+**Outputs:** `governance_plan` per §2 handoff table.
+
+**Skill activation:** **this is the primary skill activation stage.** All skills evaluate applicability here. Matched skills contribute rules; their content is loaded into the planning context (per `ARCHITECTURE.md` §19 native progressive disclosure).
+
+**Hook integration:** `PreToolUse` may fire for read tools the orchestrator uses to evaluate scope against codebase. No Stage 3-specific blocking hooks.
+
+**Subagent dispatch:** typically none. The orchestrator does the synthesis. For Large tier with many candidate skills, may dispatch a focused Researcher (per §4) to investigate a specific governance question that the orchestrator can't resolve in-context.
+
+**Failure modes:**
+
+- *Skill rules conflict.* Orchestrator surfaces the conflict to the user with both rules' citations and plain-language impacts; user resolves.
+- *No applicable skills (rare).* Indicates either scope is too narrow (e.g., comment-only change should be Trivial tier) or skill catalog has gaps. CODE-QUALITY almost always applies.
+- *User disagrees with plan.* Revise plan; do not silently implement against the original. Plan revision is normal; pretending consensus is not.
+
+### Stage 4 — Implement
+
+**Purpose:** execute the plan, applying skill rules during writing. Capture findings and deviations as they emerge.
+
+**Inputs:** `governance_plan` from Stage 3.
+
+**Operations:**
+
+For coding work: write code following the plan; apply skill rules as code is written; add tests as code is added; update relevant artifacts as decisions are made; flag any AI-generated portions for Stage 5 Verifier dispatch.
+
+For planning work: produce planning artifacts; document decisions in `DECISIONS.md`; update `PROJECT-CONTEXT.md` if material; update `ROADMAP.md` if milestones or sequencing change; identify implementation work that flows from the planning.
+
+**Mode conditionals.** Mode-agnostic at the implementation step itself; mode shaped the plan that Stage 4 executes.
+
+**Tier conditionals.** Trivial: orchestrator does the change inline. Small/Medium: orchestrator implements directly with skill-rule application. Large: orchestrator may decompose into discrete tasks and dispatch Implementer subagents (per §4) in parallel for independent file changes. Decomposition criteria: tasks must have disjoint file scopes (no shared-file editing) and clear interfaces between them.
+
+**Outputs:** `implementation_diff` per §2 handoff table, including `ai_generated_portions` array flagging regions for Verifier exercise.
+
+**Skill activation:** skills *inform* implementation (rules cited as code is written) but don't re-evaluate. The activation happened in Stage 3; Stage 4 applies the activated rules.
+
+**Hook integration:** `PreToolUse` fires for every `Bash`, `Write`, `Edit` call — the three universal hooks (per §6) actively check for dangerous git operations, secrets in commits, destructive database operations. `PostToolUse` fires for telemetry (Building+ mode). `FileChanged` fires when framework integrity files (CLAUDE.md, ARCHITECTURE.md, DECISIONS.md, WORKFLOW.md, skill files, hook scripts) are modified — surfaces to user (Hardening+ mode).
+
+**Subagent dispatch:** Implementer (per §4) dispatched at Large tier when work decomposes. Each Implementer receives a disjoint file scope and the relevant portion of `governance_plan`. Returns `ImplementerOutput`.
+
+**Failure modes:**
+
+- *Implementation blocked by environment.* Missing tool, missing credential, missing dependency — orchestrator logs to `ERROR-LOG.md` and surfaces for user resolution before workflow continues.
+- *Tests failing.* Loop within Stage 4 to fix; do not advance to Stage 5 with known failing tests (Stage 5 review would just confirm that the tests fail; the loop should fix them first).
+- *Plan turned out to require revision.* Loop back to Stage 3 with the implementation finding that surfaced the planning gap. Do not silently deviate.
+- *AI-generated code looks plausible but unverified.* Mark `ai_generated_portions` accurately so Stage 5 Verifier dispatches; do not skip the flag because "the code looks right."
+
+### Stage 5 — Four-Pass Review
+
+**Purpose:** verify what was built against what was planned, what is good craftsmanship, what is secure, what is adversarially robust, and what integrates with the project's broader context.
+
+**Inputs:** `implementation_diff`, `governance_plan`.
+
+**Operations:**
+
+Dispatch review subagents per tier (per §5 tier scaling table). Each subagent runs the two-stage spec-then-quality pass (per `ARCHITECTURE.md` §20 and §4 `ReviewPass` type). Aggregate subagent outputs at the orchestrator: deduplicate findings (same issue caught by multiple subagents appears once), normalize severity per `CLAUDE.md` §11 model, attribute findings to source subagent for traceability, route findings per `CLAUDE.md` §11 resolution rule (fix / waive in `WAIVER-LOG.md` / escalate to `VENDOR-LOG.md`).
+
+**Mode conditionals.** Mode adjusts review *emphasis* (per §5 mode scaling table). Hardening+ gives Red Team extra weight; Maintenance+ gives Holistic extra weight on forward compatibility; Exploration reduces to Code Reviewer + light Holistic.
+
+**Tier conditionals.** Trivial: code review only, inline by orchestrator. Small: Code Reviewer + Holistic Reviewer (2 subagents). Medium: full four-pass (4 subagents in parallel). Large: full four-pass + Verifier (if `ai_generated_portions` non-empty) + possibly additional Researcher for review-time questions.
+
+**Outputs:** `review_findings` per §2 handoff table.
+
+**Skill activation:** review subagents apply skills' rules. Security Auditor (per §4) applies applicable security skills; Holistic Reviewer applies CONTINUITY's decision-documentation discipline; Code Reviewer applies CODE-QUALITY's principles.
+
+**Hook integration:** `SubagentStart` and `SubagentStop` fire for each dispatched review subagent (per §6 telemetry). `PreToolUse` may fire if subagents need to read additional context.
+
+**Subagent dispatch:** per tier scaling (§5). Subagents dispatch in parallel where possible (the four review phases at Medium and Large tier run concurrently, not sequentially — this is why orchestration adds value over single-agent work).
+
+**Failure modes:**
+
+- *Subagent disagreement on a finding.* Orchestrator surfaces both perspectives in aggregation; user decides. Do not silently resolve.
+- *Blocking findings (Critical/High that the user has not fixed or waived).* Loop back to Stage 4 with `blocking_findings` per §2 handoff. Stage 6 does not run until all blocking findings are resolved. On Stage 5 re-entry after rework, the orchestrator dispatches a *reduced* subagent set rather than full re-dispatch: the subagents that surfaced the original findings re-run on the changed regions, plus Verifier if the fix includes AI-generated code. Full re-dispatch is reserved for cases where the fix touched files outside the original review scope (broader changes warrant broader review).
+- *Non-blocking findings (Medium/Low).* User decides fix or waive; either way, the finding is logged before Stage 6 commits.
+- *Verifier dispatched but no AI-generated portions were actually flagged.* Indicates `ImplementerOutput.ai_generated_portions` was incomplete in Stage 4. Loop back to Stage 4 to re-flag rather than skipping Verifier — the empirical verification matters.
+
+### Stage 6 — Commit
+
+**Purpose:** land the work and capture the context that future sessions will need. Verify completion before declaring done.
+
+**Inputs:** `review_findings` (with all blocking findings resolved).
+
+**Operations:**
+
+For coding work: produce commit message that explains the *why* not just the *what*; generate session log entry capturing what was researched, scoped, planned, implemented, and reviewed; update relevant artifacts (`DECISIONS.md` if architectural, `PROJECT-CONTEXT.md` if material, `ROADMAP.md` if milestones progressed or shifted, `SCHEMA-HISTORY.md` if schema changed); update appropriate logs (`ERROR-LOG.md`, `VENDOR-LOG.md`, `WAIVER-LOG.md`).
+
+For planning work: commit planning artifacts; generate session log entry capturing the planning process and outcomes; update `ROADMAP.md`, `ARCHITECTURE.md`, or other affected planning documents.
+
+**Verification before completion:** before declaring work done, verify it actually is done. Did the change accomplish what was scoped? Did tests pass? Did the four-pass review actually run at the appropriate depth? Are findings logged appropriately? Is the session log entry captured? Is `ROADMAP.md` updated if the change affected milestone progress? For AI-generated code: was it empirically verified rather than just reviewed for plausibility?
+
+**Mode conditionals.** Mode-agnostic at commit time; mode shaped the work that committing closes.
+
+**Tier conditionals.** Trivial: commit message + commit. Small: commit + session log entry. Medium: commit + session log + ROADMAP delta. Large: commit + session log + ROADMAP delta + `DECISIONS.md` entry (if architectural) + `SCHEMA-HISTORY.md` entry (if schema-affecting).
+
+**Outputs:** `commit_record` per §2 handoff table.
+
+**Skill activation:** `CONTINUITY` (always-on) ensures all log discipline. The session log entry generation IS CONTINUITY's primary Stage 6 output.
+
+**Hook integration:** `PreToolUse` fires for `Bash(git commit ...)` — workflow hooks (Building+ mode) verify tests pass, verify session log entry exists, verify `ROADMAP.md` updated. Git pre-commit hooks (if installed via `.claude/git-hooks/`) fire commit-time enforcement that runs regardless of whether commit was Claude-initiated. `PostToolUse` fires after commit for telemetry. `SessionEnd` fires at session close (if this is the last commit of the session); generates final session log entry and cleans up `.tgf/state/sessions/{session_id}.json`.
+
+**Subagent dispatch:** none typically. (For very Large changes producing multiple commits, the orchestrator may sequence commits without subagent dispatch — each commit is itself a workflow invocation.)
+
+**Failure modes:**
+
+- *Pre-commit hook blocks.* Fix the underlying issue and create a NEW commit; never `--amend` past a hook failure (per `CLAUDE.md` Git Safety Protocol — `--amend` after a failed commit modifies the *previous* commit, which can destroy work).
+- *Commit produces unexpected state* (wrong branch, wrong files, partial staging). Investigate before any destructive recovery; do not `git reset --hard` as a shortcut.
+- *User disagrees with commit message.* Revise the message via `git commit --amend -m` for the *current* (just-made) commit only — never amend earlier commits.
+- *Session log entry not generated.* Loop within Stage 6 to generate it; do not commit Stage 6 as "done" without the entry, since future sessions depend on it.
 
 ---
 
@@ -579,23 +763,113 @@ This preserves §5's intent: the framework respects user authority but does not 
 
 ## §7 Debugging Variant
 
-*[Forthcoming — Phase 3 commit 2.](docs/phase-3-plan.md#5-implementation-order)*
+When work is debugging rather than building, the six-stage workflow keeps its shape but its stage operations shift. The mapping is one-to-one; the same handoff contracts (§2), tier scaling (§5), and hook integrations (§6) apply.
 
-This section specifies how the six stages reshape when work is debugging rather than building (per `CLAUDE.md` §3 final paragraph): Reproduce → Isolate → Hypothesize → Test → Root-Cause → Verify-Fix. Each debugging stage maps to a building stage; subagent dispatch differences are spelled out; termination criteria for debugging are explicit.
+| Building stage | Debugging stage | What changes |
+|----------------|-----------------|--------------|
+| 1. Research | **Reproduce** | Operations focus on triggering the bug reliably (find inputs, environments, sequences that produce it). Inputs include any error reports, stack traces, user-provided repro steps. Failure mode: cannot reproduce → loop within stage with broader hypothesis space before declaring "cannot reproduce" (which itself is a finding worth logging). |
+| 2. Scope | **Isolate** | Operations bound the bug — narrow which file, function, or condition causes it. `change_tier` reflects bug *scope* rather than fix scope (a Critical bug in a Trivial-tier fix-area is still Critical for review purposes). Trust boundaries affected = where the bug crosses them. |
+| 3. Plan with Governance | **Hypothesize** | Form testable hypotheses for root cause. The "governance plan" becomes the hypothesis list with test plans for each. Skills activate against the *suspected fix area*, not the bug itself; security skills especially help spot hypotheses missed by the original implementer. |
+| 4. Implement | **Test** | Test hypotheses systematically (the Agans methodology / Five Whys patterns referenced in `CLAUDE.md` §3's debugging callout). Each hypothesis test is a focused intervention; outputs are the test result + updated hypothesis state. AI-generated test code gets flagged for Verifier same as in building. |
+| 5. Four-Pass Review | **Root-Cause** | Review applies to the *fix*, not to the bug. The fix is treated as new code: Code Reviewer for craftsmanship, Security Auditor for security regressions the fix might introduce, Red Team for adversarial scenarios the fix might miss, Holistic Reviewer for regression risk (the central concern for fixes). Verifier dispatches when the fix uses AI-generated code. |
+| 6. Commit | **Verify-Fix** | Commit + verify the fix actually fixes the bug (not just "all tests pass" — exercise the original reproduction path from the Reproduce stage). Log the bug to `ERROR-LOG.md` as Resolved with the fix commit referenced. Session log captures the debugging trail (hypotheses tried + ruled out) since this is often the most valuable context for future similar bugs. |
+
+### Termination criteria for debugging
+
+The workflow terminates when:
+
+- **Fixed:** the fix exercises cleanly against the Reproduce-stage repro path; `ERROR-LOG.md` updated to Resolved; commit landed.
+- **Worked around, not fixed:** root cause not isolated but symptoms mitigated. Log as Resolved-with-workaround in `ERROR-LOG.md` with the underlying open question; create a new entry to track the actual root cause.
+- **Cannot reproduce:** explicit determination after thorough Reproduce-stage work. Log to `ERROR-LOG.md` as Cannot-Reproduce with the conditions tried; surfaces for future re-investigation if symptoms recur.
+- **Not actually a bug:** Hypothesize stage surfaces that the reported behavior is intentional or correct. Update `ERROR-LOG.md` to Not-A-Bug with the reasoning; document the surprise in `DECISIONS.md` if the reporter's expectation indicates a UX or documentation gap worth addressing.
+
+### When debugging dispatches subagents
+
+Subagent dispatch differs subtly from building:
+
+- **Researcher** dispatched in Reproduce for Large-tier bugs (multi-aspect investigation: log analysis, codepath tracing, environment differences). Often parallel: one Researcher per suspected subsystem.
+- **Implementer** rarely dispatched (fixes are usually focused, not decomposable). Dispatched only for Large-tier fixes that span multiple subsystems.
+- **Verifier** always dispatched when the fix includes AI-suggested code, regardless of tier — debugging is exactly where AI's plausible-but-wrong patterns cause regression. Verifier exercises both the original repro (does the fix work?) and adjacent edge cases (does the fix introduce new bugs?).
 
 ---
 
 ## §8 Worked Examples
 
-*[Forthcoming — Phase 3 commit 2.](docs/phase-3-plan.md#5-implementation-order)*
+Three end-to-end traces exercising the spec. Each example shows: stages run/skipped, skill activations, subagent dispatches (with input/output sketches), hook fires (with stdin/stdout sketches), artifact updates, total findings.
 
-Three end-to-end traces exercising the spec:
+### Example 1 — Trivial: typo fix in `CLAUDE.md`
 
-1. **Trivial:** typo fix in CLAUDE.md
-2. **Medium:** authentication middleware refactor in a Next.js application
-3. **Large:** new billing feature crossing trust boundaries (PII + payments + webhooks)
+**Change:** `recieve` → `receive` on one line. **Mode:** building. **Tier:** Trivial (typo per `CLAUDE.md` §3 rubric).
 
-Each example traces: stages run/skipped, skills activated, subagents dispatched (with input/output), hooks fired (with stdin/stdout), artifacts updated, total findings count.
+**Stage 1 (Research):** SKIPPED — Trivial tier has no codebase context to gather.
+
+**Stage 2 (Scope):** orchestrator notes `CLAUDE.md` is the only file affected, no trust boundaries, no `ROADMAP.md` milestone. Writes `change_tier: "trivial"` to `.tgf/state/sessions/{session_id}.json`.
+
+**Stage 3 (Plan with Governance):** SKIPPED per Trivial tier (no skill evaluation needed for typo fix).
+
+**Stage 4 (Implement):** orchestrator does the `Edit` inline. `PreToolUse` fires for the `Edit` call; universal hooks check (no dangerous-git, no secrets, no destructive-db pattern) → `permissionDecision: "allow"`. `PostToolUse` fires; framework integrity hook detects `CLAUDE.md` modification and emits a `systemMessage` flagging the change for user awareness (per §6 `FileChanged` semantics, since `CLAUDE.md` is a framework integrity file).
+
+**Stage 5 (Four-Pass Review):** orchestrator inline code review only (no subagents per §5 tier scaling). Confirms one-character change in a comment-equivalent context; no quality concerns.
+
+**Stage 6 (Commit):** commit message `Fix typo in CLAUDE.md §4`. No session log entry required at Trivial (per §5 logging row), no `ROADMAP.md` delta.
+
+**Artifacts updated:** `CLAUDE.md` only. **Subagents dispatched:** 0. **Hooks fired:** 3 (`PreToolUse`, `PostToolUse` × 1 each for the Edit; `PreToolUse` for the commit). **Findings:** 0. **Total workflow cost:** seconds of orchestrator time, ~0 subagent tokens.
+
+### Example 2 — Medium: authentication middleware refactor (Next.js project)
+
+**Change:** refactor `middleware/auth.ts` to centralize session validation; touches `middleware/auth.ts`, `lib/session.ts`, `tests/auth.test.ts`. **Mode:** building. **Tier:** Medium (multi-file, no architectural change, crosses no new trust boundaries).
+
+**Stage 1 (Research):** orchestrator reads the three target files, greps for callers (`app/api/**/*.ts`), checks `DECISIONS.md` for prior auth decisions (finds `DEC-2025-XX-008` mandating JWT not session cookies), checks `ERROR-LOG.md` for related items (one entry: F-031 "intermittent session expiry race condition"), checks `ROADMAP.md` (milestone "authentication hardening" in progress). No Researcher subagent dispatched (Medium tier inline).
+
+**Stage 2 (Scope):** files in scope confirmed; trust boundary affected = browser↔server session boundary; `change_tier: "medium"` written to state file; out-of-scope: the JWT signing-key rotation (separate ticket).
+
+**Stage 3 (Plan with Governance):** skills evaluated. Path matches activate `security-iam-sessions`, `security-iam-authentication`, `security-cryptography`, `code-quality`, `testing`, `continuity`. Import matches add `security-input-validation` (middleware processes request data). Plan: apply rules from those 7 skills; anti-patterns to avoid include "session ID compared with `==`" (constant-time comparison required, OWASP ASVS V3.4.1); test requirements include race-condition coverage (per F-031).
+
+**Stage 4 (Implement):** orchestrator writes the refactor (Medium tier inline, no Implementer subagent). 47 lines changed across 2 files; 3 tests added. AI-generated portions: lines 23–41 of `lib/session.ts` flagged for Verifier.
+
+**Stage 5 (Four-Pass Review):** 4 review subagents dispatch in parallel per Medium tier. Plus Verifier (since `ai_generated_portions` non-empty).
+- **Code Reviewer:** `review_pass.spec_compliance.matches = true`; `review_pass.quality.passes = false`; 1 Medium finding (error swallows `Error.cause`).
+- **Security Auditor:** 1 High finding (session ID `==` comparison vs constant-time; OWASP ASVS V3.4.1).
+- **Red Team:** 1 High finding (race condition on renewal — the F-031 surface area; reproduces it concretely).
+- **Holistic Reviewer:** 1 Medium finding (JWT verification approach worth documenting in DECISIONS.md as DEC follow-up).
+- **Verifier:** 1 Critical finding (AI assumed `jose.decodeJwt()` validates issuer claim; it does not — hallucinated library behavior pattern).
+- Orchestrator aggregates: 5 findings (1 Critical, 2 High, 2 Medium); deduplication didn't reduce count (each finding distinct).
+
+User fixes all 4 blocking findings (Critical + High); accepts the Medium DEC-doc finding as a separate ticket logged to `ERROR-LOG.md`. Loop back through Stage 4 for fixes; Stage 5 re-runs with reduced subagent set (just Verifier on the fix region).
+
+**Stage 6 (Commit):** commit message captures the refactor + 4 finding fixes. Session log entry generated. `ROADMAP.md` updated (authentication hardening milestone advanced). `ERROR-LOG.md` updated (F-031 resolved; new entry F-034 for the DEC documentation TODO). Pre-commit hook verifies tests pass.
+
+**Artifacts updated:** 2 code files, 3 test files, `ROADMAP.md`, `ERROR-LOG.md`, session log. **Subagents dispatched:** 5 (4 reviewers + Verifier; then 1 Verifier for the fix iteration). **Hooks fired:** ~20 across the session (PreToolUse for each Bash/Write/Edit, SubagentStart/Stop pairs, PostToolUse for telemetry, PreToolUse for git commit, SessionEnd). **Findings:** 5 total, 4 blocking, all resolved.
+
+### Example 3 — Large: new billing feature crossing trust boundaries
+
+**Change:** add Stripe billing integration to a SaaS — new endpoints, PII handling, payment data flow, Stripe webhook receiver. Touches `app/api/billing/*.ts`, `lib/stripe.ts`, `lib/billing.ts`, new database tables, webhook handler `app/api/webhooks/stripe/route.ts`, env var additions. **Mode:** building (transitioning to hardening for the billing surface area). **Tier:** Large (new feature, crosses new trust boundary at the webhook receiver, introduces PII storage, introduces payment data flow).
+
+**Stage 1 (Research):** orchestrator dispatches 3 Researcher subagents in parallel.
+- *Researcher A* (codebase patterns): identifies existing API route patterns, database access patterns, current secret management.
+- *Researcher B* (prior decisions): finds `DEC-2025-XX-014` (chose Stripe over alternative payment processors), confirms no prior billing decisions to constrain.
+- *Researcher C* (related logs): no `ERROR-LOG.md` entries for billing; one `WAIVER-LOG.md` entry on webhook signature verification deferred for a different webhook integration; one `VENDOR-LOG.md` entry on Stripe dashboard configuration that's pending.
+
+Aggregated `research_findings`: 12 relevant files, 1 prior decision, 1 relevant waiver, 1 pending vendor action, ROADMAP milestone "billing MVP" advanced.
+
+**Stage 2 (Scope):** files in scope identified; trust boundaries affected = (1) browser↔server for billing UI, (2) server↔Stripe API for charges, (3) Stripe↔server for webhooks (NEW trust boundary). `change_tier: "large"` written; out-of-scope: refund flow (later milestone), subscription management UI (later milestone).
+
+**Stage 3 (Plan with Governance):** full skill evaluation. Skills that activate include `security-iam-authentication`, `security-iam-authorization`, `security-input-validation`, `security-output-encoding`, `security-webhooks`, `security-secrets-management`, `security-api`, `security-cryptography`, `security-data-classification` (PII!), `security-privacy-data-handling`, `compliance-foundations`, `compliance-pci-dss` (payment data!), `data-architecture` (new tables), `security-database`, `security-error-handling`, `security-logging`, `code-quality`, `testing`, `continuity`. Compliance-pci-dss surfaces PCI-DSS scope question — confirmed via PROJECT-CONTEXT that the project uses Stripe.js for card data (no card data touches the server), reducing PCI-DSS scope to SAQ-A. Governance plan includes ~40 rules across the activated skills.
+
+**Stage 4 (Implement):** orchestrator decomposes into 4 parallel Implementer tasks: (1) database tables + migrations, (2) Stripe client wrapper + tests, (3) billing API endpoints, (4) webhook receiver + signature verification. Each Implementer gets disjoint file scope and the relevant slice of `governance_plan`. ~580 lines added across 11 files; 24 tests; multiple AI-generated portions flagged for Verifier.
+
+**Stage 5 (Four-Pass Review):** all 4 review subagents + Verifier dispatch.
+- **Code Reviewer:** 2 Medium findings (naming inconsistency between client/wrapper, missing JSDoc on public exports).
+- **Security Auditor:** 1 Critical (webhook signature verification accepts unsigned requests if header missing — auth bypass!), 2 High (PII logged in error path, secret in env var named without TGF convention), 3 Medium (input validation gaps on optional fields).
+- **Red Team:** 1 Critical confirming the Security Auditor's webhook finding from an exploitation angle (forging webhook events), 1 High (race condition on subscription state during simultaneous webhooks).
+- **Holistic Reviewer:** 1 High (new PII storage not documented in `SCHEMA-HISTORY.md`; data classification entry needed), 2 Medium (multiple architectural decisions made in implementation without DECISIONS.md entries).
+- **Verifier:** 1 Critical (Stripe.js client-side tokenization assumed but not actually integrated in the UI; AI hallucinated the integration point), 2 Medium (edge cases in subscription cancellation untested).
+
+Orchestrator aggregates: 14 findings (3 Critical, 4 High, 7 Medium); deduplication merges the webhook signature finding (caught by both Security Auditor and Red Team) → 13 findings. User addresses 3 Critical + 4 High (all 7 blocking); fixes loop back through Stage 4. Stage 5 re-runs with reduced subagent set (Security Auditor + Verifier on the fix regions). 1 Medium accepted as out-of-scope and logged to `WAIVER-LOG.md` with 30-day revisit date.
+
+**Stage 6 (Commit):** the work decomposes into 3 commits (decomposed implementation produces multiple commit-able chunks). Per CLAUDE.md Git Safety Protocol, each commit is a NEW commit. Final commits land. `DECISIONS.md` gets 2 new entries (webhook signature verification approach; PII data classification decision). `SCHEMA-HISTORY.md` gets entry for new tables. `ROADMAP.md` updated (billing MVP advanced; new milestone added for subscription management). `VENDOR-LOG.md` updated (Stripe dashboard webhook endpoint registration still pending). `WAIVER-LOG.md` gets the 1 deferred Medium finding. Session log entry generated capturing the full Large-tier flow.
+
+**Artifacts updated:** 11 code files, 24 test files, 1 migration, `ROADMAP.md`, `DECISIONS.md`, `SCHEMA-HISTORY.md`, `VENDOR-LOG.md`, `WAIVER-LOG.md`, `ERROR-LOG.md`, session log, `.env.example`. **Subagents dispatched:** 12+ (3 Researchers + 4 Implementers + 5 review subagents + reduced reviewer set on fix iterations). **Hooks fired:** ~100 across the session (every tool call, every subagent lifecycle, framework integrity checks on DECISIONS.md and SCHEMA-HISTORY.md modifications, multiple commits). **Findings:** 13 unique findings (3 Critical, 4 High, 6 Medium after dedup), 7 blocking, all resolved (6 fixed + 1 waived).
 
 ---
 
@@ -633,4 +907,4 @@ Each example traces: stages run/skipped, skills activated, subagents dispatched 
 
 ---
 
-*This document is Phase 3, commit 1: §1, §2, §4, §5, §6, §9 land. §3 (Per-Stage Specifications), §7 (Debugging Variant), and §8 (Worked Examples) ship in Phase 3 commit 2 per Checkpoint 1 Decision E.*
+*Phase 3 complete with this commit (2 of 2 per Checkpoint 1 Decision E). Phases 4–12 build against the specifications in §3–§8.*
