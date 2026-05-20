@@ -4,7 +4,7 @@ The Governance Framework v1 — 16-phase build plan. Path A scope (full v1 with 
 
 > ROADMAP is living documentation. Items here are committed to. Milestones with target dates that slip get explicit revision, not silent extension. Update at session close when phase status changes or milestones progress.
 
-**Current focus:** Phase 4 architectural reconciliation in progress (2026-05-19). Three ADRs landed (`DEC-2026-05-19-007` TGF as plugin with orchestrator agent + skill preload; `DEC-2026-05-19-008` skill catalog consolidation + reference file pattern; `DEC-2026-05-19-009` hook physical layout for plugin distribution). Pre-Phase-4 housekeeping commit (repo restructure to plugin layout) and `docs/phase-4-plan.md` to follow. Phase 4 implementation (3 always-on skills + tgf-orchestrator agent) begins after the plan + Checkpoint 1 approval. Phase 3 ✅ Complete same day with `docs/WORKFLOW.md` at 911 lines.
+**Current focus:** Phase 4 plan drafted 2026-05-19 — `docs/phase-4-plan.md` awaiting Checkpoint 1 approval on five open decisions before implementation begins. Architectural foundation locked across three ADRs (`DEC-007` plugin + orchestrator agent + skills preload; `DEC-008` skill catalog consolidation + reference file pattern; `DEC-009` hook physical layout) and one pre-Phase-4 housekeeping commit (`49c8a82` repo restructure to plugin layout). Phase 4 implementation produces 3 always-on skills (CODE-QUALITY, SECURITY-CORE, CONTINUITY) + tgf-orchestrator agent + 4 review subagent scaffolds + plugin `settings.json` — estimated ~18-20 hours focused work across 3-5 sessions. Phase 3 ✅ Complete same day with `docs/WORKFLOW.md` at 911 lines.
 
 ---
 
@@ -16,7 +16,7 @@ The Governance Framework v1 — 16-phase build plan. Path A scope (full v1 with 
 | 1 | Foundation / Repo Structure | ✅ Complete |
 | 2 | CLAUDE.md (expanded with §15-§22 for Path A) + adopter template | ✅ Complete |
 | 3 | Workflow Specification with Orchestration | ✅ Complete |
-| 4 | Always-On Skills (3) | ⬜ Not started |
+| 4 | Always-On Skills (3) | 🟡 In progress (plan drafted) |
 | 5 | Activity Skills (6) | ⬜ Not started |
 | 6 | Foundation Security Skills (11) | ⬜ Not started |
 | 7 | Extended Security Skills (22) | ⬜ Not started |
