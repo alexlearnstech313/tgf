@@ -6,6 +6,60 @@ Each decision captures: what was decided, when, why, what alternatives were cons
 
 ---
 
+## DEC-2026-05-19-006: TGF session state architecture — file-based, session-keyed
+
+**Decided:** TGF-specific runtime context (`project_mode`, `change_tier`, and future per-session state) lives in a file-based store at `.tgf/state/sessions/{session_id}.json`. The orchestrator (main agent) writes to it; hooks and meta-skills read from it on demand. The `.tgf/state/` directory is gitignored (it's per-session operational state, not committed artifact).
+
+**Date:** 2026-05-19
+
+**Context:** Phase 3 planning surfaced that ARCHITECTURE.md §18 documents Claude Code's actual hook stdin JSON (which carries `session_id`, `cwd`, `permission_mode`, `hook_event_name`, plus event-specific fields like `tool_name` and `tool_input`) but does *not* carry TGF concepts (`project_mode` is exploration/prototype/building/hardening/maintenance; `change_tier` is trivial/small/medium/large). These TGF concepts gate hook profile activation (§18 mode profiles) and orchestration depth (§19, §20 cost-aware dispatch by tier). Hooks need access to them at fire time.
+
+`DEC-2026-05-17-003` Clause 2's original specification listed `project_mode` and `change_tier` as part of the hook stdin JSON — that was invented before consulting Claude Code's canonical source. `DEC-2026-05-17-005` corrected the event names but did not address the TGF-context-injection question. This ADR closes that gap.
+
+Without an explicit mechanism, hook scripts would either: (i) embed mode/tier assumptions in script logic (fragile and untestable), (ii) reimplement mode-inference per script (duplication and drift), or (iii) load entire PROJECT-CONTEXT to derive mode (expensive per fire).
+
+**Decision:**
+
+1. **State file location:** `.tgf/state/sessions/{session_id}.json`. Session-keyed so concurrent Claude Code sessions in the same repo do not collide. `session_id` is in every hook's stdin JSON per Claude Code's contract.
+
+2. **State file contents (minimum):**
+   ```
+   {
+     "session_id": "<from Claude Code>",
+     "project_mode": "exploration|prototype|building|hardening|maintenance",
+     "change_tier": "trivial|small|medium|large",
+     "current_stage": "research|scope|plan|implement|review|commit",
+     "started": "<ISO 8601 timestamp>",
+     "last_updated": "<ISO 8601 timestamp>"
+   }
+   ```
+   Additional fields may accumulate as Phase 11 (Meta-Skills) and Phase 12 (Hook Library) need them. The schema is forward-compatible: readers ignore unknown fields.
+
+3. **Write authority:** the orchestrator (main agent) writes session state. A `SessionStart` hook initializes the file with inferred `project_mode` from PROJECT-CONTEXT. The orchestrator updates `change_tier` and `current_stage` as the workflow progresses through stages. `/tgf:set-mode` updates `project_mode` directly.
+
+4. **Read authority:** hooks read the file at fire time. Meta-skills read it when they need context. No reader-writer locking required at TGF v1 scale (single user, single Claude Code session per repo typical).
+
+5. **Gitignored:** `.tgf/state/` is added to `.gitignore.template` (it joins `.tgf/telemetry/` and `.tgf/evolution/observations/` as gitignored TGF-internal state). State is per-session ephemeral operational data, not project artifact.
+
+6. **Cleanup:** a `SessionEnd` hook removes the session's state file. Stale files from crashed sessions get cleaned up by a `SessionStart` hook that prunes files older than 30 days.
+
+**Alternatives considered:**
+
+- **`SessionStart` additionalContext injection.** Rejected. `additionalContext` is a stdout field on `SessionStart` for injecting context into Claude's session — it's a Claude-facing mechanism, not a hook-to-hook communication channel. Misusing it would couple TGF to undocumented behavior.
+- **Environment variables (`TGF_PROJECT_MODE`, `TGF_CHANGE_TIER`).** Rejected. `change_tier` changes per workflow invocation; env vars would need re-export on every Stage 2 completion, which is awkward. File-based handles per-invocation updates naturally.
+- **Single global `.tgf/state/current.json`.** Rejected. Two Claude Code sessions in the same repo would stomp each other's state. Session-keyed eliminates the collision risk for a minor directory-organization cost.
+- **Embed mode/tier in PROJECT-CONTEXT or another committed artifact.** Rejected. `change_tier` is per-invocation; committing it would create churn. PROJECT-CONTEXT is the source of truth for mode *defaults*; runtime state is downstream.
+
+**Consequences:**
+
+- Phase 11 (Meta-Skills) implements the orchestration meta-skill that writes session state at workflow stage boundaries.
+- Phase 12 (Hook Library) implements hooks that read session state to determine profile applicability (mode-aware profiles per ARCHITECTURE.md §18) and dispatch depth (tier scaling per ARCHITECTURE.md §19/§20).
+- `.gitignore.template` (Phase 1 artifact) already covers `.tgf/state/` via the broader `.tgf/` ignore — no template change needed.
+- WORKFLOW.md (Phase 3 deliverable) §6 Hook Integration Contracts references this ADR when specifying how hooks access TGF context. WORKFLOW.md §2 Conceptual Model identifies the orchestrator as the state-writer.
+- This ADR is approved subject to Phase 3 Step 1 spot-check of the Claude Code Hooks reference. If Claude Code's hook context-passing mechanisms turn out richer than ARCHITECTURE.md §18 documents, this decision could be revisited via a superseding ADR. Low probability — the Phase 2 verification was thorough.
+
+---
+
 ## DEC-2026-05-17-005: Hook architecture amendment — use Claude Code's actual event taxonomy
 
 **Decided:** Amend `DEC-2026-05-17-003` Clause 2 (Hook architecture) to use Claude Code's actual hook event names rather than the kebab-case names invented in the original Phase 0 specification. Add a separate `.claude/git-hooks/` directory for git-layer enforcement, distinct from Claude Code's `.claude/hooks/`.

@@ -251,34 +251,23 @@ Applied to every section. Per Phase 2 plan-adjustment, criterion #1 (skill secti
 
 ---
 
-## 7. Open Decisions for Checkpoint 1
+## 7. Checkpoint 1 — Decisions Resolved (2026-05-19)
 
-Approve, revise, or reject before implementation begins:
+All five decisions resolved. Implementation cleared.
 
-**Decision A — TGF context injection mechanism (§3 of this plan).** Approve the hybrid resolution (`project_mode` via `.tgf/state/current.json`; `change_tier` passed per workflow invocation), or pick alternative A/B/C.
+**Decision A — TGF context injection mechanism: RESOLVED.** File-based state at `.tgf/state/sessions/{session_id}.json` (refined from the original hybrid proposal). Session-keyed to handle concurrent Claude Code sessions in the same repo without collision (`session_id` is in every hook's stdin JSON per Claude Code's contract). Orchestrator writes mode + tier + current stage; hooks read on demand. State file schema and write-authority rules captured in `DEC-2026-05-19-006` (TGF session state architecture) in `DECISIONS.md`. Approved subject to Phase 3 Step 1 spot-check of the Claude Code Hooks reference; revisable via superseding ADR if Step 1 surfaces unexpected mechanisms.
 
-**Decision B — Subagent output schema format.** Two options:
-- (i) Inline JSON schema syntax (Draft 2020-12) — formal, validator-ready, more verbose
-- (ii) TypeScript-style interface notation — compact, readable, easier to author but less validator-friendly
+**Decision B — Subagent output schema format: RESOLVED.** TypeScript-style interface notation. WORKFLOW.md is a spec for human implementers, not a runtime artifact; TS interfaces read more naturally than JSON Schema Draft 2020-12. Schemas authored with discriminated unions, explicit required-vs-optional, and consistent naming so Phase 11 (Meta-Skills) can mechanically translate to JSON Schema if runtime validation becomes needed.
 
-Lean: (ii) for readability; the schemas don't need runtime validation immediately. Phase 11 (Meta-Skills) can generate validators if needed.
+**Decision C — Hook contract organization: RESOLVED.** Per-event as primary structure (one section per `SessionStart`, `PreToolUse`, etc.) to match Phase 12's `.claude/hooks/<EventName>/` directory layout. A "Hooks by purpose" cross-reference table at the §6 opening shows which events serve safety / workflow / governance purposes — solves the per-purpose lookup case without restructuring.
 
-**Decision C — Hook contract specifications: per-event or per-purpose?** Two organizing principles for §6:
-- (i) Per-event sections (one section per `SessionStart`, `PreToolUse`, etc.) — mirrors Claude Code's mental model
-- (ii) Per-purpose sections (safety hooks, workflow hooks, governance hooks) — mirrors TGF's profile structure
+**Decision D — Worked example domains: RESOLVED.** Generic examples (typo fix, auth middleware refactor, billing feature with PII + payments + webhooks). WORKFLOW.md is the framework spec, not the framework's own usage demo. Phase 13 (Stack Baselines) is the right place for LabList/AdaptivIQ/BLETRAP-specific traces.
 
-Lean: (i) per-event — Phase 12 implementers write scripts in `.claude/hooks/<EventName>/` directories, so the doc structure matching that is most useful at implementation time.
+**Decision E — Commit grouping: RESOLVED.** Two commits. First: §1, §2, §4, §5, §6, §9 (scaffolding + schemas + tables + hook contracts + reference). Second: §3, §7, §8 (per-stage spec, debugging variant, worked examples). Structure-before-content respects the dependency order in §5.
 
-**Decision D — Worked example domains.** Lean toward generic examples (auth refactor, billing feature) over specific Alt-project examples (LabList, AdaptivIQ, BLETRAP). Generic examples are reusable as adopter-facing material. But specific examples would be richer.
+### Architectural reach
 
-Lean: generic. Phase 13 (Stack Baselines) is the right place for project-specific traces.
-
-**Decision E — Commit grouping.** Options:
-- (i) Single commit: full WORKFLOW.md at the end of implementation
-- (ii) Two commits: structure (§1, §2, §4, §5, §6, §9) → content (§3, §7, §8)
-- (iii) Three commits: scaffolding → per-stage spec → examples + closeout
-
-Lean: (ii) — structure first lets the per-stage spec land against a stable scaffold; examples + closeout (§3/§7/§8) is the substantive work.
+Decision A is genuinely architectural (gates Phase 11 and Phase 12); captured as `DEC-2026-05-19-006`. Decisions B–E are tactical to Phase 3; captured here in the plan only.
 
 ---
 

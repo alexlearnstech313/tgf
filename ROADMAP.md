@@ -4,7 +4,7 @@ The Governance Framework v1 — 16-phase build plan. Path A scope (full v1 with 
 
 > ROADMAP is living documentation. Items here are committed to. Milestones with target dates that slip get explicit revision, not silent extension. Update at session close when phase status changes or milestones progress.
 
-**Current focus:** Phase 3 in progress — `docs/phase-3-plan.md` drafted 2026-05-19, awaiting Checkpoint 1 approval (Decisions A–E) before WORKFLOW.md implementation. Also: `CLAUDE.md` split (extracted §15–§22 to `docs/ARCHITECTURE.md`) shipped 2026-05-19 to clear the 40k-char performance warning.
+**Current focus:** Phase 3 in progress — Checkpoint 1 cleared 2026-05-19 (all 5 decisions resolved; `DEC-2026-05-19-006` captures the architectural one). `docs/WORKFLOW.md` implementation cleared to begin next session. Also shipped 2026-05-19: `CLAUDE.md` split (extracted §15–§22 to `docs/ARCHITECTURE.md`) to clear the 40k-char performance warning.
 
 ---
 
@@ -91,7 +91,7 @@ Detailed workflow document (`docs/WORKFLOW.md`) specifying:
 - Debugging variant adaptation
 - Three worked examples (Trivial / Medium / Large)
 
-**Status (2026-05-19):** Plan drafted at `docs/phase-3-plan.md`. Awaiting Checkpoint 1 approval on five open decisions (TGF context injection mechanism for hooks, schema format, hook section organization, worked-example domain, commit grouping) before WORKFLOW.md implementation begins. Pre-Phase-3 housekeeping shipped same day: `CLAUDE.md` split with §15–§22 extracted to `docs/ARCHITECTURE.md` (commit `a630540`).
+**Status (2026-05-19):** Plan drafted at `docs/phase-3-plan.md`. Checkpoint 1 cleared same day — all five decisions resolved (Decision A captured as `DEC-2026-05-19-006`: TGF session state architecture; Decisions B–E captured in the plan). WORKFLOW.md implementation cleared to begin next session. Pre-Phase-3 housekeeping shipped same day: `CLAUDE.md` split with §15–§22 extracted to `docs/ARCHITECTURE.md` (commit `a630540`).
 
 ### Phase 4 — Always-On Skills (3)
 
