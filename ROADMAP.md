@@ -4,7 +4,7 @@ The Governance Framework v1 — 16-phase build plan. Path A scope (full v1 with 
 
 > ROADMAP is living documentation. Items here are committed to. Milestones with target dates that slip get explicit revision, not silent extension. Update at session close when phase status changes or milestones progress.
 
-**Current focus:** Phase 3 in progress — Checkpoint 1 cleared 2026-05-19 (all 5 decisions resolved; `DEC-2026-05-19-006` captures the architectural one). `docs/WORKFLOW.md` implementation cleared to begin next session. Also shipped 2026-05-19: `CLAUDE.md` split (extracted §15–§22 to `docs/ARCHITECTURE.md`) to clear the 40k-char performance warning.
+**Current focus:** Phase 3 in progress — WORKFLOW.md commit 1 of 2 landed 2026-05-19 (§1, §2, §4, §5, §6, §9; ~720 lines including worked examples per role and richer hook schema discovered in Step 1 spot-check). Commit 2 ships §3 (Per-Stage Specifications, ~400 lines), §7 (Debugging Variant), §8 (Worked Examples) — the substantive bulk of the document. Also shipped 2026-05-19: `CLAUDE.md` split (`docs/ARCHITECTURE.md`) to clear the 40k-char performance warning; Phase 3 plan + Checkpoint 1 clearance + DEC-006.
 
 ---
 
@@ -91,7 +91,7 @@ Detailed workflow document (`docs/WORKFLOW.md`) specifying:
 - Debugging variant adaptation
 - Three worked examples (Trivial / Medium / Large)
 
-**Status (2026-05-19):** Plan drafted at `docs/phase-3-plan.md`. Checkpoint 1 cleared same day — all five decisions resolved (Decision A captured as `DEC-2026-05-19-006`: TGF session state architecture; Decisions B–E captured in the plan). WORKFLOW.md implementation cleared to begin next session. Pre-Phase-3 housekeeping shipped same day: `CLAUDE.md` split with §15–§22 extracted to `docs/ARCHITECTURE.md` (commit `a630540`).
+**Status (2026-05-19):** WORKFLOW.md commit 1 of 2 landed. Sections shipped: §1 Purpose and Scope, §2 Conceptual Model (state machine + handoff contract table), §4 Subagent Output Schemas (TypeScript-style interfaces for all 7 roles, each with worked example), §5 Tier and Mode Scaling Tables (with composition rule), §6 Hook Integration Contracts (per-event contracts for 8 events, TGF context injection per DEC-006 with session_id validation, richer `hookSpecificOutput` schema from Step 1 spot-check), §9 Reference. Remaining for commit 2: §3 Per-Stage Specifications (the bulk, ~400 lines), §7 Debugging Variant, §8 Worked Examples. Estimated commit 2 effort: ~3 hours.
 
 ### Phase 4 — Always-On Skills (3)
 
