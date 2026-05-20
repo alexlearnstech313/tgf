@@ -4,7 +4,7 @@ The Governance Framework v1 — 16-phase build plan. Path A scope (full v1 with 
 
 > ROADMAP is living documentation. Items here are committed to. Milestones with target dates that slip get explicit revision, not silent extension. Update at session close when phase status changes or milestones progress.
 
-**Current focus:** Phase 4 implementation commit 1/6 landed (2026-05-19) — `templates/SKILL.md.template` updated per DEC-007/008 + new `rules.md.template` + `anti-patterns.md.template`. Convention established for all Phase 4-10 skills. Next: commit 2/6 = `skills/code-quality/` (SKILL.md + rules.md + anti-patterns.md). Then SECURITY-CORE, CONTINUITY, agents, closeout. Phase 4 Checkpoint 1 cleared earlier same day; architectural foundation locked across DEC-007/008/009 + housekeeping commit `49c8a82`. Phase 3 ✅ Complete same day with `docs/WORKFLOW.md` at 911 lines.
+**Current focus:** Phase 4 ✅ Complete (2026-05-20). All three always-on skills shipped — `skills/code-quality/`, `skills/security-core/`, `skills/continuity/` — plus the `agents/` scaffolds (`tgf-orchestrator` + 4 review subagents) and the plugin-root `settings.json`. Six Phase 4 implementation commits (1/6 → 6/6) plus pre-publish housekeeping (`b302eb6`), the first public push to `github.com/alexlearnstech313/tgf`, and `DEC-2026-05-20-010` (security_reminder_hook disabled for TGF). Next: Phase 5 — Activity Skills (6 skills: project-management, discovery, testing, debugging, disagreement, design).
 
 ---
 
@@ -16,7 +16,7 @@ The Governance Framework v1 — 16-phase build plan. Path A scope (full v1 with 
 | 1 | Foundation / Repo Structure | ✅ Complete |
 | 2 | CLAUDE.md (expanded with §15-§22 for Path A) + adopter template | ✅ Complete |
 | 3 | Workflow Specification with Orchestration | ✅ Complete |
-| 4 | Always-On Skills (3) | 🟡 In progress (plan drafted) |
+| 4 | Always-On Skills (3) | ✅ Complete |
 | 5 | Activity Skills (6) | ⬜ Not started |
 | 6 | Foundation Security Skills (11) | ⬜ Not started |
 | 7 | Extended Security Skills (22) | ⬜ Not started |
@@ -229,12 +229,13 @@ Plus plugin marketplace submission.
 
 | ID | Milestone | Target | Confidence | Status |
 |----|-----------|--------|------------|--------|
-| M4 | Phase 4 complete (always-on skills: CODE-QUALITY, SECURITY-CORE, CONTINUITY) | TBD | medium | not started |
+| M5 | Phase 5 complete (activity skills: project-management, discovery, testing, debugging, disagreement, design) | TBD | medium | not started |
 
 ## Completed Milestones
 
 | ID | Milestone | Completed | Notes |
 |----|-----------|-----------|-------|
+| M4 | Phase 4 complete (always-on skills: CODE-QUALITY, SECURITY-CORE, CONTINUITY + agents/ scaffolds) | 2026-05-20 | Six implementation commits: `ea9a0bb` template refactor · `1157e8c` CODE-QUALITY (845 lines) · `b49715d` SECURITY-CORE (1156 lines) · `511f585` CONTINUITY (1080 lines) · `d4abbb0` agents/ (5 scaffolds + plugin settings.json) · closing commit closeout. Plus `b302eb6` README voice rewrite + plugin.json URLs (pre-publish housekeeping; first public push to `github.com/alexlearnstech313/tgf`) and `7c81170` DEC-2026-05-20-010 (security-guidance plugin hook disabled for TGF via env override, since the hook is hostile to security documentation by design). Plan-adjustments captured at session close: OWASP ASVS 5.0 chapter numbering completely reorganized from 4.x (caught at Stage 1 spot-check during SECURITY-CORE); AP-9 (disabled-authentication middleware) gap caught in Stage 5 Phase 4 holistic review during SECURITY-CORE. Three always-on skills total 3081 lines across 9 files; agents 122 lines across 6 files. |
 | M3 | Phase 3 complete (workflow specification with orchestration) | 2026-05-19 | `docs/WORKFLOW.md` 911 lines, 9 sections. Four commits: `efd25c2` plan · `61c1614` Checkpoint 1 + DEC-006 · `d47d355` WORKFLOW.md commit 1/2 · closing commit WORKFLOW.md commit 2/2 + closeout. Dogfooded the workflow during construction. Plus pre-Phase-3 housekeeping: `a630540` CLAUDE.md/ARCHITECTURE.md split (cleared 40k-char threshold). |
 | M2 | Phase 2 complete (CLAUDE.md §15-§22 + adopter template + DEC-005) | 2026-05-17 | Four commits: `c9ac67a` §17 · `92c9894` §18+§19+restructure+DEC-005 · `3a48b0a` §20+§21 · closing commit §22+template+closeout |
 | M1 | Phase 1 complete (repo scaffolding, templates, initial commit) | 2026-05-17 | Initial commit on `main` |
@@ -246,4 +247,4 @@ Plus plugin marketplace submission.
 
 ---
 
-*Last updated: 2026-05-19.*
+*Last updated: 2026-05-20.*

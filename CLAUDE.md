@@ -275,7 +275,7 @@ The user can override your recommendations. They can waive findings with rationa
 
 ## §6 Always-On Skills
 
-Three skills load on every session regardless of task. They are the developer's traits.
+Three skills load on every session regardless of task. They are the developer's traits. Activation is via the `tgf-orchestrator` agent (per `DEC-2026-05-19-007`), which preloads these three skills' content at session start using the Anthropic-native `skills:` frontmatter field — Claude Code's native mechanism for guaranteed-load context. When TGF is installed as a plugin, the plugin-root `settings.json` activates `tgf-orchestrator` as the default main-session agent automatically.
 
 - **CODE-QUALITY** — engineering discipline, type safety, error handling, naming, scale-aware patterns, migration patterns, documentation principles, solo-maintainability.
 
@@ -283,7 +283,7 @@ Three skills load on every session regardless of task. They are the developer's 
 
 - **CONTINUITY** — memory architecture, session log discipline, three-log management (ERROR/VENDOR/WAIVER), ROADMAP maintenance, decision capture, refresh capability, information disclosure considerations.
 
-All other skills load conditionally based on contextual triggers evaluated against the change context, gated by project mode (`docs/ARCHITECTURE.md` §15).
+All other skills load conditionally based on contextual triggers evaluated against the change context, gated by project mode (`docs/ARCHITECTURE.md` §15). The four-pass review subagents (`code-reviewer`, `security-auditor`, `red-team`, `holistic-reviewer`) preload domain-relevant skills via the same `skills:` mechanism per `docs/WORKFLOW.md` §4.
 
 ---
 
@@ -376,14 +376,16 @@ When the user engages in early-stage exploration (handled by PROJECT-MANAGEMENT 
 
 ## §9 Skill Index
 
-Skills live in `.claude/skills/`. Each skill is a complete governance unit with contextual triggers, authoritative source citations, numbered rules, anti-patterns with code examples, canonical patterns, AI-specific concerns, and workflow integration specifications.
+Skills live in `skills/` at the plugin root (per `DEC-2026-05-19-009`). Each skill is a complete governance unit with contextual triggers, authoritative source citations, numbered rules, anti-patterns with code examples, canonical patterns, AI-specific concerns, and workflow integration specifications.
 
 Skills include plain-language impact statements alongside citations. Findings are actionable, not just compliant.
 
-### Always-on skills (load every session)
-- `code-quality/`
-- `security-core/`
-- `continuity/`
+Total catalog target: **~75 skills** across all phases (consolidated from ~80 per `DEC-2026-05-19-008` — architectural cluster 5→2, CIA triad 3→1). Adopter projects see only the subset their project mode + scope warrants.
+
+### Always-on skills (load every session via `tgf-orchestrator` preload)
+- `code-quality/` ✅ Phase 4
+- `security-core/` ✅ Phase 4
+- `continuity/` ✅ Phase 4
 
 ### Activity skills (load on context)
 - `project-management/` — planning, decomposition, MVP definition, stack selection, ROADMAP maintenance
@@ -395,9 +397,9 @@ Skills include plain-language impact statements alongside citations. Findings ar
 
 ### Universal security skills (load on contextual triggers, gated by mode)
 
-*Core properties:* security-confidentiality, security-integrity, security-availability
+*Core properties:* security-cia-triad (consolidated from 3 per DEC-008)
 
-*Architectural:* security-defense-in-depth, security-secure-architecture, security-zero-trust, security-least-privilege, security-assumed-breach
+*Architectural:* security-architectural-principles (consolidated from 4 per DEC-008 — defense-in-depth, zero-trust, least-privilege, assumed-breach), security-secure-architecture
 
 *Identity and access:* security-iam-authentication, security-iam-sessions, security-iam-authorization, security-iam-oauth-oidc
 
@@ -411,7 +413,7 @@ Skills include plain-language impact statements alongside citations. Findings ar
 
 *Privacy:* security-privacy-data-handling, security-privacy-consent
 
-*AI-specific:* security-ai-prompt-injection, security-ai-output-handling, security-ai-data-poisoning, security-ai-supply-chain, security-ai-excessive-agency, security-ai-sensitive-info, security-ai-model-governance, security-adversarial-ai
+*AI-specific:* security-ai-prompt-injection, security-ai-output-handling, security-ai-data-poisoning, security-ai-supply-chain, security-ai-excessive-agency, security-ai-sensitive-info, security-ai-model-governance, security-ai-research-integrity, security-adversarial-ai
 
 ### Operations and quality skills
 - `ops-observability/`
@@ -434,10 +436,11 @@ Skills include plain-language impact statements alongside citations. Findings ar
 - `domain-research/` — current authoritative knowledge of project's domain
 - `baseline-audit/` — seven-phase brownfield assessment
 - `skill-forge/` — generates project-specific bridge skills
+- `framework-health/` — quarterly health report; surfaces telemetry and pending self-evolution proposals
 
 ### Project-specific skills (generated by SKILL-FORGE)
 
-Stack-specific bridge skills generated based on PROJECT-CONTEXT. These translate universal principles into specific implementations for the project's actual stack. See `.claude/skills/` for what's been generated for this project.
+Stack-specific bridge skills generated based on PROJECT-CONTEXT. These translate universal principles into specific implementations for the project's actual stack. See `skills/` for what's been generated for this project.
 
 ---
 
