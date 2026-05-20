@@ -292,59 +292,23 @@ Applied to every Phase 5 skill (extending the Phase 4 criteria; intentions, not 
 
 ---
 
-## 7. Open Checkpoint 1 Decisions
+## 7. Checkpoint 1 — Decisions Resolved (2026-05-20)
 
-Five decisions to resolve before implementation begins.
+All five decisions resolved. Implementation cleared.
 
-### Decision A — DESIGN skill scope (UX/UI vs system vs all)
+**Decision A — DESIGN skill scope: RESOLVED.** Option (iii). Universal DESIGN principles + cross-reference to domain skills for depth. TESTING (for testable design), SECURITY-CORE (for secure design), future `data-architecture` (Phase 9, for schema design), future `security-api` (Phase 7, for API design). The DESIGN skill captures constraint-first, negative-constraint, simplicity-discipline, and AI-pattern-vs-constraint principles; depth on each design domain lives in the relevant skill. Cross-references to skills not yet built (forward references) are acceptable — Phase 4 already uses this pattern (SECURITY-CORE references future Phase 6/7 security skills in its OWASP Top 10:2025 coverage map).
 
-DESIGN's domain spans UX/UI design, system architecture design, API design, schema design. The scope as currently written is "design principles + negative constraints + AI-specific failure modes" — broad. Three options:
+**Decision B — TESTING skill scope: RESOLVED.** Option (iii). Present both pyramid AND trophy with when-each-fits guidance. TGF's adopter projects span backend (LabList Next.js API, BLETRAP Python), frontend (LabList UI, AdaptivIQ Flutter), and library code — a single-shape prescription would mismatch significant adopter scenarios. SKILL.md body remains ≤300 lines because the discussion of when each fits is brief (~10-15 lines) and most of the rule content is shape-agnostic (test trust boundaries, behavior not implementation, coverage as feedback).
 
-- **(i) All-of-the-above DESIGN.** Single skill covers all design domains; rules are domain-agnostic (constraint-first, simplicity, etc.). Pros: minimal skill count. Cons: domain-specific guidance is shallow.
-- **(ii) System/architecture DESIGN only.** Schema/API/UI design split off to future skills. Pros: depth. Cons: leaves gaps; conflicts with ROADMAP scope.
-- **(iii) Universal DESIGN principles + cross-reference to domain skills** (TESTING for testable design, SECURITY-CORE for secure design, future `data-architecture` skill for schema design, future `security-api` for API design). Pros: depth without bloat; honest about cross-skill integration. Cons: requires forward references to skills not yet built.
+**Decision C — DISAGREEMENT vs CLAUDE.md §5 boundary: RESOLVED.** Option (iii). Skill references §5 for the severity definitions and adds: contextual triggers (when does each severity engage?), rules per severity level (what is the operational pattern for "light touch" vs "standard advocacy" vs "strong advocacy" vs "hard refusal"?), anti-patterns showing the gradient in practice (AI sycophancy at light touch; AI false confidence at standard advocacy; AI weakening hard-refusal items for convenience), and waiver protocol cross-reference to CONTINUITY Rule 5.3 (WAIVER-LOG routing). CLAUDE.md §5 remains the authoritative source for the severity gradient; DISAGREEMENT operationalizes it.
 
-Lean toward **(iii)** — TGF's value is in skill-to-skill orchestration; the DESIGN skill captures universal principles and points to domain skills for depth.
+**Decision D — DEBUGGING subagent role: RESOLVED.** Option (iii). Defer the `debugger` subagent decision to Phase 11. Phase 5 ships DEBUGGING skill at the orchestrator level; the debugging variant of the workflow (per docs/WORKFLOW.md §7) activates through the orchestrator. Phase 11 (orchestration meta-skill + full subagent semantics) decides whether to define a dedicated subagent. Consistent with Phase 4's Decision D — defer subagent semantics to Phase 11.
 
-### Decision B — TESTING skill scope (pyramid vs trophy vs both)
+**Decision E — Commit grouping: RESOLVED.** Option (i). Seven focused commits: DISCOVERY (1/7) → PROJECT-MANAGEMENT (2/7) → DESIGN (3/7) → TESTING (4/7) → DEBUGGING (5/7) → DISAGREEMENT (6/7) → closeout (7/7). Matches the validated Phase 4 cadence; each diff is independently reviewable and revertable. The "if this skill needs a fix, the commit becomes hard to revert" risk of grouped commits is real and unnecessary here.
 
-Modern testing conventions vary by domain. Test PYRAMID (many unit, fewer integration, fewest E2E) is classical advice; test TROPHY (heavy integration, lighter unit, some E2E) is the newer convention especially in web/frontend. Three options:
+### Architectural reach
 
-- **(i) TESTING prescribes the pyramid.** Classical; stable; older. Best for backend / library code.
-- **(ii) TESTING prescribes the trophy.** Modern; fits how AI-generated UI code is typically tested. Best for frontend / web.
-- **(iii) TESTING presents both and discusses when each fits.** Pros: honest about domain variance. Cons: skill body grows.
-
-Lean toward **(iii)** — TGF's adopter projects span multiple domains (LabList Next.js, AdaptivIQ Flutter, BLETRAP Python); a single-shape prescription would mismatch.
-
-### Decision C — DISAGREEMENT skill vs CLAUDE.md §5 boundary
-
-DISAGREEMENT operationalizes the severity gradient already in CLAUDE.md §5. Three options for how the skill relates to §5:
-
-- **(i) DISAGREEMENT restates §5 verbatim.** Pros: self-contained skill. Cons: duplication; risk of drift.
-- **(ii) DISAGREEMENT references §5 and adds only the operational layer.** Pros: no duplication. Cons: requires reader to context-switch between SKILL.md and CLAUDE.md.
-- **(iii) DISAGREEMENT references §5 for the severity definitions and adds: contextual triggers, rules per severity level, anti-patterns showing the gradient in practice, AI-specific concerns (sycophancy), waiver protocol cross-reference.** Pros: skill adds value without restating; CLAUDE.md remains authoritative. Cons: minor — the layout is well-precedented.
-
-Lean toward **(iii)**.
-
-### Decision D — DEBUGGING skill subagent role
-
-ARCHITECTURE.md §20 specifies seven subagent roles. The four Phase 4 review subagents (code-reviewer, security-auditor, red-team, holistic-reviewer) cover the four-pass review. The remaining three include verifier (per CLAUDE.md §16) and others. Is there a `debugger` subagent role to be defined, or does DEBUGGING activate at the orchestrator level during the debugging variant of the workflow? Three options:
-
-- **(i) DEBUGGING activates only at orchestrator level** during the docs/WORKFLOW.md §7 debugging variant. No dedicated subagent.
-- **(ii) Define a `debugger` subagent** in Phase 5 alongside DEBUGGING skill. Activates when the workflow shifts to the debugging variant. Pros: explicit isolation of debugging work; Phase 11 can build on it. Cons: adds an agent scaffold not in phase-4-plan.
-- **(iii) Defer the subagent decision to Phase 11** when the full orchestration meta-skill is built. Phase 5 just ships the DEBUGGING skill at the orchestrator level.
-
-Lean toward **(iii)** — Phase 4 deferred subagent semantics to Phase 11; consistent for Phase 5 to do the same.
-
-### Decision E — Commit grouping (6+1 vs grouped)
-
-Phase 4 used six focused commits. Phase 5 has six skills plus a closeout. Three options:
-
-- **(i) Seven commits.** One per skill + closeout. Matches Phase 4 cadence.
-- **(ii) Grouped commits.** Group related skills (e.g., DISCOVERY + PROJECT-MANAGEMENT as planning-pair; TESTING + DEBUGGING as quality-pair; DISAGREEMENT + DESIGN as meta-pair). Three skill commits + closeout = four commits.
-- **(iii) Mixed.** Standalone for the larger skills (TESTING, DEBUGGING, DESIGN), grouped for the related smaller ones (DISCOVERY + PROJECT-MANAGEMENT; DISAGREEMENT alone).
-
-Lean toward **(i)** — Phase 4 pattern is validated; grouping risks the "if this skill needs a fix, the commit becomes hard to revert" problem.
+None of A–E warranted a new ADR. All five are tactical to Phase 5. The leans were accepted unmodified at Checkpoint 1; no new architectural concerns surfaced. If Phase 5 implementation reveals a tension with these decisions, plan adjustments accumulate in the Phase 5 session log per validated pattern.
 
 ---
 
