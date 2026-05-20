@@ -217,42 +217,31 @@ Applied to every skill. Per Phase 2 plan-adjustment lesson, criteria are intenti
 
 ---
 
-## 7. Open Decisions for Checkpoint 1
+## 7. Checkpoint 1 — Decisions Resolved (2026-05-19)
 
-Approve, revise, or reject before implementation begins:
+All five decisions resolved. Implementation cleared.
 
-**Decision A — Source citation density for craft rules.** Two options:
-- (i) Rule-level citations for every rule including craft rules — forces citations for naming conventions etc. that may not have specific authoritative backing; risks weak citations (citing NIST SSDF generally rather than at rule level)
-- (ii) Principle-level citation acceptable for craft rules; rule-level required for security-relevant rules — honest about where the discipline comes from
+**Decision A — Source citation density: RESOLVED.** Cite at the source's natural granularity. For sources with sub-rule numbering (OWASP ASVS, ISO 27002), use rule-level identifiers (`OWASP ASVS 5.0 V6.2.2`). For sources where practices ARE the granular level (NIST SSDF — practices like PW.4 are themselves the smallest cited unit), cite the practice. For craft rules with no authoritative rule-level mapping (e.g., naming conventions, comment discipline), cite the closest principle-level source (typically NIST SSDF PW.4 + Anthropic Skills authoring best practices) and acknowledge as TGF synthesis of senior-engineer craft.
 
-Lean: (ii). Per `DEC-2026-05-17-004`, the framework's value is rule-level citation *where it exists*. Craft rules synthesize senior-engineer practice; citing them at principle level is more honest than forcing weak citations.
+This is a refinement of `DEC-2026-05-17-004` Clause 2's intent — not a contradiction. Clause 2 prevents vague "OWASP recommends" citations; it does not require fabricating sub-rule numbers that don't exist in the source. The discipline is "the most specific identifier the source provides." If Phase 5+ surfaces tensions with this approach, promote to a new ADR; for Phase 4 the plan-file capture suffices.
 
-**Decision B — Reference file scope.** Ship Phase 4 skills with which reference files?
-- (i) SKILL.md only (defer rules.md, anti-patterns.md to later iteration when content volume warrants)
-- (ii) SKILL.md + rules.md + anti-patterns.md (full reference-file pattern from day one)
-- (iii) SKILL.md + rules.md + anti-patterns.md + citations.md (separate citations file)
+**Decision B — Reference file scope: RESOLVED.** Option (ii). Ship `rules.md` and `anti-patterns.md` for every Phase 4 skill from day one. Citations live inline within `rules.md`. Defer `citations.md` split until any skill's `rules.md` exceeds ~400 lines.
 
-Lean: (ii). Ships the pattern Phases 5–10 will follow. Defer citations.md split until rules.md exceeds ~400 lines. For Phase 4 skills (Code-Quality, Security-Core, Continuity), inline citations in rules.md is sufficient.
+**Decision C — Skill descriptions: RESOLVED.** Option (i). Descriptions serve both adoption modes (orchestrator-active + skills-only). Target ~300-500 chars per always-on skill description — broad enough to match coding/planning prompts when the orchestrator is not active, tight enough to fit the description budget across ~75 skills.
 
-**Decision C — Skill descriptions for always-on skills.** Always-on skills preload via the orchestrator agent. Do descriptions still matter?
-- (i) Write descriptions assuming both adoption modes (orchestrator agent active + skills-only) — broad enough to match coding/planning prompts when orchestrator not active
-- (ii) Write minimal descriptions ("Preloaded by tgf-orchestrator") — assumes orchestrator always active
+**Decision D — Review subagent definitions: RESOLVED.** Option (ii). Scaffolds in Phase 4: `skills:` preload + `memory: project` + a 5-10 line system prompt establishing the role ("This is the [Code Reviewer / Security Auditor / Red Team / Holistic Reviewer] for TGF's four-pass review. See WORKFLOW.md §4 and §3 Stage 5 for the contract."). Full system prompts deferred to Phase 11 when the orchestration meta-skill is built. Ships the architecture end-to-end without locking content prematurely.
 
-Lean: (i). Skills-only adoption mode is a documented path (per DEC-007); descriptions should serve it.
+**Decision E — Commit grouping: RESOLVED.** Option (ii). Six focused commits:
+1. `templates/SKILL.md.template` update (Anthropic-native runtime frontmatter + TGF-extension metadata distinction; reference-file pattern; ≤300-line body budget)
+2. `skills/code-quality/` (SKILL.md + rules.md + anti-patterns.md)
+3. `skills/security-core/` (SKILL.md + rules.md + anti-patterns.md, citing OWASP Top 10:2025)
+4. `skills/continuity/` (SKILL.md + rules.md + anti-patterns.md)
+5. `agents/` (tgf-orchestrator.md + code-reviewer.md + security-auditor.md + red-team.md + holistic-reviewer.md + plugin-root `settings.json` activating tgf-orchestrator)
+6. Closeout (CLAUDE.md §6 reflects orchestrator-agent-preload mechanism; CLAUDE.md §9 reflects consolidated catalog count; ROADMAP + CHANGELOG; session log)
 
-**Decision D — Review subagent definitions: full or scaffolds?**
-- (i) Full system prompts and configuration for all 4 review subagents in Phase 4 — complete integration
-- (ii) Scaffolds only (`skills:` preload + minimal system prompt); full system prompts in Phase 11
-- (iii) Defer entirely to Phase 11
+### Architectural reach
 
-Lean: (ii). Ships the agent definitions so the full architecture exists end-to-end after Phase 4. Phase 11 deepens the system prompts when implementing the orchestration meta-skill.
-
-**Decision E — Commit grouping.** Options:
-- (i) One commit per skill (3 commits) + 1 commit for agents + 1 closeout commit = 5 commits
-- (ii) One commit for template update + one commit per skill + one commit for agents + closeout = 6 commits
-- (iii) Bundle all 3 skills into 1 commit + 1 commit for agents + closeout = 3 commits
-
-Lean: (ii). Template update gates the skills; each skill is meaningful; agents are distinct artifact type; closeout is its own. Six focused commits.
+None of A–E warranted a new ADR. Decisions B–E are tactical to Phase 4. Decision A is a refinement of DEC-004 Clause 2's intent — captured here in the plan; promotable to ADR later if Phase 5+ surfaces tensions.
 
 ---
 
