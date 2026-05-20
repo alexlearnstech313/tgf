@@ -4,7 +4,7 @@ The Governance Framework v1 — 16-phase build plan. Path A scope (full v1 with 
 
 > ROADMAP is living documentation. Items here are committed to. Milestones with target dates that slip get explicit revision, not silent extension. Update at session close when phase status changes or milestones progress.
 
-**Current focus:** Phase 3 ✅ Complete (2026-05-19). `docs/WORKFLOW.md` at 911 lines — the operational specification Phases 4–12 build against. Next: Phase 4 — Always-On Skills (3 skills: CODE-QUALITY, SECURITY-CORE, CONTINUITY). Phase 4 is the first phase that produces actual skill content rather than framework structure.
+**Current focus:** Phase 4 architectural reconciliation in progress (2026-05-19). Three ADRs landed (`DEC-2026-05-19-007` TGF as plugin with orchestrator agent + skill preload; `DEC-2026-05-19-008` skill catalog consolidation + reference file pattern; `DEC-2026-05-19-009` hook physical layout for plugin distribution). Pre-Phase-4 housekeeping commit (repo restructure to plugin layout) and `docs/phase-4-plan.md` to follow. Phase 4 implementation (3 always-on skills + tgf-orchestrator agent) begins after the plan + Checkpoint 1 approval. Phase 3 ✅ Complete same day with `docs/WORKFLOW.md` at 911 lines.
 
 ---
 

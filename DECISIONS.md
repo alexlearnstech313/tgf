@@ -6,6 +6,222 @@ Each decision captures: what was decided, when, why, what alternatives were cons
 
 ---
 
+## DEC-2026-05-19-009: Hook physical layout amendment — plugin-native JSON config
+
+**Decided:** Amend `DEC-2026-05-17-005` (hook architecture amendment) to specify that TGF's canonical hook layout is the plugin-native JSON format (`hooks/hooks.json` at plugin root) rather than the PascalCase directory structure (`.claude/hooks/<EventName>/NN-name.sh`). The directory format remains valid for standalone `.claude/hooks/` usage by adopters who choose not to install TGF as a plugin, but TGF's distributed form uses the JSON format.
+
+**Date:** 2026-05-19
+
+**Context:** `DEC-2026-05-17-005` specified the hook event taxonomy (PascalCase event names matching Claude Code's actual events) and the physical layout (`.claude/hooks/<EventName>/NN-name.sh` directory convention). At the time, TGF was conceived as a `.claude/` directory drop-in. Phase 4 research surfaced (per `DEC-2026-05-19-007`) that TGF's primary distribution is a plugin. Plugin distribution requires `hooks/hooks.json` at the plugin root — the JSON object format identical to what appears in `.claude/settings.json` `hooks` blocks. The directory + numbered scripts convention is not used in plugin distribution.
+
+The two formats are not just different paths; they're different *mechanisms*:
+
+- **Standalone `.claude/hooks/<EventName>/NN-name.sh`:** each numbered script in an event directory is auto-discovered and invoked when that event fires. Execution order is determined by the numeric prefix.
+- **Plugin `hooks/hooks.json`:** a JSON configuration object mapping event names to matchers and command invocations. Same format as `.claude/settings.json` `hooks` blocks. Execution order is the array order.
+
+Leaving DEC-005's directory convention unamended would create the same documentation/repo divergence problem DEC-005 itself was correcting: WORKFLOW.md §6 references hook contracts; the repo would ship a directory layout that doesn't match plugin distribution.
+
+**Decision:**
+
+1. **TGF's distributed form uses `hooks/hooks.json` at the plugin root.** This is the canonical format. All Phase 12 (Hook Library) work ships in this format.
+
+2. **The hook event taxonomy from DEC-005 stands unchanged.** `SessionStart`, `SessionEnd`, `PreToolUse`, `PostToolUse`, `SubagentStart`, `SubagentStop`, `FileChanged`, `ConfigChange`, plus other Claude Code events as needed. The events themselves don't change; only the physical layout of the hook configuration files.
+
+3. **Hook script files (the actual shell scripts) live in `hooks/scripts/` at the plugin root,** referenced from `hooks/hooks.json` by path. This separates configuration from implementation while keeping both in the plugin's hook subtree.
+
+4. **Standalone `.claude/hooks/<EventName>/NN-name.sh` convention remains valid** for adopters who copy TGF's source rather than install the plugin. TGF documents this as a secondary path but does not maintain a parallel implementation — adopters using the standalone path translate from `hooks/hooks.json` themselves or copy the JSON into their `.claude/settings.json`.
+
+5. **The current repo's empty `.claude/hooks/<EventName>/` placeholder directories** are removed in the pre-Phase-4 housekeeping commit. The repo restructures to the plugin layout (`hooks/hooks.json` + `hooks/scripts/`) per `DEC-2026-05-19-007`.
+
+6. **Git hooks (`.claude/git-hooks/`) are unaffected.** Git-layer enforcement is a separate concern from Claude Code hooks (per DEC-005). The git-hooks subtree may eventually move to the plugin's `bin/` or stay separate; that's a Phase 12 implementation decision, not a DEC-009 concern.
+
+**Alternatives considered:**
+
+- **Maintain both formats in parallel.** Rejected. Duplicated maintenance burden; risk of drift between the two implementations; complexity for adopters trying to understand which format they should reference.
+- **Keep DEC-005's directory convention and require adopters to translate to JSON.** Rejected for plugin distribution path. The plugin is the primary distribution; making it secondary creates friction for the typical adopter.
+- **Edit `DEC-2026-05-17-005` in place to switch the convention.** Rejected. ADRs preserve decision history. The original DEC-005 captures *why* TGF moved to PascalCase events; this ADR captures *why* the physical layout shifted further to plugin-native JSON.
+
+**Consequences:**
+
+- Pre-Phase-4 housekeeping commit removes the `.claude/hooks/<EventName>/` placeholder directories and creates `hooks/hooks.json` (empty configuration ready for Phase 12).
+- Phase 12 (Hook Library) implementation ships scripts in `hooks/scripts/` referenced from `hooks/hooks.json`.
+- ARCHITECTURE.md §18 (hooks for enforcement) and WORKFLOW.md §6 (hook integration contracts) need a clarifying note that the *physical* layout is plugin-native JSON; the conceptual taxonomy stands.
+- `DEC-2026-05-17-005` is amended in effect by this ADR for the physical layout. The original DEC-005 remains as historical record; the event taxonomy portion of DEC-005 continues to apply operationally.
+- Adopter `templates/CLAUDE.md.template` may eventually need a note for adopters who choose standalone-path TGF usage; deferred until template-update phase.
+
+---
+
+## DEC-2026-05-19-008: Principled skill catalog consolidation
+
+**Decided:** Consolidate the originally-planned skill catalog (per `CLAUDE.md` §9 / `ROADMAP.md` Phases 4-10) from ~80 skills to ~75 skills, targeting clusters where domain overlap is real and granular activation does not pay off. Adopt reference files as the standard pattern for managing citation density within the 300-line SKILL.md body budget specified in `DEC-2026-05-19-007`.
+
+**Date:** 2026-05-19
+
+**Context:** Phase 4 research surfaced two constraints that affect skill catalog design:
+
+- **Description budget pressure.** Claude Code's skill description budget defaults to 1% of context window. With ~80 skills, descriptions hit the budget and get compressed (least-used dropped first), making discovery less reliable.
+- **Citation density vs body budget.** TGF's authoritative source discipline (per `DEC-2026-05-17-004`) requires rule-level citations. Properly-cited rules average 15-25 lines each; 5 rules + 8 anti-patterns with code examples + sources table + principles + discovery + AI concerns + workflow + subagent context comfortably exceeds 500 lines per skill before reference material.
+
+Both pressures suggest two interventions: (1) consolidate skills where domain overlap genuinely reduces precision rather than just count, and (2) adopt reference files for verbose content per Anthropic's spec.
+
+**Decision:**
+
+### Consolidations
+
+1. **Architectural cluster (5 → 2 skills).** Consolidate `security-defense-in-depth`, `security-zero-trust`, `security-least-privilege`, `security-assumed-breach` into a single `security-architectural-principles` skill. These four overlap heavily in principles and are typically applied together. Keep `security-secure-architecture` separate — it covers *how to design* (different scope from *which principles to apply*).
+
+2. **CIA triad (3 → 1 skill).** Consolidate `security-confidentiality`, `security-integrity`, `security-availability` into a single `security-cia-triad` skill. The triad is a foundational concept applied together at the planning level; three separate skills create artificial fragmentation for what is essentially one taxonomic framework.
+
+### Clusters NOT consolidated
+
+3. **IAM cluster (4 skills) stays split.** `security-iam-authentication`, `security-iam-sessions`, `security-iam-authorization`, `security-iam-oauth-oidc` are the most frequently-touched security domain in typical projects. Granular `applies-when` matching (via `paths` + description) pays off — an OAuth-specific change should load OAuth content, not all of IAM. Variable cost per invocation matters more than fixed catalog count here.
+
+4. **Data layer cluster (3 skills) stays split.** `security-database`, `security-data-encryption`, `security-data-classification` touch different trust boundaries and operational patterns. Granular activation pays off.
+
+5. **Threat management cluster (3 skills) stays split.** `security-threat-modeling`, `security-attack-surface`, `security-supply-chain` are meaningfully distinct domains.
+
+6. **All other skill clusters stay as currently scoped.** Application skills, operations, compliance, AI-specific, meta-skills, project-specific — no consolidations.
+
+### Net change
+
+- Originally planned: ~80 skills (per `CLAUDE.md` §9)
+- After consolidation: ~75 skills (5 skills consolidated: 4 architectural → 1; 3 CIA → 1; net -5)
+- Phases 4, 9, 11, 13 unaffected (consolidations are within Phase 7's extended security skills)
+
+### Reference file pattern (standard)
+
+Every skill SKILL.md body stays ≤300 lines per `DEC-2026-05-19-007`. Verbose content moves to reference files in the skill directory:
+
+```
+.claude/skills/<skill-name>/
+├── SKILL.md           # principles, rule summaries, navigation (≤300 lines)
+├── rules.md           # full rules with rule-level citations (loaded on demand)
+├── anti-patterns.md   # 8+ anti-patterns paired with canonical, with code (loaded on demand)
+└── citations.md       # full citation table with verbatim source quotes (loaded on demand)
+```
+
+SKILL.md references the reference files so Claude knows when to load them (per Anthropic's spec: *"Reference these files from your `SKILL.md` so Claude knows what they contain and when to load them"*). The 8+ anti-patterns and 5+ rules requirements from `DEC-2026-05-17-003` Clause 1 stand; the *location* of that content shifts from SKILL.md body to reference files.
+
+**Alternatives considered:**
+
+- **Flat 20% consolidation.** Rejected. Arbitrary target loses precision where granularity pays off (IAM, data, threat management). Principled consolidation focused on real overlap is more defensible.
+- **No consolidation; rely entirely on reference files for budget management.** Rejected. Reference files solve citation density but not description budget pressure. Some consolidation is warranted on the description-budget grounds alone.
+- **More aggressive consolidation (~60 skills).** Rejected. Goes beyond real overlap; starts consolidating skills with distinct activation patterns. Cost (less granular `applies-when` matching, larger bodies per invocation) outweighs benefit.
+
+**Consequences:**
+
+- `CLAUDE.md` §9 Skill Index updates to reflect the new catalog count (~75 skills) and the consolidations.
+- `ROADMAP.md` Phase 7 updates to reflect consolidated skill names.
+- `templates/SKILL.md.template` reflects the reference-file pattern as standard (SKILL.md body budget ≤300 lines; reference files for verbose content).
+- Phase 4 (3 always-on skills) ships against the reference-file pattern from day one — sets the convention all later phases inherit.
+- Phase 7 (extended security skills) implementations follow the consolidated catalog.
+
+---
+
+## DEC-2026-05-19-007: TGF architecture as plugin with orchestrator agent
+
+**Decided:** TGF's distribution and architectural form is a Claude Code plugin (per the canonical plugin specification). The framework's "always-on skill" behavior is implemented natively via a custom orchestrator agent (`tgf-orchestrator`) that preloads CODE-QUALITY, SECURITY-CORE, and CONTINUITY via the Anthropic-native `skills:` frontmatter field. Four-pass review subagents are similarly defined with skill preloads. Adopters install TGF as a plugin and optionally activate the orchestrator agent for the full framework experience.
+
+**Date:** 2026-05-19
+
+**Context:** Phase 4 research surfaced that Anthropic's Agent Skills specification is purely description-driven — there is no native `always-on: true` field or equivalent mechanism. TGF's original conception of "always-on skills" (per `CLAUDE.md` §6) was not supported by Claude Code natively. Three viable paths were considered:
+
+1. Embed the trait content in CLAUDE.md directly (rejected — pushes CLAUDE.md back over the 40k-char performance threshold cleared in commit `a630540`; loses skill structure with anti-patterns paired with canonical patterns; loses self-evolution mechanism)
+2. Compose Anthropic primitives with a `SessionStart` hook injecting principles via `additionalContext` (the original Phase 4 proposal — works but bespoke)
+3. Use the Claude Code `--agent` flag with a custom orchestrator agent that preloads always-on skills via the native `skills:` frontmatter field (selected — purely Anthropic-native, eliminates the bespoke composition)
+
+Deeper Phase 4 research (Claude Code Subagents documentation + Plugins documentation) confirmed:
+
+- *"Run the whole session as a subagent. Pass `--agent <name>` to start a session where the main thread itself takes on that subagent's system prompt, tool restrictions, and model... CLAUDE.md files and project memory still load through the normal message flow."*
+- *"Use the `skills` field to inject skill content into a subagent's context at startup. The full content of each listed skill is injected into the subagent's context at startup."*
+- *"Plugin `settings.json` can activate one of the plugin's custom agents as the main thread, applying its system prompt, tool restrictions, and model. This lets a plugin change how Claude Code behaves by default when enabled."*
+
+These mechanisms compose cleanly into TGF's always-on architecture without inventing new primitives.
+
+**Decision:**
+
+### Plugin distribution
+
+1. **TGF's primary distribution is a Claude Code plugin.** Phase 1 already scaffolded `.claude-plugin/plugin.json` and `marketplace.json`. Plugin distribution provides versioning (via `version` field), shareable installation (`/plugin install`), namespace isolation (`/tgf:skill-name` prefix), settings activation, and background monitor capabilities.
+
+2. **The repo restructures to plugin layout.** Components at plugin root:
+   - `.claude-plugin/plugin.json` — manifest (unchanged from Phase 1)
+   - `skills/` — skill directories (migrated from `.claude/skills/`)
+   - `agents/` — custom agent definitions including `tgf-orchestrator` and review subagents
+   - `hooks/hooks.json` — hook configuration (per `DEC-2026-05-19-009`)
+   - `hooks/scripts/` — hook script implementations
+   - `monitors/monitors.json` — background monitors (optional, deferred)
+   - `settings.json` — default settings activating `tgf-orchestrator` agent
+
+3. **Standalone `.claude/` usage remains supported as a secondary path** for adopters who copy TGF's source rather than install the plugin. Both adoption paths are documented; the plugin path is primary.
+
+### Orchestrator agent (`tgf-orchestrator`)
+
+4. **TGF defines a custom agent at `agents/tgf-orchestrator.md`** that becomes the main session via `--agent tgf-orchestrator` or via `settings.json` `"agent": "tgf-orchestrator"` (the default for TGF-installed projects). The orchestrator's system prompt encodes the six-stage workflow contract (per CLAUDE.md §3) and engages TGF's discipline.
+
+5. **The orchestrator preloads the three always-on skills via the `skills:` field:**
+
+   ```yaml
+   ---
+   name: tgf-orchestrator
+   description: TGF governance framework orchestrator. Engages six-stage workflow for all coding and planning work.
+   skills:
+     - code-quality
+     - security-core
+     - continuity
+   model: inherit
+   ---
+   ```
+
+   The full content of each listed skill is injected into the orchestrator's context at startup (per Anthropic's spec). The "always-on" guarantee comes from this native mechanism, not from a TGF-invented `always-on: true` field.
+
+6. **Skill content discipline.** Each always-on skill's SKILL.md body stays ≤300 lines (per `DEC-2026-05-19-008` reference-file pattern). Verbose content (full rules, anti-patterns with code, citation tables) lives in reference files loaded on demand. The 3 × 300-line preload represents ~20k tokens of always-on context — real cost, accepted for the always-on guarantee, bounded by the body budget.
+
+### Review subagents
+
+7. **Four-pass review subagents are defined at `agents/{code-reviewer,security-auditor,red-team,holistic-reviewer}.md`** with skill preloads matching their domain:
+
+   - `code-reviewer` preloads `code-quality`
+   - `security-auditor` preloads `security-core` plus applicable security skills (loaded per Stage 3 governance plan)
+   - `red-team` preloads `security-core` (adversarial perspective; specific skills loaded per scope)
+   - `holistic-reviewer` preloads `continuity`
+
+   Each review subagent uses `memory: project` to enable self-evolution data accumulation (per `DEC-2026-05-19-007` integration with §21 self-evolving knowledge).
+
+8. **Verifier subagent** dispatched per `CLAUDE.md` §16; preloads none by default but receives `ai_generated_portions` context from the orchestrator.
+
+### Self-evolution data layer
+
+9. **Agent memory (`memory: project`) is the data layer for self-evolution observations** (per `ARCHITECTURE.md` §21). The `.tgf/evolution/observations/` directory specified in `DEC-2026-05-17-003` Clause 4 is replaced by `.claude/agent-memory/{agent-name}/MEMORY.md` per Anthropic's native agent-memory mechanism. Phase 11 (Meta-Skills) implements the evolution meta-skill that reads agent memories and produces proposals. The `.tgf/evolution/proposals/{pending,accepted,rejected}/` structure stays as TGF-internal (no Anthropic-native equivalent for the proposal workflow).
+
+### Mode-aware skill catalog (deferred)
+
+10. **Mode-aware skill visibility via `skillOverrides` in settings is identified as a future capability** (Hardening mode shows full security catalog; Exploration mode hides advanced compliance skills). Implementation deferred until Phase 15 (Documentation) when adopter-facing mode-switch tooling matures. For Phase 4–12, all installed skills are visible.
+
+### Plugin-native TGF state
+
+11. **TGF state directory (`.tgf/state/sessions/{session_id}.json` per `DEC-2026-05-19-006`) is unaffected by this ADR.** It remains the session state mechanism for `project_mode` + `change_tier` + `current_stage`. Phase 12 hook implementations read this file per the pattern in WORKFLOW.md §6.
+
+**Alternatives considered:**
+
+- **SessionStart-hook injection of principles via `additionalContext` (original Phase 4 plan).** Rejected as no-longer-needed once the `skills:` field on the orchestrator agent was discovered. The hook composition was a workaround for an absence that doesn't exist — Anthropic provides the mechanism natively for agent contexts.
+- **Embed always-on content directly in CLAUDE.md.** Rejected per the criteria above (size, structure, self-evolution).
+- **Description-driven discovery with broad descriptions for always-on skills.** Rejected as unreliable (Claude's discovery is probabilistic) and as competing against ~70 other skills for description budget.
+- **Standalone `.claude/` directory as primary distribution (no plugin).** Rejected because plugin gives versioning, installation simplicity, and the `agent` settings mechanism that activates the orchestrator by default.
+
+**Consequences:**
+
+- Pre-Phase-4 housekeeping commit restructures the repo to plugin layout (`skills/`, `agents/`, `hooks/hooks.json`, `settings.json` at plugin root; `.claude/skills/` and `.claude/hooks/<EventName>/` placeholders removed).
+- Phase 4 implementation produces 3 always-on skills (CODE-QUALITY, SECURITY-CORE, CONTINUITY) in plugin `skills/` directory plus the `tgf-orchestrator` agent definition in `agents/`. Review subagent definitions may land in Phase 4 or defer to Phase 11.
+- `CLAUDE.md` §6 (Always-On Skills section) language updates to reflect that the always-on behavior is implemented via orchestrator agent skill preload, not via an invented frontmatter mechanism.
+- `templates/CLAUDE.md.template` may need similar update for adopters; deferred.
+- `templates/SKILL.md.template` updated to reflect: only Anthropic-native frontmatter fields are runtime; TGF-extension fields (`sources`, `applies-when` sub-fields beyond `paths`, `disqualifying-when`, `last-generated`, `refresh-recommended`, `self-evolution`) are TGF-internal metadata for Phase 11 meta-skill consumption, not Claude Code runtime fields. `DEC-2026-05-17-003` Clause 1 is amended in effect by this clarification (the original Clause 1 stands as historical record).
+- `ARCHITECTURE.md` §19 (token efficiency) gains a note about the always-on preload cost (~20k tokens per session for 3 × 300-line SKILL.md bodies) and reaffirms the 300-line discipline as critical.
+- WORKFLOW.md §4 subagent schemas reflect that `skills:` preload is the always-on mechanism for orchestrator and review subagents.
+- Phase 1's plugin scaffolding is the right foundation; no rework needed beyond the directory restructure.
+
+---
+
 ## DEC-2026-05-19-006: TGF session state architecture — file-based, session-keyed
 
 **Decided:** TGF-specific runtime context (`project_mode`, `change_tier`, and future per-session state) lives in a file-based store at `.tgf/state/sessions/{session_id}.json`. The orchestrator (main agent) writes to it; hooks and meta-skills read from it on demand. The `.tgf/state/` directory is gitignored (it's per-session operational state, not committed artifact).
