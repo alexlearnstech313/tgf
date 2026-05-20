@@ -4,7 +4,7 @@ The Governance Framework v1 — 16-phase build plan. Path A scope (full v1 with 
 
 > ROADMAP is living documentation. Items here are committed to. Milestones with target dates that slip get explicit revision, not silent extension. Update at session close when phase status changes or milestones progress.
 
-**Current focus:** Phase 4 Checkpoint 1 cleared 2026-05-19 — all five decisions resolved (citation density at source's natural granularity; rules.md + anti-patterns.md per skill from day one; descriptions serve both adoption modes; review subagent scaffolds in Phase 4 with full prompts in Phase 11; six focused commits). Implementation cleared to begin with `templates/SKILL.md.template` update, then 3 always-on skills (CODE-QUALITY, SECURITY-CORE, CONTINUITY), then `tgf-orchestrator` agent + 4 review subagent scaffolds + plugin `settings.json`, then closeout. Architectural foundation locked across three ADRs (`DEC-007/008/009`) and one pre-Phase-4 housekeeping commit (`49c8a82`). Phase 3 ✅ Complete same day with `docs/WORKFLOW.md` at 911 lines.
+**Current focus:** Phase 4 implementation commit 1/6 landed (2026-05-19) — `templates/SKILL.md.template` updated per DEC-007/008 + new `rules.md.template` + `anti-patterns.md.template`. Convention established for all Phase 4-10 skills. Next: commit 2/6 = `skills/code-quality/` (SKILL.md + rules.md + anti-patterns.md). Then SECURITY-CORE, CONTINUITY, agents, closeout. Phase 4 Checkpoint 1 cleared earlier same day; architectural foundation locked across DEC-007/008/009 + housekeeping commit `49c8a82`. Phase 3 ✅ Complete same day with `docs/WORKFLOW.md` at 911 lines.
 
 ---
 

@@ -1,0 +1,137 @@
+# Anti-Patterns + Canonical Patterns — [Skill Name]
+
+Full anti-pattern + canonical pattern pairs with code examples. Referenced from `SKILL.md` §6 Anti-Pattern Summaries. Loaded on demand when concrete examples are needed (typically Stage 5 review when surfacing a specific finding).
+
+Minimum 8 anti-patterns paired with canonical patterns per `DEC-2026-05-17-003` Clause 1. Each anti-pattern violates a specific rule (see `rules.md`). Each pairs with a canonical pattern showing the correct implementation.
+
+---
+
+## AP-1: [Anti-pattern title]
+
+**Pattern:**
+
+```language
+// Example of what to reject — concrete code that demonstrates the failure
+// Use the actual language/framework the skill governs
+```
+
+**Violates:** Rule 5.1 (see `rules.md#rule-51`)
+
+**Why it fails:** [Attack scenario, failure mode, or specific consequence. Be concrete — name the CVE class, the data exposure, the specific exploitation path, the maintenance burden, the failure mode.]
+
+**Source for failure mode:** [Citation — CVE class, OWASP rule, attack technique, or observed AI failure pattern]
+
+### CP-1: [Canonical pattern title]
+
+**Pattern:**
+
+```language
+// Example of correct implementation
+// Address what AP-1 got wrong
+```
+
+**Pairs with:** Anti-pattern AP-1
+
+**Why it works:** [Explanation grounded in the rule and source. Why is this the right way? What does it prevent that AP-1 enables?]
+
+**Additional considerations:** [Performance, complexity, when this pattern doesn't fit, alternatives within the rule's bounds.]
+
+---
+
+## AP-2: [Anti-pattern title]
+
+**Pattern:**
+
+```language
+// Concrete code example
+```
+
+**Violates:** Rule 5.X (see `rules.md#rule-5x`)
+
+**Why it fails:** [Specific failure mode.]
+
+**Source for failure mode:** [Citation]
+
+### CP-2: [Canonical pattern title]
+
+**Pattern:**
+
+```language
+// Correct implementation
+```
+
+**Pairs with:** Anti-pattern AP-2
+
+**Why it works:** [Explanation.]
+
+---
+
+## AP-3: [Anti-pattern title]
+
+**Pattern:**
+
+```language
+// Concrete code example
+```
+
+**Violates:** Rule 5.X
+
+**Why it fails:** [Specific failure mode.]
+
+**Source for failure mode:** [Citation]
+
+### CP-3: [Canonical pattern title]
+
+**Pattern:**
+
+```language
+// Correct implementation
+```
+
+**Pairs with:** Anti-pattern AP-3
+
+**Why it works:** [Explanation.]
+
+---
+
+## AP-4: [Anti-pattern title]
+
+**Pattern:**
+
+```language
+// Concrete code example
+```
+
+**Violates:** Rule 5.X
+
+**Why it fails:** [Specific failure mode.]
+
+**Source for failure mode:** [Citation]
+
+### CP-4: [Canonical pattern title]
+
+**Pattern:**
+
+```language
+// Correct implementation
+```
+
+**Pairs with:** Anti-pattern AP-4
+
+**Why it works:** [Explanation.]
+
+---
+
+## AP-5 through AP-8
+
+<!-- Repeat the same structure for AP-5, AP-6, AP-7, AP-8. -->
+<!-- Eight pairs is the minimum per DEC-003 Clause 1. -->
+<!-- Add more as observed during use; the self-evolution mechanism (per ARCHITECTURE.md §21) accumulates new anti-patterns over time. -->
+
+---
+
+## Pairing discipline
+
+Per `DEC-2026-05-17-003` Clause 1: every anti-pattern MUST be paired with a canonical pattern. The framework's value depends on showing the user *both* what to reject and what to do instead. Standalone anti-patterns without paired canonical patterns are incomplete and should not ship.
+
+When a new anti-pattern is observed but no clear canonical pattern is obvious, log to `WAIVER-LOG.md` for revisit rather than shipping a one-sided entry.

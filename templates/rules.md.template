@@ -1,0 +1,80 @@
+# Rules — [Skill Name]
+
+Full rule statements with rule-level citations, plain-language impact, and extended discussion. Referenced from `SKILL.md` §5 Rule Summaries. Loaded on demand when deep rule application is needed (typically Stage 5 review).
+
+Minimum 5 rules per `DEC-2026-05-17-003` Clause 1. Cite at the source's natural granularity per Phase 4 Checkpoint 1 Decision A (rule-level for sub-numbered sources like OWASP ASVS; principle-level for sources where practices are the granular unit; acknowledge TGF synthesis where no rule-level mapping exists).
+
+---
+
+## Rule 5.1: [Concise rule title]
+
+**Statement:** [The rule itself, one to three sentences.]
+
+**Citation:** [Source ID + specific rule reference, e.g., `OWASP-ASVS-5.0 V3.2.1` or `NIST-SSDF v1.1 PW.4` or `TGF-SYNTHESIS — grounded in NIST SSDF PW.4 + senior-engineer practice`]
+
+**Plain-language impact:** [What failure looks like in practice. Avoid jargon. State what could go wrong if the rule isn't followed — concrete consequence the user can understand without reading the source.]
+
+**Extended discussion:** [Why this rule matters, when it applies, edge cases, related rules. Two to five paragraphs as needed. This is the depth that doesn't fit in SKILL.md.]
+
+**Related anti-patterns:** AP-1, AP-3 (see `anti-patterns.md`)
+
+---
+
+## Rule 5.2: [Concise rule title]
+
+**Statement:** [The rule.]
+
+**Citation:** [Source ID + specific rule reference]
+
+**Plain-language impact:** [Concrete consequence.]
+
+**Extended discussion:** [Depth.]
+
+**Related anti-patterns:** AP-2
+
+---
+
+## Rule 5.3: [Concise rule title]
+
+**Statement:** [The rule.]
+
+**Citation:** [Source ID + specific rule reference]
+
+**Plain-language impact:** [Concrete consequence.]
+
+**Extended discussion:** [Depth.]
+
+**Related anti-patterns:** AP-4, AP-5
+
+---
+
+## Rule 5.4: [Concise rule title]
+
+**Statement:** [The rule.]
+
+**Citation:** [Source ID + specific rule reference]
+
+**Plain-language impact:** [Concrete consequence.]
+
+**Extended discussion:** [Depth.]
+
+**Related anti-patterns:** AP-6
+
+---
+
+## Rule 5.5: [Concise rule title]
+
+**Statement:** [The rule.]
+
+**Citation:** [Source ID + specific rule reference]
+
+**Plain-language impact:** [Concrete consequence.]
+
+**Extended discussion:** [Depth.]
+
+**Related anti-patterns:** AP-7, AP-8
+
+---
+
+<!-- Add more rules as the skill content matures. Five is the minimum per DEC-003 Clause 1. -->
+<!-- When this file exceeds ~400 lines, split verbose citation tables into citations.md per Phase 4 Checkpoint 1 Decision B. -->
