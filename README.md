@@ -34,7 +34,7 @@ Every coding or planning prompt runs a six-stage workflow: Research → Scope �
 
 ## Status
 
-**Phase 4 of 16 in progress.** Foundation phases (Phases 1–3) are complete — repo scaffolding, expanded CLAUDE.md with deeper architecture in `docs/ARCHITECTURE.md`, and the workflow specification at `docs/WORKFLOW.md`. Currently building the three always-on skills (CODE-QUALITY, SECURITY-CORE, CONTINUITY) plus the orchestrator agent that activates them. Not yet ready for adoption.
+**Phase 6 of 16 next.** Phases 1–5 complete — repo scaffolding and plugin layout, expanded CLAUDE.md with deeper architecture in `docs/ARCHITECTURE.md`, the workflow specification at `docs/WORKFLOW.md`, three always-on skills (CODE-QUALITY, SECURITY-CORE, CONTINUITY) plus the `tgf-orchestrator` agent and four review subagents, and seven activity skills (DISCOVERY, PROJECT-MANAGEMENT, DESIGN, UI-CRAFT, TESTING, DEBUGGING, DISAGREEMENT). Roughly 10,800 lines of skill content shipped so far. Phase 6 (Foundation Security Skills, 11 skills) is up next — the substantial security push runs through Phases 6/7/8. Not yet ready for adoption.
 
 See [`ROADMAP.md`](./ROADMAP.md) for the full 16-phase build plan and current progress. See [`DECISIONS.md`](./DECISIONS.md) for architectural decisions with full reasoning. Full adopter docs (INSTALL, DESIGN-RATIONALE, how-it-works, glossary, FAQ) land in Phase 15.
 
