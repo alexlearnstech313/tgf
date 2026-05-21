@@ -1,8 +1,8 @@
-# Phase 5 Implementation Plan: Activity Skills (6)
+# Phase 5 Implementation Plan: Activity Skills (7)
 
 **Date:** 2026-05-20
-**Status:** Plan drafted; awaiting Checkpoint 1 approval before implementation.
-**Process:** Per the validated phase-workflow pattern (Phase 2, Phase 3, Phase 4) — write phase-N-plan.md first, get explicit approval on open decisions, then implement.
+**Status:** Checkpoint 1 cleared (2026-05-20); mid-phase amendment landed 2026-05-20 — added UI-CRAFT as a seventh skill alongside DESIGN to close the design-craft / anti-AI-slop gap surfaced during commit 3/7 (DESIGN).
+**Process:** Per the validated phase-workflow pattern (Phase 2, Phase 3, Phase 4) — write phase-N-plan.md first, get explicit approval on open decisions, then implement. Mid-phase scope amendments (like adding UI-CRAFT) are surfaced consciously, captured in the plan file, and recorded as a new Decision when warranted.
 
 ---
 
@@ -19,11 +19,12 @@ Phase 5 deliverables:
 3. `skills/testing/` — test strategy, coverage discipline, security testing, accessibility testing
 4. `skills/debugging/` — Agans 9 rules, Five Whys, scientific method, AI-specific debugging concerns
 5. `skills/disagreement/` — tactful pushback, severity gradient, waiver protocol (operationalizes CLAUDE.md §5)
-6. `skills/design/` — design principles, negative constraints, AI-specific design failure modes
+6. `skills/design/` — design decision discipline (constraint-first, negative constraints, simplicity, AI-pattern-vs-constraint, change accommodation, accessibility)
+7. `skills/ui-craft/` — UI/UX craft discipline (anti-AI-slop): design systems, color/typography/spacing rhythm, considered motion, designed states, restraint. **Added mid-phase 2026-05-20** per Decision F.
 
 Each skill ships SKILL.md + rules.md + anti-patterns.md per the reference-file pattern established in Phase 4 (DEC-2026-05-19-007 + DEC-2026-05-19-008).
 
-Estimated effort: 6 focused commits (one per skill) + closeout = ~7 commits. ~3-5 sessions, ~15-20 hours total.
+Estimated effort: 7 focused commits (one per skill) + closeout = ~8 commits. ~3-5 sessions, ~17-22 hours total.
 
 ---
 
@@ -92,9 +93,20 @@ Per DEC-2026-05-17-004 Clause 1 (live verification at skill-creation time). Sour
 
 | Source | Phase 5 use | Verification status |
 |--------|-------------|---------------------|
-| Anthropic published design principles for AI-assisted development | Foundation for AI-aware design; canonical URL TBD | Stage 1 spot-check needed at DESIGN implementation |
-| WCAG 2.2 — Perceivable / Operable / Understandable / Robust principles | Accessibility-aware design grounding | Stage 1 spot-check needed |
+| Anthropic — "Building Effective Agents" | Foundation for AI-aware design; Simplicity principle | Verified 2026-05-20 (Stage 1 of DESIGN implementation) |
+| WCAG 2.2 — Perceivable / Operable / Understandable / Robust principles | Accessibility-aware design grounding | Verified 2026-05-20 (Stage 1 of DESIGN implementation) |
 | TGF synthesis — negative constraints, AI-specific design failure modes | What makes AI-assisted design distinct | TGF synthesis (acknowledged per DEC-004 Decision A) |
+
+### UI-CRAFT sources (added 2026-05-20 per Decision F)
+
+| Source | Phase 5 use | Verification status |
+|--------|-------------|---------------------|
+| Apple Human Interface Guidelines | Platform-published design principles (typography, color, spacing, motion) | Stage 1 spot-check at UI-CRAFT implementation |
+| Material Design 3 | Google's published design system (color/typography/spacing scales, motion) | Stage 1 spot-check at UI-CRAFT implementation |
+| Jakob Nielsen — 10 Usability Heuristics for User Interface Design (1994, refreshed; Nielsen Norman Group) | Research-backed usability framework | Stable methodology reference |
+| WCAG 2.2 | Cross-reference from DESIGN; accessibility-as-craft adjacent | Already verified 2026-05-20 |
+| Refactoring UI (Schoger/Wathan, 2018) | Comparative source per DEC-2026-05-17-004 Clause 6; practical anti-slop guidance for engineers building UI | Reference only (book; design-rationale) |
+| TGF synthesis — anti-AI-slop discipline (default Tailwind everywhere, color sprawl, default spacing, indiscriminate motion, forgotten states, maximalist accumulation) | Observable 2024-2026 AI-output failure modes | TGF synthesis acknowledged per DEC-2026-05-17-004 |
 
 ### Comparative sources (design-rationale only, per DEC-2026-05-17-004 Clause 6)
 
@@ -103,6 +115,7 @@ Per DEC-2026-05-17-004 Clause 1 (live verification at skill-creation time). Sour
 | Cal Newport — "Deep Work" / digital minimalism | Comparative validation for DEBUGGING's "quit thinking and look" rule |
 | Christopher Alexander — "A Pattern Language" | Comparative source for DESIGN's pattern-language framing |
 | Kim Scott — "Radical Candor" | Comparative source for DISAGREEMENT's tactful-pushback framing (NOT cited at rule level — book/blog-grade reference) |
+| High-craft reference sites — Stripe (stripe.com), Vercel (vercel.com), Linear (linear.app), Monogram (monogram.io), Kraken (kraken.com) | Comparative pattern study for UI-CRAFT — concrete examples of color systems, typography mastery, spacing rhythm, considered motion, designed states. Appear in UI-CRAFT AP/CP examples, NOT in §2 Authoritative Sources tables. |
 
 Comparative sources stay in design-rationale notes within the plan; they do not appear in skill `§2 Authoritative Sources` tables.
 
@@ -254,22 +267,52 @@ Comparative sources stay in design-rationale notes within the plan; they do not 
 - (d) Anthropic design principles cited (URL verified at Stage 1)
 - (e) SKILL.md body ≤300 lines
 
+### UI-CRAFT (added mid-phase 2026-05-20 per Decision F)
+
+**Scope:** UI/UX craft discipline for AI-assisted development — anti-AI-slop. Design systems (intentional color/typography/spacing scales), considered motion, designed states (hover, focus, active, disabled, loading, error, empty), restraint, hierarchy. Pairs with DESIGN: DESIGN governs decision-making about design (which approach, against which constraints); UI-CRAFT governs the craft of executing the design (which color value, which spacing, which motion timing). Closes the design-craft gap that DESIGN's "universal principles + cross-refs" framing (Decision A) didn't cover — design craft doesn't have an obvious domain home (not testable, not secure, not schema, not API), so it earns its own skill.
+
+**Description (≤500 chars):** "UI/UX craft discipline for AI-assisted development — anti-AI-slop. Use when building UI or reviewing visual design: design systems (color/typography/spacing scales), considered motion, designed states across the board, restraint over maximalism. Pairs with DESIGN (decision discipline) as design's craft companion. Defends against the recognizable 'AI-generated UI' aesthetic: Tailwind defaults, color sprawl, monotone typography, indiscriminate motion, forgotten states."
+
+**SKILL.md sections (~250-280 lines):**
+- §1 Overview (~30 lines)
+- §2 Authoritative Sources (~20 lines — Apple HIG, Material Design 3, Nielsen heuristics, WCAG 2.2 cross-ref)
+- §3 Discovery Commands (~25 lines)
+- §4 Principles (~50 lines — design system over defaults, restrained color palettes, typography as hierarchy, spacing rhythm, motion as communication, designed states, restraint earns trust)
+- §5 Rule Summaries (~65 lines — 6-7 rules)
+- §6 Anti-Pattern Summaries (~50 lines — 8 AP/CP pairs)
+- §7 AI-Specific Concerns (~30 lines — pattern reproduction of Tailwind defaults, color sprawl from no system, monotone hierarchy, default motion, forgotten states)
+- §8 Workflow Integration (~15 lines)
+- §9 Subagent Context (~10 lines)
+
+**Reference files:**
+- `rules.md` — full rules with citations to Apple HIG / Material 3 / Nielsen heuristics where applicable; TGF synthesis acknowledged for anti-slop discipline
+- `anti-patterns.md` — full AP/CP pairs with concrete pattern examples. High-craft reference sites (Stripe, Vercel, Linear, Monogram, Kraken) appear in CP examples as comparative pattern references per DEC-2026-05-17-004 Clause 6 — they illustrate canonical patterns without being authoritative citations.
+
+**Per-skill QC criteria:**
+- (a) ≥5 rules covering design system thinking, color discipline, typography hierarchy, spacing rhythm, designed states, restraint
+- (b) ≥8 anti-patterns paired with canonical patterns demonstrating anti-AI-slop discipline
+- (c) Citations to Apple HIG and/or Material Design 3 verified at Stage 1
+- (d) High-craft reference sites used in CP examples as comparative references (not authoritative citations) per DEC-004 Clause 6
+- (e) SKILL.md body ≤300 lines
+- (f) Anti-AI-slop discipline is TGF synthesis acknowledged honestly per DEC-2026-05-17-004 — observable 2024-2026 phenomenon not yet codified in authoritative standards
+
 ---
 
 ## 5. Implementation Order
 
 Dependency-driven order (later skills can reference earlier ones for cross-skill consistency):
 
-1. **DISCOVERY** — least dependencies; foundational for the planning skills
-2. **PROJECT-MANAGEMENT** — references DISCOVERY for ambiguous-input handling
-3. **DESIGN** — references PROJECT-MANAGEMENT for context; sets pattern conventions used by TESTING and DEBUGGING
-4. **TESTING** — references DESIGN principles; sources align with NIST SSDF PW.7/PW.8 (already in SECURITY-CORE so cross-skill citation pattern established)
-5. **DEBUGGING** — references TESTING (debugging vs testing distinction) and uses docs/WORKFLOW.md §7 debugging variant explicitly
-6. **DISAGREEMENT** — meta-skill; references CLAUDE.md §5 and §11 directly; written last so cross-skill operational patterns are visible
+1. **DISCOVERY** ✅ commit `563da7e` — least dependencies; foundational for the planning skills
+2. **PROJECT-MANAGEMENT** ✅ commit `bce6bfa` — references DISCOVERY for ambiguous-input handling
+3. **DESIGN** ✅ commit `2f8bc2e` — design decision discipline; sets pattern conventions used by TESTING and DEBUGGING
+4. **UI-CRAFT** (new, mid-phase amendment per Decision F) — UI/UX craft, anti-AI-slop discipline; pairs with DESIGN (decision discipline) as "design's craft companion"; references DESIGN principles
+5. **TESTING** — references DESIGN principles + UI-CRAFT for UI-test considerations; sources align with NIST SSDF PW.7/PW.8 (already in SECURITY-CORE)
+6. **DEBUGGING** — references TESTING (debugging vs testing distinction) and uses docs/WORKFLOW.md §7 debugging variant explicitly
+7. **DISAGREEMENT** — meta-skill; references CLAUDE.md §5 and §11 directly; written last so cross-skill operational patterns are visible
 
 Then closeout: ROADMAP M5 → Complete, CHANGELOG Phase 5 entries, session log entry.
 
-Six implementation commits + one closeout = seven Phase 5 commits.
+Seven implementation commits + one closeout = eight Phase 5 commits.
 
 ---
 
@@ -304,11 +347,25 @@ All five decisions resolved. Implementation cleared.
 
 **Decision D — DEBUGGING subagent role: RESOLVED.** Option (iii). Defer the `debugger` subagent decision to Phase 11. Phase 5 ships DEBUGGING skill at the orchestrator level; the debugging variant of the workflow (per docs/WORKFLOW.md §7) activates through the orchestrator. Phase 11 (orchestration meta-skill + full subagent semantics) decides whether to define a dedicated subagent. Consistent with Phase 4's Decision D — defer subagent semantics to Phase 11.
 
-**Decision E — Commit grouping: RESOLVED.** Option (i). Seven focused commits: DISCOVERY (1/7) → PROJECT-MANAGEMENT (2/7) → DESIGN (3/7) → TESTING (4/7) → DEBUGGING (5/7) → DISAGREEMENT (6/7) → closeout (7/7). Matches the validated Phase 4 cadence; each diff is independently reviewable and revertable. The "if this skill needs a fix, the commit becomes hard to revert" risk of grouped commits is real and unnecessary here.
+**Decision E — Commit grouping: RESOLVED.** Option (i). Originally seven focused commits matching Phase 4 cadence. Amended to **eight commits** by Decision F: DISCOVERY (1/8) ✅ `563da7e` → PROJECT-MANAGEMENT (2/8) ✅ `bce6bfa` → DESIGN (3/8) ✅ `2f8bc2e` → UI-CRAFT (4/8, new) → TESTING (5/8) → DEBUGGING (6/8) → DISAGREEMENT (7/8) → closeout (8/8). Each diff is independently reviewable and revertable.
+
+**Decision F — Mid-phase amendment: add UI-CRAFT skill alongside DESIGN: RESOLVED (2026-05-20).** During Phase 5 commit 3/7 (DESIGN), user surfaced that DESIGN's "decision discipline" scope (constraint-first, simplicity, AI-pattern-vs-constraint, accessibility) does not cover **design craft** — the difference between polished intentional UI and recognizable "AI slop" (default Tailwind everything, color sprawl, monotone typography, default spacing, indiscriminate motion, forgotten states, stock-photo aesthetic, maximalist accumulation). Decision A's framing (DESIGN = universal principles + cross-refs to domain skills for depth) assumed depth lived in domains (TESTING, SECURITY-CORE, future schema/API skills) — but design craft doesn't have an obvious domain home: not testable, not secure, not schema, not API. It earns its own skill.
+
+Options considered:
+- (i) Add as a new sibling skill in Phase 5 alongside DESIGN. **CHOSEN.** Cleanest separation; DESIGN keeps decision-discipline scope; new UI-CRAFT skill covers craft. Phase 5 grows from 6 → 7 skills; commit grouping from 7 → 8.
+- (ii) Expand DESIGN to include craft rules. Rejected — would mix decision-discipline and craft into one skill; thematically split.
+- (iii) Defer to Phase 9 quality skills. Rejected — Phase 5 would ship with a known credibility gap visible to anyone reading the framework. Anti-AI-slop is one of the most visible failure modes of AI-assisted development; TGF's mission alignment demands addressing it.
+- (iv) Add as Phase 13 SKILL-FORGE bridge skill. Rejected — most anti-slop discipline is universal, not stack-specific.
+
+Authoritative grounding: Apple Human Interface Guidelines, Material Design 3, Jakob Nielsen's 10 Usability Heuristics, WCAG 2.2 (cross-ref from DESIGN). Comparative pattern references in AP/CP examples: Stripe, Vercel, Linear, Monogram, Kraken — concrete high-craft sites studied for what they do right (per DEC-2026-05-17-004 Clause 6, comparative sources inform examples without being authoritative citations).
+
+This is a tactical scope amendment, not architectural. No new ADR warranted; the plan-file capture suffices. If Phase 6+ reveals systemic implications (e.g., a need for an `accessibility-craft` distinction), promote to ADR then.
 
 ### Architectural reach
 
-None of A–E warranted a new ADR. All five are tactical to Phase 5. The leans were accepted unmodified at Checkpoint 1; no new architectural concerns surfaced. If Phase 5 implementation reveals a tension with these decisions, plan adjustments accumulate in the Phase 5 session log per validated pattern.
+None of A–F warranted a new ADR. Decisions A–E are tactical to Phase 5 and were accepted unmodified at Checkpoint 1. Decision F (mid-phase UI-CRAFT addition) is also tactical — it expands Phase 5 scope by one skill but doesn't change architectural foundations (DEC-007/008/009/010 still hold). Plan-file capture is the appropriate record per Phase 4 precedent.
+
+If Phase 6+ reveals systemic implications of the design-discipline-vs-design-craft split (e.g., a need to refactor DESIGN against UI-CRAFT, or a need for additional craft skills in other domains like accessibility-craft, content-craft), promote to ADR then.
 
 ---
 
