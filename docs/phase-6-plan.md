@@ -1,7 +1,7 @@
 # Phase 6 Implementation Plan: Foundation Security Skills (11)
 
 **Date:** 2026-05-20
-**Status:** Plan drafted; awaiting Checkpoint 1 approval before implementation.
+**Status:** Checkpoint 1 cleared (2026-05-20) — all four decisions resolved without new ADRs. Implementation cleared.
 **Process:** Per the validated phase-workflow pattern (Phases 2, 3, 4, 5) — write phase-N-plan.md first, get explicit approval on open decisions, then implement. Mid-phase scope amendments are surfaced consciously and captured in this plan file (precedent: Phase 5 Decision F adding UI-CRAFT).
 
 ---
@@ -435,53 +435,47 @@ Applied to every Phase 6 skill (extending Phase 4/5 criteria; intentions, not nu
 
 ---
 
-## 7. Open Checkpoint 1 Decisions
+## 7. Checkpoint 1 — Decisions Resolved (2026-05-20)
 
-Decisions warranting user input before implementation begins. Most match candidates surfaced in the session kickoff; one (Decision C) addresses a forward-reference inconsistency caught during Stage 1.
+All four decisions resolved. Implementation cleared.
 
-### Decision A — OWASP ASVS 5.0 citation depth for Phase 6 skills
+**Decision A — OWASP ASVS 5.0 citation depth for Phase 6 skills: RESOLVED.** Option (iii) Hybrid. Chapter level in §2 Sources tables; sub-rule level in `rules.md` where the mapping is crisp and verifiable in the live ASVS 5.0 source at Stage 1 of each skill's implementation; chapter-level fallback for rules where sub-rule mapping isn't clean. Matches Phase 4 actual practice in SECURITY-CORE. This refines Phase 4 Decision A's "cite at source's natural granularity" principle for the specific case of ASVS 5.0 sub-rules: the source provides sub-rule numbers, but not every TGF rule maps 1:1 to a single sub-rule (some span multiple, some don't have a crisp mapping). Honest mapping over fabricated precision. Stage 1 verification per skill remains the discipline.
 
-Phase 4 Decision A established the general principle ("cite at source's natural granularity"). The specific question for Phase 6 is how granular to go within ASVS 5.0 chapters, which carry many sub-rules (V6 Authentication alone has several dozen).
-
-Options:
-- (i) **Chapter-level only** — every Phase 6 rule cites the chapter (e.g., `OWASP ASVS 5.0 V6 (Authentication)`). Terse and stable to source revisions but loses granularity.
-- (ii) **Sub-rule level for every Phase 6 rule** — fresh per-rule verification at Stage 1 against the live ASVS 5.0 source (e.g., `OWASP ASVS 5.0 V6.2.5`). Tight adherence to DEC-004 Clause 2; multiplies Stage 1 verification work across 11 skills × 5–7 rules each = ~60–80 sub-rule lookups.
-- (iii) **Hybrid (recommended)** — chapter level in §2 Sources tables; sub-rule level in `rules.md` where the mapping is crisp and verifiable in the live source at Stage 1; chapter-level fallback for rules where sub-rule mapping isn't clean. Matches Phase 4 actual practice in SECURITY-CORE.
-
-### Decision B — SECURITY-CORE rule extension discipline
-
-Each Phase 6 skill extends one or more SECURITY-CORE rules (5.1–5.7). The discipline for how Phase 6 skills relate to SECURITY-CORE matters for cross-skill drift, hard-refusal coverage, and reader navigation.
-
-Options:
-- (i) **Restate** — each Phase 6 skill restates the SECURITY-CORE rule (slight variation for context) plus adds skill-specific depth. Risk: duplication and drift over time.
-- (ii) **Reference and extend (recommended)** — Phase 6 skill references SECURITY-CORE's rule by ID (e.g., "This skill extends SECURITY-CORE Rule 5.1 with depth on…") and adds skill-specific rules numbered freshly. SECURITY-CORE remains canonical for universal rules; Phase 6 adds depth on top.
-- (iii) **Hybrid** — Phase 6 skill restates the SECURITY-CORE rule in §4 Principles (for the orchestrator preload coherence) but explicitly notes the extension relationship; skill-specific rules in §5 don't restate.
+**Decision B — SECURITY-CORE rule extension discipline: RESOLVED.** Option (ii) Reference and extend. Phase 6 skill references SECURITY-CORE's rule by ID (e.g., "This skill extends SECURITY-CORE Rule 5.1 with depth on…") and adds skill-specific rules numbered freshly. SECURITY-CORE remains canonical for the universal rules and the CLAUDE.md §5 hard-refusal list; Phase 6 adds depth on top without restating.
 
 Same discipline applies to anti-patterns. The CLAUDE.md §5 hard-refusal list (7 items) maps 1:1 to SECURITY-CORE APs (AP-1 through AP-9). Phase 6 skills naturally re-encounter these patterns (e.g., security-cryptography re-encounters custom crypto + MD5/SHA-1; security-secrets-management re-encounters hardcoded credentials; security-iam-authentication re-encounters disabled authentication middleware).
 
-Recommended (Option ii): Phase 6 hard-refusal APs reference SECURITY-CORE's canonical AP by ID (e.g., "see SECURITY-CORE AP-2 for custom-crypto hard refusal"). Phase 6 APs cover NON-hard-refusal patterns that SECURITY-CORE didn't cover at depth — e.g., security-cryptography AP for AES-ECB misuse, ChaCha20-Poly1305 nonce reuse, GCM tag truncation; security-secrets-management AP for `.env` commits, CI secret leakage, long-lived static keys. This keeps SECURITY-CORE canonical, makes Phase 6 about extended depth, and avoids drift.
+Operational pattern: Phase 6 hard-refusal APs reference SECURITY-CORE's canonical AP by ID (e.g., "see SECURITY-CORE AP-2 for the custom-crypto hard refusal"). Phase 6 APs cover NON-hard-refusal patterns that SECURITY-CORE didn't cover at depth — for example: security-cryptography AP for AES-ECB misuse, ChaCha20-Poly1305 nonce reuse, GCM tag truncation; security-secrets-management AP for `.env` commits, CI secret leakage in masked log output, long-lived static keys without rotation; security-iam-authentication AP for Argon2id parameter pitfalls, bcrypt cost-factor issues, identity-enumeration via login-response timing. This keeps SECURITY-CORE canonical, makes Phase 6 about extended depth, avoids drift, and respects the reader's navigation (one canonical statement per hard-refusal item).
 
-### Decision C — Forward-reference correction in SECURITY-CORE at closeout
+**Decision C — Forward-reference correction in SECURITY-CORE: RESOLVED.** Option (ii) Correct in Phase 6 closeout commit 12/12. Closeout commit edits SECURITY-CORE `rules.md` to point Phase 6 skills to Phase 6 correctly:
 
-Stage 1 of Phase 6 plan drafting surfaced that SECURITY-CORE's `rules.md` (Phase 4 commit 3/6) forward-references several Phase 6 skills as "Phase 7":
+- Rule 5.3 references to `security-cryptography` corrected from "Phase 7" to "Phase 6"
+- Rule 5.4 references to `security-secrets-management` and `security-supply-chain` corrected from "Phase 7" to "Phase 6"
+- Rule 5.7 references to `security-logging` corrected from "Phase 7" to "Phase 6"
+- Any additional Phase 6 forward-references caught during the closeout-time scan get corrected in the same edit
 
-- Rule 5.3 references "future skill `security-cryptography` (Phase 7)" — actually Phase 6
-- Rule 5.4 references "future skills `security-secrets-management` (Phase 7) and `security-supply-chain` (Phase 7)" — both Phase 6
-- Rule 5.7 references "future skill `security-logging` (Phase 7)" — actually Phase 6
+Single bundled edit; doesn't churn SECURITY-CORE incrementally across 11 commits. The SECURITY-CORE skill is the canonical floor — touching it carefully at closeout matches its role.
 
-These were correct when SECURITY-CORE was written (catalog was less crystallized) but are wrong post-Phase 6.
+**Decision D — Commit grouping: RESOLVED.** Option (i) Twelve commits total: eleven implementation commits + closeout. One commit per skill matches Phase 4/5 cadence. Each diff is independently reviewable and revertable. Sequence per the dependency-driven order in §5 above:
 
-Options:
-- (i) **Leave SECURITY-CORE alone** — adopters reading current cross-references see "Phase 7" labels that point them to a real future skill but with a misleading phase. Skill names are still correct.
-- (ii) **Correct in Phase 6 closeout commit (recommended)** — commit 12/12 edits SECURITY-CORE `rules.md` to point Phase 6 skills to Phase 6 correctly. Single bundled edit; doesn't churn SECURITY-CORE incrementally.
-- (iii) **Correct incrementally** — each Phase 6 commit that ships a skill also edits SECURITY-CORE to fix the corresponding forward-reference. Spreads the edit across 11 commits; adds touch surface to each.
+1. security-input-validation
+2. security-output-encoding
+3. security-error-handling
+4. security-cryptography
+5. security-secrets-management
+6. security-iam-authentication
+7. security-iam-sessions
+8. security-iam-authorization
+9. security-database
+10. security-logging
+11. security-supply-chain
+12. Closeout — SECURITY-CORE forward-reference fix per Decision C + ROADMAP + CHANGELOG + CLAUDE.md §9 catalog check + session log
 
-### Decision D — Commit grouping
+### Architectural reach
 
-Options:
-- (i) **Eleven implementation commits + closeout = twelve total (recommended)** — one commit per skill, matches Phase 4/5 cadence. Each diff is independently reviewable and revertable. Closeout commit handles SECURITY-CORE forward-reference fix (per Decision C option ii) + ROADMAP + CHANGELOG + CLAUDE.md + session log.
-- (ii) **Group thematically** — e.g., injection-defense pair (input-validation + output-encoding) in one commit, IAM cluster (authn + sessions + authz) in one commit, etc. Fewer commits but larger diffs harder to review and revert.
-- (iii) **Two-commit split** — first 5 skills in one commit, second 6 in another. Too large for single-commit review.
+None of A–D warranted a new ADR. Decisions A and B are tactical refinements of existing ADRs (Phase 4 Decision A + DEC-2026-05-17-004 Clause 2 for A; DEC-2026-05-19-007 + DEC-2026-05-17-003 Clause 1 for B). Decisions C and D are operational. Plan-file capture is the appropriate record per Phase 4/5 precedent.
+
+If Phase 6+ surfaces systemic implications of the SECURITY-CORE extension discipline (e.g., a need to refactor SECURITY-CORE itself, or a pattern that recurs across Phases 7 / 8 / 9 / 10 warranting a meta-rule about always-on-skill extension), promote to ADR then.
 
 ---
 
