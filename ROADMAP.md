@@ -4,7 +4,7 @@ The Governance Framework v1 — 16-phase build plan. Path A scope (full v1 with 
 
 > ROADMAP is living documentation. Items here are committed to. Milestones with target dates that slip get explicit revision, not silent extension. Update at session close when phase status changes or milestones progress.
 
-**Current focus:** Phase 4 ✅ Complete (2026-05-20). All three always-on skills shipped — `skills/code-quality/`, `skills/security-core/`, `skills/continuity/` — plus the `agents/` scaffolds (`tgf-orchestrator` + 4 review subagents) and the plugin-root `settings.json`. Six Phase 4 implementation commits (1/6 → 6/6) plus pre-publish housekeeping (`b302eb6`), the first public push to `github.com/alexlearnstech313/tgf`, and `DEC-2026-05-20-010` (security_reminder_hook disabled for TGF). Next: Phase 5 — Activity Skills (6 skills: project-management, discovery, testing, debugging, disagreement, design).
+**Current focus:** Phase 5 ✅ Complete (2026-05-20). All seven activity skills shipped — `skills/discovery/`, `skills/project-management/`, `skills/design/`, `skills/ui-craft/`, `skills/testing/`, `skills/debugging/`, `skills/disagreement/`. Phase 5 grew from 6 → 7 skills mid-phase per Decision F (UI-CRAFT added alongside DESIGN to close the design-craft / anti-AI-slop gap surfaced during commit 3/7). Eight Phase 5 implementation commits (1/8 → 7/8 skill commits + plan amendment + 8/8 closeout). Next: Phase 6 — Foundation Security Skills (11 skills): security-input-validation, security-output-encoding, security-iam-authentication, security-iam-sessions, security-iam-authorization, security-cryptography, security-database, security-error-handling, security-logging, security-secrets-management, security-supply-chain.
 
 ---
 
@@ -17,7 +17,7 @@ The Governance Framework v1 — 16-phase build plan. Path A scope (full v1 with 
 | 2 | CLAUDE.md (expanded with §15-§22 for Path A) + adopter template | ✅ Complete |
 | 3 | Workflow Specification with Orchestration | ✅ Complete |
 | 4 | Always-On Skills (3) | ✅ Complete |
-| 5 | Activity Skills (6) | ⬜ Not started |
+| 5 | Activity Skills (7 — grew from 6 mid-phase per Decision F) | ✅ Complete |
 | 6 | Foundation Security Skills (11) | ⬜ Not started |
 | 7 | Extended Security Skills (22) | ⬜ Not started |
 | 8 | AI-Specific Security Skills (8+1 adversarial) | ⬜ Not started |
@@ -229,12 +229,13 @@ Plus plugin marketplace submission.
 
 | ID | Milestone | Target | Confidence | Status |
 |----|-----------|--------|------------|--------|
-| M5 | Phase 5 complete (activity skills: project-management, discovery, testing, debugging, disagreement, design) | TBD | medium | not started |
+| M6 | Phase 6 complete (foundation security skills — 11 skills: input-validation, output-encoding, iam-authentication, iam-sessions, iam-authorization, cryptography, database, error-handling, logging, secrets-management, supply-chain) | TBD | medium | not started |
 
 ## Completed Milestones
 
 | ID | Milestone | Completed | Notes |
 |----|-----------|-----------|-------|
+| M5 | Phase 5 complete (activity skills — 7 skills: discovery, project-management, design, ui-craft, testing, debugging, disagreement) | 2026-05-20 | Eight implementation commits: `563da7e` DISCOVERY (811 lines) · `bce6bfa` PROJECT-MANAGEMENT (934 lines) · `2f8bc2e` DESIGN (1015 lines) · `45fc38d` plan amendment adding UI-CRAFT per Decision F · `404840e` UI-CRAFT (1220 lines, mid-phase addition closing the design-craft / anti-AI-slop gap) · `db4d8bc` TESTING (1260 lines) · `c34417e` DEBUGGING (1237 lines) · `489a491` DISAGREEMENT (1144 lines) · closing commit closeout. Plus `4f3a5f8` plan draft · `2247b2a` Checkpoint 1 clearance (Decisions A-E resolved without new ADRs). Phase 5 grew from 6 → 7 skills mid-phase per Decision F when user surfaced that DESIGN's "decision discipline" scope didn't cover design-craft / anti-AI-slop — UI-CRAFT added with authoritative grounding (Apple HIG, Material Design 3, Nielsen heuristics, WCAG 2.2) and high-craft reference site studies (Stripe, Vercel, Linear, Monogram, Kraken) per DEC-004 Clause 6 as comparative pattern references. Seven activity skills total 7621 lines across 21 files. Stage 1 plan adjustments captured: Apple HIG / Material Design 3 SPA-rendered and unfetchable via WebFetch — cited by reference at foundation level (same pattern as PMBOK/BABOK paywalled). ISTQB site returned 403 to WebFetch — cited by reference at syllabus level (v4.0 October 2023). OWASP WSTG v4.2 confirmed current; v5.0 in development. Cross-skill web maturity demonstrably composing: DISAGREEMENT references SECURITY-CORE hard-refusal items + CONTINUITY waiver protocol; UI-CRAFT cross-refs DESIGN; TESTING cross-refs SECURITY-CORE + DESIGN + UI-CRAFT; DEBUGGING cross-refs CONTINUITY audit-trail + DISCOVERY Five Whys + TESTING regression. |
 | M4 | Phase 4 complete (always-on skills: CODE-QUALITY, SECURITY-CORE, CONTINUITY + agents/ scaffolds) | 2026-05-20 | Six implementation commits: `ea9a0bb` template refactor · `1157e8c` CODE-QUALITY (845 lines) · `b49715d` SECURITY-CORE (1156 lines) · `511f585` CONTINUITY (1080 lines) · `d4abbb0` agents/ (5 scaffolds + plugin settings.json) · closing commit closeout. Plus `b302eb6` README voice rewrite + plugin.json URLs (pre-publish housekeeping; first public push to `github.com/alexlearnstech313/tgf`) and `7c81170` DEC-2026-05-20-010 (security-guidance plugin hook disabled for TGF via env override, since the hook is hostile to security documentation by design). Plan-adjustments captured at session close: OWASP ASVS 5.0 chapter numbering completely reorganized from 4.x (caught at Stage 1 spot-check during SECURITY-CORE); AP-9 (disabled-authentication middleware) gap caught in Stage 5 Phase 4 holistic review during SECURITY-CORE. Three always-on skills total 3081 lines across 9 files; agents 122 lines across 6 files. |
 | M3 | Phase 3 complete (workflow specification with orchestration) | 2026-05-19 | `docs/WORKFLOW.md` 911 lines, 9 sections. Four commits: `efd25c2` plan · `61c1614` Checkpoint 1 + DEC-006 · `d47d355` WORKFLOW.md commit 1/2 · closing commit WORKFLOW.md commit 2/2 + closeout. Dogfooded the workflow during construction. Plus pre-Phase-3 housekeeping: `a630540` CLAUDE.md/ARCHITECTURE.md split (cleared 40k-char threshold). |
 | M2 | Phase 2 complete (CLAUDE.md §15-§22 + adopter template + DEC-005) | 2026-05-17 | Four commits: `c9ac67a` §17 · `92c9894` §18+§19+restructure+DEC-005 · `3a48b0a` §20+§21 · closing commit §22+template+closeout |

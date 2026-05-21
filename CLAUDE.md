@@ -388,12 +388,13 @@ Total catalog target: **~75 skills** across all phases (consolidated from ~80 pe
 - `continuity/` ✅ Phase 4
 
 ### Activity skills (load on context)
-- `project-management/` — planning, decomposition, MVP definition, stack selection, ROADMAP maintenance
-- `discovery/` — branching interview methodology for vague inputs
-- `testing/` — test strategy, coverage discipline
-- `debugging/` — Agans methodology, Five Whys, scientific method
-- `disagreement/` — handling user pushback tactfully
-- `design/` — design principles with negative constraints
+- `discovery/` ✅ Phase 5 — branching-tree interview methodology for vague/ambiguous inputs
+- `project-management/` ✅ Phase 5 — greenfield/brownfield planning, MVP definition, stack selection, dependency planning, ROADMAP support
+- `design/` ✅ Phase 5 — design decision discipline (constraint-first, negative constraints, simplicity, AI-pattern-vs-constraint, accessibility)
+- `ui-craft/` ✅ Phase 5 (added mid-phase per DEC-F amendment) — UI/UX craft, anti-AI-slop discipline (design systems, color/typography/spacing rhythm, considered motion, designed states, restraint)
+- `testing/` ✅ Phase 5 — test strategy, coverage discipline, security testing (OWASP WSTG), accessibility testing (WCAG 2.2), AI tautological-test audit
+- `debugging/` ✅ Phase 5 — Agans 9 rules, Five Whys, scientific method, AI fabricated-root-cause defense
+- `disagreement/` ✅ Phase 5 — operationalizes CLAUDE.md §5 severity gradient (light touch / standard / strong / hard refusal) + AI sycophancy defense
 
 ### Universal security skills (load on contextual triggers, gated by mode)
 
