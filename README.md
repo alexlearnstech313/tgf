@@ -47,3 +47,6 @@ MIT — see [LICENSE](./LICENSE).
 ---
 
 *Built by DynamIQ Learning LLC.*
+
+<!-- diagnostic push 2026-05-22 -->
+
