@@ -1,6 +1,15 @@
 # TGF's own operational state — telemetry, evolution proposals,
 # and session logs from TGF's own development.
-.tgf/
+# Framework infrastructure (registry, org-mapping, schemas) is tracked;
+# per-machine/per-session state (hashes, baselines, research-logs, approvals,
+# overrides, parameter-history, debug log) is gitignored.
+.tgf/*
+!.tgf/state/
+.tgf/state/*
+!.tgf/state/source-registry.json
+!.tgf/state/source-org-mapping.json
+!.tgf/state/source-schemas/
+!.tgf/state/source-schemas/*.json
 .sessions/
 
 # Editor / OS
@@ -14,6 +23,11 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Python bytecode (research-security hooks under .claude/hooks/lib/ are Python)
+__pycache__/
+*.pyc
+*.pyo
 
 # Local environment
 .env

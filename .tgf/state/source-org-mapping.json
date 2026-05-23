@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "_note": "Source publishing organization + jurisdiction mapping for M12 independence verification. Two sources are independent only when their orgs differ. Same-org corroboration (e.g., OWASP-ASVS + OWASP-CHEAT-PS) counts as single-source per CLAUDE.md §1 and RESEARCH-SECURITY.md §4.3 M12.",
+  "orgs": {
+    "OWASP": {
+      "full_name": "Open Worldwide Application Security Project",
+      "jurisdiction": "international",
+      "type": "nonprofit-foundation",
+      "primary_domains": ["owasp.org", "cheatsheetseries.owasp.org", "genai.owasp.org"]
+    },
+    "NIST": {
+      "full_name": "National Institute of Standards and Technology",
+      "jurisdiction": "US-federal",
+      "type": "government-standards-body",
+      "primary_domains": ["csrc.nist.gov", "nvlpubs.nist.gov", "nist.gov"]
+    },
+    "IETF": {
+      "full_name": "Internet Engineering Task Force",
+      "jurisdiction": "international",
+      "type": "standards-body",
+      "primary_domains": ["ietf.org", "datatracker.ietf.org", "rfc-editor.org"]
+    },
+    "ISO": {
+      "full_name": "International Organization for Standardization",
+      "jurisdiction": "international",
+      "type": "standards-body",
+      "primary_domains": ["iso.org"]
+    },
+    "MITRE": {
+      "full_name": "MITRE Corporation",
+      "jurisdiction": "US-federal-contractor",
+      "type": "research-nonprofit",
+      "primary_domains": ["mitre.org", "cwe.mitre.org", "attack.mitre.org", "atlas.mitre.org"]
+    }
+  },
+  "independence_rules": {
+    "rule": "Two source IDs are independent only when their publisher orgs differ. Same-org pairs (e.g., OWASP-ASVS-V11 vs OWASP-CHEAT-CS) are NOT independent.",
+    "examples_independent": [
+      ["OWASP-ASVS-V11", "NIST-SP-800-57"],
+      ["OWASP-CHEAT-PS", "NIST-SP-800-175B"],
+      ["RFC-8446", "OWASP-ASVS-V12"],
+      ["NIST-SP-800-218", "OWASP-CHEAT-IV"]
+    ],
+    "examples_not_independent": [
+      ["OWASP-ASVS-V1", "OWASP-CHEAT-XSS"],
+      ["OWASP-ASVS-V11", "OWASP-CHEAT-CS"],
+      ["OWASP-ASVS-V11", "OWASP-CHEAT-PS"],
+      ["NIST-SP-800-57", "FIPS-197"],
+      ["RFC-8446", "RFC-8996"]
+    ],
+    "memory_alignment_note": "M9: AI prior knowledge consistent with a fetched source is NOT a second corroborating observation. Memory and source share a common upstream (training data + fetched document may both derive from the same root). Memory alignment is recorded in M8 verification summaries but never counted toward M5 corroboration."
+  }
+}

@@ -1,0 +1,512 @@
+{
+  "version": 1,
+  "_note": "Source allow-list and metadata for research-security hooks. Tier 1 = living documents requiring live fetch. Tier 2 = stable formal publications acceptable at publication-level citation. Tier 3 = comparative/design-rationale only, not load-bearing. The id_prefix_match field documents skill-side citation variants (e.g., 'OWASP-TOP10-A04') that resolve to a canonical source_id; citation_parser.py (Step 11) consumes this for alias resolution. last_verified dates are pre-hook session verifications captured in the session log; they will be re-written by PostToolUse-WebFetch on first verified re-fetch under hooks (per implementation plan §8.2 option a).",
+  "sources": {
+    "OWASP-ASVS-V1": {
+      "tier": 1,
+      "type": "owasp-asvs-chapter",
+      "publisher": "OWASP",
+      "jurisdiction": "international",
+      "primary_url": "https://raw.githubusercontent.com/OWASP/ASVS/master/5.0/en/0x10-V1-Encoding-and-Sanitization.md",
+      "allow_url_patterns": [
+        "https://raw.githubusercontent.com/OWASP/ASVS/master/5.0/en/0x10-V1-*",
+        "https://github.com/OWASP/ASVS/blob/master/5.0/en/0x10-V1-*"
+      ],
+      "expected_schema": "owasp-asvs-chapter",
+      "pinned": true,
+      "last_verified": "2026-05-22",
+      "cited_in": [
+        "skills/security-output-encoding"
+      ]
+    },
+    "OWASP-ASVS-V2": {
+      "tier": 1,
+      "type": "owasp-asvs-chapter",
+      "publisher": "OWASP",
+      "jurisdiction": "international",
+      "primary_url": "https://raw.githubusercontent.com/OWASP/ASVS/master/5.0/en/0x11-V2-Validation-and-Business-Logic.md",
+      "allow_url_patterns": [
+        "https://raw.githubusercontent.com/OWASP/ASVS/master/5.0/en/0x11-V2-*",
+        "https://github.com/OWASP/ASVS/blob/master/5.0/en/0x11-V2-*"
+      ],
+      "expected_schema": "owasp-asvs-chapter",
+      "pinned": true,
+      "last_verified": "2026-05-20",
+      "cited_in": [
+        "skills/security-input-validation"
+      ]
+    },
+    "OWASP-ASVS-V4": {
+      "tier": 1,
+      "type": "owasp-asvs-chapter",
+      "publisher": "OWASP",
+      "jurisdiction": "international",
+      "primary_url": "https://raw.githubusercontent.com/OWASP/ASVS/master/5.0/en/0x13-V4-API-and-Web-Service.md",
+      "allow_url_patterns": [
+        "https://raw.githubusercontent.com/OWASP/ASVS/master/5.0/en/0x13-V4-*",
+        "https://github.com/OWASP/ASVS/blob/master/5.0/en/0x13-V4-*"
+      ],
+      "expected_schema": "owasp-asvs-chapter",
+      "pinned": true,
+      "last_verified": "2026-05-20",
+      "cited_in": [
+        "skills/security-input-validation"
+      ]
+    },
+    "OWASP-ASVS-V11": {
+      "tier": 1,
+      "type": "owasp-asvs-chapter",
+      "publisher": "OWASP",
+      "jurisdiction": "international",
+      "primary_url": "https://raw.githubusercontent.com/OWASP/ASVS/master/5.0/en/0x20-V11-Cryptography.md",
+      "allow_url_patterns": [
+        "https://raw.githubusercontent.com/OWASP/ASVS/master/5.0/en/0x20-V11-*",
+        "https://github.com/OWASP/ASVS/blob/master/5.0/en/0x20-V11-*"
+      ],
+      "expected_schema": "owasp-asvs-chapter",
+      "pinned": true,
+      "last_verified": "2026-05-22",
+      "cited_in": [
+        "skills/security-cryptography"
+      ]
+    },
+    "OWASP-ASVS-V12": {
+      "tier": 1,
+      "type": "owasp-asvs-chapter",
+      "publisher": "OWASP",
+      "jurisdiction": "international",
+      "primary_url": "https://raw.githubusercontent.com/OWASP/ASVS/master/5.0/en/0x21-V12-Secure-Communication.md",
+      "allow_url_patterns": [
+        "https://raw.githubusercontent.com/OWASP/ASVS/master/5.0/en/0x21-V12-*",
+        "https://github.com/OWASP/ASVS/blob/master/5.0/en/0x21-V12-*"
+      ],
+      "expected_schema": "owasp-asvs-chapter",
+      "pinned": true,
+      "last_verified": "2026-05-22",
+      "cited_in": [
+        "skills/security-cryptography"
+      ]
+    },
+    "OWASP-ASVS-V16": {
+      "tier": 1,
+      "type": "owasp-asvs-chapter",
+      "publisher": "OWASP",
+      "jurisdiction": "international",
+      "primary_url": "https://raw.githubusercontent.com/OWASP/ASVS/master/5.0/en/0x25-V16-Security-Logging-and-Error-Handling.md",
+      "allow_url_patterns": [
+        "https://raw.githubusercontent.com/OWASP/ASVS/master/5.0/en/0x25-V16-*",
+        "https://github.com/OWASP/ASVS/blob/master/5.0/en/0x25-V16-*"
+      ],
+      "expected_schema": "owasp-asvs-chapter",
+      "pinned": true,
+      "last_verified": "2026-05-22",
+      "cited_in": [
+        "skills/security-error-handling"
+      ]
+    },
+    "OWASP-TOP10-2025": {
+      "tier": 1,
+      "type": "owasp-top-10",
+      "publisher": "OWASP",
+      "jurisdiction": "international",
+      "primary_url": "https://owasp.org/Top10/2025/",
+      "allow_url_patterns": [
+        "https://owasp.org/Top10/2025",
+        "https://owasp.org/Top10/2025/",
+        "https://owasp.org/Top10/2025/*"
+      ],
+      "expected_schema": "owasp-top-10",
+      "pinned": true,
+      "last_verified": "2026-05-20",
+      "id_prefix_match": [
+        "OWASP-TOP10"
+      ],
+      "cited_in": [
+        "skills/security-input-validation",
+        "skills/security-output-encoding",
+        "skills/security-error-handling",
+        "skills/security-cryptography"
+      ]
+    },
+    "OWASP-CHEAT-IV": {
+      "tier": 1,
+      "type": "owasp-cheat-sheet",
+      "publisher": "OWASP",
+      "jurisdiction": "international",
+      "primary_url": "https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html",
+      "allow_url_patterns": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html"
+      ],
+      "expected_schema": "owasp-cheat-sheet",
+      "pinned": true,
+      "last_verified": "2026-05-20",
+      "cited_in": [
+        "skills/security-input-validation"
+      ]
+    },
+    "OWASP-CHEAT-XSS": {
+      "tier": 1,
+      "type": "owasp-cheat-sheet",
+      "publisher": "OWASP",
+      "jurisdiction": "international",
+      "primary_url": "https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html",
+      "allow_url_patterns": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html"
+      ],
+      "expected_schema": "owasp-cheat-sheet",
+      "pinned": true,
+      "last_verified": "2026-05-22",
+      "cited_in": [
+        "skills/security-output-encoding"
+      ]
+    },
+    "OWASP-CHEAT-SQLI": {
+      "tier": 1,
+      "type": "owasp-cheat-sheet",
+      "publisher": "OWASP",
+      "jurisdiction": "international",
+      "primary_url": "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html",
+      "allow_url_patterns": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html"
+      ],
+      "expected_schema": "owasp-cheat-sheet",
+      "pinned": true,
+      "last_verified": "2026-05-22",
+      "cited_in": [
+        "skills/security-output-encoding"
+      ]
+    },
+    "OWASP-CHEAT-OSI": {
+      "tier": 1,
+      "type": "owasp-cheat-sheet",
+      "publisher": "OWASP",
+      "jurisdiction": "international",
+      "primary_url": "https://cheatsheetseries.owasp.org/cheatsheets/OS_Command_Injection_Defense_Cheat_Sheet.html",
+      "allow_url_patterns": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/OS_Command_Injection_Defense_Cheat_Sheet.html"
+      ],
+      "expected_schema": "owasp-cheat-sheet",
+      "pinned": true,
+      "last_verified": "2026-05-22",
+      "cited_in": [
+        "skills/security-output-encoding"
+      ]
+    },
+    "OWASP-CHEAT-LDAP": {
+      "tier": 1,
+      "type": "owasp-cheat-sheet",
+      "publisher": "OWASP",
+      "jurisdiction": "international",
+      "primary_url": "https://cheatsheetseries.owasp.org/cheatsheets/LDAP_Injection_Prevention_Cheat_Sheet.html",
+      "allow_url_patterns": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/LDAP_Injection_Prevention_Cheat_Sheet.html"
+      ],
+      "expected_schema": "owasp-cheat-sheet",
+      "pinned": true,
+      "last_verified": "2026-05-22",
+      "cited_in": [
+        "skills/security-output-encoding"
+      ]
+    },
+    "OWASP-CHEAT-EH": {
+      "tier": 1,
+      "type": "owasp-cheat-sheet",
+      "publisher": "OWASP",
+      "jurisdiction": "international",
+      "primary_url": "https://cheatsheetseries.owasp.org/cheatsheets/Error_Handling_Cheat_Sheet.html",
+      "allow_url_patterns": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/Error_Handling_Cheat_Sheet.html"
+      ],
+      "expected_schema": "owasp-cheat-sheet",
+      "pinned": true,
+      "last_verified": "2026-05-22",
+      "cited_in": [
+        "skills/security-error-handling"
+      ]
+    },
+    "OWASP-CHEAT-CS": {
+      "tier": 1,
+      "type": "owasp-cheat-sheet",
+      "publisher": "OWASP",
+      "jurisdiction": "international",
+      "primary_url": "https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html",
+      "allow_url_patterns": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html"
+      ],
+      "expected_schema": "owasp-cheat-sheet",
+      "pinned": true,
+      "last_verified": "2026-05-22",
+      "cited_in": [
+        "skills/security-cryptography"
+      ]
+    },
+    "OWASP-CHEAT-PS": {
+      "tier": 1,
+      "type": "owasp-cheat-sheet",
+      "publisher": "OWASP",
+      "jurisdiction": "international",
+      "primary_url": "https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html",
+      "allow_url_patterns": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html"
+      ],
+      "expected_schema": "owasp-cheat-sheet",
+      "pinned": true,
+      "last_verified": "2026-05-22",
+      "cited_in": [
+        "skills/security-cryptography"
+      ]
+    },
+    "OWASP-LLM-TOP10-2025": {
+      "tier": 1,
+      "type": "owasp-llm-top-10",
+      "publisher": "OWASP",
+      "jurisdiction": "international",
+      "primary_url": "https://genai.owasp.org/llm-top-10/",
+      "allow_url_patterns": [
+        "https://genai.owasp.org/llm-top-10/",
+        "https://genai.owasp.org/llm-top-10/*"
+      ],
+      "expected_schema": "owasp-llm-top-10",
+      "pinned": true,
+      "last_verified": "2026-05-17",
+      "id_prefix_match": [
+        "OWASP-LLM"
+      ],
+      "cited_in": [
+        "skills/security-input-validation"
+      ]
+    },
+    "NIST-SP-800-57": {
+      "tier": 2,
+      "type": "nist-sp",
+      "publisher": "NIST",
+      "jurisdiction": "US-federal",
+      "primary_url": "https://csrc.nist.gov/pubs/sp/800/57/pt1/r5/final",
+      "allow_url_patterns": [
+        "https://csrc.nist.gov/pubs/sp/800/57/*",
+        "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57pt1r5.pdf"
+      ],
+      "expected_schema": "nist-sp",
+      "pinned": false,
+      "last_verified": "2026-05-22",
+      "note": "Tier-2 stable formal publication; cited at publication level. Drift unlikely without formal revision (Rev 6 etc.).",
+      "cited_in": [
+        "skills/security-cryptography"
+      ]
+    },
+    "NIST-SP-800-175B": {
+      "tier": 2,
+      "type": "nist-sp",
+      "publisher": "NIST",
+      "jurisdiction": "US-federal",
+      "primary_url": "https://csrc.nist.gov/pubs/sp/800/175/b/r1/final",
+      "allow_url_patterns": [
+        "https://csrc.nist.gov/pubs/sp/800/175/*",
+        "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-175Br1.pdf"
+      ],
+      "expected_schema": "nist-sp",
+      "pinned": false,
+      "last_verified": "2026-05-22",
+      "cited_in": [
+        "skills/security-cryptography"
+      ]
+    },
+    "NIST-SP-800-218": {
+      "tier": 2,
+      "type": "nist-sp",
+      "publisher": "NIST",
+      "jurisdiction": "US-federal",
+      "primary_url": "https://csrc.nist.gov/pubs/sp/800/218/final",
+      "allow_url_patterns": [
+        "https://csrc.nist.gov/pubs/sp/800/218/*",
+        "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-218.pdf"
+      ],
+      "expected_schema": "nist-sp",
+      "pinned": false,
+      "last_verified": "2026-05-20",
+      "id_prefix_match": [
+        "NIST-SSDF"
+      ],
+      "note": "NIST SSDF v1.1; cited as NIST-SSDF in skill source IDs.",
+      "cited_in": [
+        "skills/security-input-validation"
+      ]
+    },
+    "FIPS-197": {
+      "tier": 2,
+      "type": "nist-fips",
+      "publisher": "NIST",
+      "jurisdiction": "US-federal",
+      "primary_url": "https://csrc.nist.gov/pubs/fips/197/final",
+      "allow_url_patterns": [
+        "https://csrc.nist.gov/pubs/fips/197/*",
+        "https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197*.pdf"
+      ],
+      "expected_schema": "nist-fips",
+      "pinned": false,
+      "last_verified": "2026-05-22",
+      "cited_in": [
+        "skills/security-cryptography"
+      ]
+    },
+    "FIPS-180-4": {
+      "tier": 2,
+      "type": "nist-fips",
+      "publisher": "NIST",
+      "jurisdiction": "US-federal",
+      "primary_url": "https://csrc.nist.gov/pubs/fips/180-4/upd1/final",
+      "allow_url_patterns": [
+        "https://csrc.nist.gov/pubs/fips/180-4/*",
+        "https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf"
+      ],
+      "expected_schema": "nist-fips",
+      "pinned": false,
+      "last_verified": "2026-05-22",
+      "cited_in": [
+        "skills/security-cryptography"
+      ]
+    },
+    "FIPS-202": {
+      "tier": 2,
+      "type": "nist-fips",
+      "publisher": "NIST",
+      "jurisdiction": "US-federal",
+      "primary_url": "https://csrc.nist.gov/pubs/fips/202/final",
+      "allow_url_patterns": [
+        "https://csrc.nist.gov/pubs/fips/202/*",
+        "https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf"
+      ],
+      "expected_schema": "nist-fips",
+      "pinned": false,
+      "last_verified": "2026-05-22",
+      "cited_in": [
+        "skills/security-cryptography"
+      ]
+    },
+    "RFC-4180": {
+      "tier": 2,
+      "type": "rfc",
+      "publisher": "IETF",
+      "jurisdiction": "international",
+      "primary_url": "https://datatracker.ietf.org/doc/html/rfc4180",
+      "allow_url_patterns": [
+        "https://datatracker.ietf.org/doc/html/rfc4180",
+        "https://www.rfc-editor.org/rfc/rfc4180*"
+      ],
+      "expected_schema": "rfc",
+      "pinned": false,
+      "last_verified": "2026-05-22",
+      "cited_in": [
+        "skills/security-output-encoding"
+      ]
+    },
+    "RFC-4514": {
+      "tier": 2,
+      "type": "rfc",
+      "publisher": "IETF",
+      "jurisdiction": "international",
+      "primary_url": "https://datatracker.ietf.org/doc/html/rfc4514",
+      "allow_url_patterns": [
+        "https://datatracker.ietf.org/doc/html/rfc4514",
+        "https://www.rfc-editor.org/rfc/rfc4514*"
+      ],
+      "expected_schema": "rfc",
+      "pinned": false,
+      "last_verified": "2026-05-22",
+      "cited_in": [
+        "skills/security-output-encoding"
+      ]
+    },
+    "RFC-4515": {
+      "tier": 2,
+      "type": "rfc",
+      "publisher": "IETF",
+      "jurisdiction": "international",
+      "primary_url": "https://datatracker.ietf.org/doc/html/rfc4515",
+      "allow_url_patterns": [
+        "https://datatracker.ietf.org/doc/html/rfc4515",
+        "https://www.rfc-editor.org/rfc/rfc4515*"
+      ],
+      "expected_schema": "rfc",
+      "pinned": false,
+      "last_verified": "2026-05-22",
+      "cited_in": [
+        "skills/security-output-encoding"
+      ]
+    },
+    "RFC-7807": {
+      "tier": 2,
+      "type": "rfc",
+      "publisher": "IETF",
+      "jurisdiction": "international",
+      "primary_url": "https://datatracker.ietf.org/doc/html/rfc7807",
+      "allow_url_patterns": [
+        "https://datatracker.ietf.org/doc/html/rfc7807",
+        "https://www.rfc-editor.org/rfc/rfc7807*"
+      ],
+      "expected_schema": "rfc",
+      "pinned": false,
+      "last_verified": "2026-05-22",
+      "cited_in": [
+        "skills/security-error-handling"
+      ]
+    },
+    "RFC-8446": {
+      "tier": 2,
+      "type": "rfc",
+      "publisher": "IETF",
+      "jurisdiction": "international",
+      "primary_url": "https://datatracker.ietf.org/doc/html/rfc8446",
+      "allow_url_patterns": [
+        "https://datatracker.ietf.org/doc/html/rfc8446",
+        "https://www.rfc-editor.org/rfc/rfc8446*"
+      ],
+      "expected_schema": "rfc",
+      "pinned": false,
+      "last_verified": "2026-05-22",
+      "cited_in": [
+        "skills/security-cryptography"
+      ]
+    },
+    "RFC-8996": {
+      "tier": 2,
+      "type": "rfc",
+      "publisher": "IETF",
+      "jurisdiction": "international",
+      "primary_url": "https://datatracker.ietf.org/doc/html/rfc8996",
+      "allow_url_patterns": [
+        "https://datatracker.ietf.org/doc/html/rfc8996",
+        "https://www.rfc-editor.org/rfc/rfc8996*"
+      ],
+      "expected_schema": "rfc",
+      "pinned": false,
+      "last_verified": "2026-05-22",
+      "cited_in": [
+        "skills/security-cryptography"
+      ]
+    },
+    "MITRE-CWE": {
+      "tier": 1,
+      "type": "mitre-cwe",
+      "publisher": "MITRE",
+      "jurisdiction": "US-federal-contractor",
+      "primary_url": "https://cwe.mitre.org/data/definitions/",
+      "allow_url_patterns": [
+        "https://cwe.mitre.org/data/definitions/*.html"
+      ],
+      "expected_schema": "mitre-cwe",
+      "pinned": false,
+      "last_verified": "2026-05-22",
+      "id_prefix_match": [
+        "CWE-"
+      ],
+      "note": "Single registry entry covers all individual CWE entries. Per-CWE source_id (CWE-79, CWE-89, etc.) resolves here via id_prefix_match.",
+      "cited_in": [
+        "skills/security-input-validation",
+        "skills/security-output-encoding",
+        "skills/security-error-handling",
+        "skills/security-cryptography"
+      ]
+    }
+  }
+}

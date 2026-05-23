@@ -1,0 +1,11 @@
+{
+  "name": "owasp-llm-top-10",
+  "version": 1,
+  "_note": "Schema for OWASP Top 10 for LLM Applications (HTML).",
+  "checks": {
+    "min_size_bytes": 3000,
+    "required_strings": [
+      "LLM"
+    ]
+  }
+}

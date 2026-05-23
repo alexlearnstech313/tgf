@@ -1,0 +1,11 @@
+{
+  "name": "rfc",
+  "version": 1,
+  "_note": "Schema for IETF RFCs (HTML rendered via datatracker / rfc-editor). RFCs share consistent structural markers.",
+  "checks": {
+    "min_size_bytes": 3000,
+    "required_strings": [
+      "RFC"
+    ]
+  }
+}

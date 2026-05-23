@@ -1,0 +1,11 @@
+{
+  "name": "nist-sp",
+  "version": 1,
+  "_note": "Permissive schema for NIST Special Publications. NIST SPs are PDFs typically converted to text/markdown — structure is loose at the text level; we mainly check for NIST and publication marker presence to detect wrong-URL fetches.",
+  "checks": {
+    "min_size_bytes": 5000,
+    "required_strings": [
+      "NIST"
+    ]
+  }
+}

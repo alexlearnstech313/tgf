@@ -1,0 +1,11 @@
+{
+  "name": "nist-fips",
+  "version": 1,
+  "_note": "Permissive schema for NIST FIPS publications.",
+  "checks": {
+    "min_size_bytes": 5000,
+    "required_strings": [
+      "FIPS"
+    ]
+  }
+}
