@@ -1,6 +1,8 @@
 # Research-Security Implementation Plan
 
-> **Status:** v1 plan — written 2026-05-22. Companion to `docs/RESEARCH-SECURITY.md` (the design). This document specifies the concrete implementation: files, schemas, hooks, helpers, settings.json wiring, bootstrap content, smoke tests, and build sequence. After implementation, this plan is preserved as historical record; operational guidance moves into RESEARCH-SECURITY.md.
+> **Status:** ✅ EXECUTED 2026-05-22. Commit `dc2b294` lands all 20 build steps + 12-test smoke suite (T1–T12 all passing). Pushed to `origin/main`. This document is now preserved as historical record per its original intent — operational documentation lives in `docs/RESEARCH-SECURITY.md` (v1.1 with as-built §5.1 inventory, lazy-baseline §10.3, smoke-test status §10.5). In-build deviations vs this plan are documented in `docs/framework-hardening-plan.md` §3.1 and `docs/RESEARCH-SECURITY.md` §10.3.
+>
+> **Original status:** v1 plan — written 2026-05-22. Companion to `docs/RESEARCH-SECURITY.md` (the design). This document specifies the concrete implementation: files, schemas, hooks, helpers, settings.json wiring, bootstrap content, smoke tests, and build sequence.
 
 ---
 

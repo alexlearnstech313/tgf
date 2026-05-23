@@ -513,6 +513,22 @@ The Phase 4/5 pattern of one commit per substantive deliverable continues for Ph
 
 ---
 
+## 9b. Phase 6 Pause Status (2026-05-22)
+
+Phase 6 paused after commit 4/12 (`73d025d` security-cryptography). The commit-4/12 incident surfaced a structural gap that required pulling forward framework-hardening work. Per `docs/framework-hardening-plan.md`, five workstreams now sit between Phase 6 commit 4/12 and commit 5/12 resumption:
+
+- **Workstream 1 (Research-Security Infrastructure)** — ✅ COMPLETED + PUSHED 2026-05-22 (commit `dc2b294`). Hooks active on next session start.
+- **Workstream 2 (WORKFLOW-V2 Standardization)** — ⏳ NEXT
+- **Workstream 3 (Four Review Agents)** — Deferred
+- **Workstream 4 (Audit of Existing Skills 1/12–4/12 + Phase 4–5 always-on)** — Deferred
+- **Workstream 5 (Remediation of audit findings)** — Deferred
+
+**Phase 6 commit 5/12 (`security-secrets-management`) does not resume until Workstreams 2–5 complete.** When it resumes, the new discipline is in force: Stage 1 research runs under M1–M19 hook protection, Stage 3 uses WORKFLOW-V2's framework citations, Stage 5 uses Workstream 3's agents, Stage 6 enforced by Stop hook + git pre-commit. Closeout commit 12/12 still includes the SECURITY-CORE forward-reference fix per Checkpoint 1 Decision C.
+
+The §8 "Out of Scope" list above still applies in spirit but is superseded operationally by `docs/framework-hardening-plan.md` until Phase 6 resumes.
+
+---
+
 ## 10. Closing Notes
 
 - This plan is committed (per Phase 2 Decision 2 — transparency before staging)

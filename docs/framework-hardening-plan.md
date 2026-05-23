@@ -2,6 +2,8 @@
 
 > **Status:** v1 master plan — written 2026-05-22, locked at checkpoint same day. Orchestrates all framework-hardening work between Phase 6 commit 4/12 (security-cryptography, landed `73d025d`) and Phase 6 commit 5/12 (security-secrets-management, deferred).
 >
+> **Progress:** Workstream 1 ✅ COMPLETED + PUSHED 2026-05-22 (commit `dc2b294`, on `origin/main`). Workstreams 2–5 still deferred to their own workflows. See §3 for per-workstream status.
+>
 > **Scope:** this is a *master plan* that sequences five workstreams. Only Workstream 1 (research-security infrastructure) has a detailed implementation plan in this repo (`docs/research-security-implementation-plan.md`). **Workstreams 2–5 are mentioned with goals + dependencies + rationale, but each MUST have its own full TGF workflow — plan → Checkpoint 1 approval → implement → four-pass review → commit — when it begins.** This plan does not substitute for per-workstream planning.
 
 ---
@@ -57,7 +59,7 @@ Sequenced in dependency order. Each subsection: Goal → Key Artifacts → Autho
 
 ### §3.1 Workstream 1 — Research-Security Infrastructure
 
-**Status:** ⏳ NEXT. Ready to start (plan approved at checkpoint 2026-05-22).
+**Status:** ✅ COMPLETED + PUSHED 2026-05-22 in a single commit (`dc2b294`, 42 files, 6615 insertions). All 12 smoke tests (T1–T12) passing. Pre-commit hook installed locally on the development machine via symlink at `.git/hooks/pre-commit`. Hooks become active on next session start via `.claude/settings.json` registration.
 
 **Goal:** operationalize M1–M19 (per `docs/RESEARCH-SECURITY.md`) as Claude Code hooks + state infrastructure + Python helpers + settings.json wiring. Make the research-stage security discipline implicit (mechanical, external, unbypassable) rather than principles-only.
 
@@ -83,17 +85,24 @@ Sequenced in dependency order. Each subsection: Goal → Key Artifacts → Autho
 - CIA *A Tradecraft Primer* (declassified 2009)
 - RFC 8446 (TLS 1.3), RFC 9364 (DNSSEC)
 
-**Dependencies:** none external. Plan already approved at checkpoint 2026-05-22. Two design docs (`RESEARCH-SECURITY.md` + `research-security-implementation-plan.md`) on disk, awaiting commit-with-hooks as single unit.
+**Dependencies:** none external. Plan approved at checkpoint 2026-05-22; build executed same day across 5 batches with check-ins at Steps 6, 9, 14, 17, 20.
 
-**What it unlocks:** Workstreams 2–5 all involve authoritative-source research that should be protected by M1–M19 from the moment of operation. Without Workstream 1 operational, subsequent research carries the same risk that produced the commit-4/12 incident.
+**What it unlocks:** Workstreams 2–5 all involve authoritative-source research that runs under M1–M19 protection starting the next session start. Hook activation deferred until next session per the bootstrap discipline (settings.json takes effect on session start).
 
-**Effort estimate:** 6–10 hours of focused build work across one long session or 2–3 shorter sessions. 20-step build sequence detailed in `docs/research-security-implementation-plan.md` §10.
+**Effort actual:** Executed in a single 2026-05-22 session-02 across 5 batches (research, plan reading, build, smoke tests, commit). 20-step sequence completed end-to-end. Build session itself ran under principles-only discipline (acceptable per the bootstrap problem; mitigated by intensive prior design review and narrow Anthropic-only research scope).
 
-**Workflow note:** plan exists; Checkpoint 1 cleared 2026-05-22; ready for Stage 4 (Implement). Stages 5 (Review) + 6 (Commit) follow normally. NOTE: this workstream's build IS the framework that will protect subsequent workstreams — it operates under principles-only discipline during construction (acceptable per the bootstrap problem; the alternative is infinite regress).
+**In-build deviations from plan (all documented):**
+- Lazy baselines (plan §8.2 option b) supersedes pre-warm (option a) — captured in `RESEARCH-SECURITY.md` §10.3
+- `id_prefix_match` field added to source-registry to handle skill-side citation variants (CWE-79 → MITRE-CWE, OWASP-TOP10-A04 → OWASP-TOP10-2025)
+- Stop hook expanded from 1 to 3 git queries (diff HEAD + diff --cached + ls-files --others) to catch untracked control-locking files
+- pretool-context handoff in `.tgf/state/pretool-context/` (project-scoped, gitignored) rather than `$TMPDIR`
+- citation_parser regex tightened to require alphanumeric after prefix hyphen (eliminated bare-prefix false positives)
+- `.gitignore` selectively tracks framework data (registry, org-mapping, schemas) while excluding per-machine state
+- Pre-commit hook installed locally via `.git/hooks/pre-commit` symlink (Option B from script header)
 
 ### §3.2 Workstream 2 — WORKFLOW-V2 Standardization
 
-**Status:** Deferred until Workstream 1 operational. Will have its own full TGF workflow when it begins.
+**Status:** ⏳ NEXT. Workstream 1 operational as of 2026-05-22. Workstream 2 begins on next fresh session under hook protection. Will have its own full TGF workflow when it begins (plan → Checkpoint 1 → implement → review → commit).
 
 **Goal:** standardize Stage 1 (Research) / Stage 2 (Scope) / Stage 3 (Plan with Governance) against authoritative-source-backed methodology. Replace principles-only discipline with framework-citation-backed checklists.
 
@@ -245,38 +254,45 @@ If during Workstream 2, gaps in Workstream 1 surface (e.g., a hook doesn't catch
 
 ---
 
-## §5 Artifacts Already Produced
+## §5 Artifacts Produced
 
-Items already authored during the design conversation (2026-05-22 post-commit-4/12):
+Items authored during the design conversation (2026-05-22 session-01 addendum) and during the Workstream 1 build (2026-05-22 session-02). All landed in commit `dc2b294` unless noted.
 
 | Artifact | Location | Status | Notes |
 |----------|----------|--------|-------|
-| Research-security design | `docs/RESEARCH-SECURITY.md` | On disk, uncommitted | v1; 544 lines; 10 sections. Lands with Workstream 1 commit. |
-| Research-security implementation plan | `docs/research-security-implementation-plan.md` | On disk, uncommitted | v1; 756 lines; 12 sections; build sequence in §10. Lands with Workstream 1 commit. |
-| This master plan | `docs/framework-hardening-plan.md` | On disk, uncommitted | v1. Orchestration document for all five workstreams. |
-| WORKFLOW-V2 design notes | `docs/workflow-v2-design-notes.md` | On disk, uncommitted | v1 design notes for Workstream 2; captures source-tier hierarchy, per-stage methodology integration (Admiralty Code / NIST 800-37 / NIST 800-53), citation chain proposal (rule → ASVS → 800-53 → CSF), draft checklists. Starting input for Workstream 2 plan; will land when Workstream 2 commits. |
-| Four-agents design notes | `docs/four-agents-design-notes.md` | On disk, uncommitted | v1 design notes for Workstream 3; captures full personas (voice/instincts/mindset per agent), authoritative materials lists, boundary discipline (red-team), severity gradient (security-auditor), conceptual integrity framing (holistic-reviewer), activation criteria, future-proofing. Starting input for Workstream 3 plan; will land when Workstream 3 commits. |
-| Session log addendum | `.sessions/2026-05-22-session-01-phase-6-commits-2-3-4-with-correction.md` | On disk, gitignored | Updated with full design conversation summary. |
-| Memory updates | `~/.claude/projects/-home-alt313-TGF/memory/project_tgf_build_phases.md` | On disk | Pause state + M9 principle + sequencing captured. |
+| Research-security design | `docs/RESEARCH-SECURITY.md` | ✅ Committed `dc2b294` | v1.1 operational; expanded with as-built §5.1 inventory table, lazy-baseline §10.3, smoke-test status §10.5. |
+| Research-security implementation plan | `docs/research-security-implementation-plan.md` | ✅ Committed `dc2b294` | v1; preserved as historical record per plan §1. Build deviations documented in `RESEARCH-SECURITY.md` and §3.1 above. |
+| This master plan | `docs/framework-hardening-plan.md` | ✅ Committed `dc2b294` | v1 with §3.1 progress update. Orchestration document for Workstreams 2–5. |
+| WORKFLOW-V2 design notes | `docs/workflow-v2-design-notes.md` | ✅ Committed `dc2b294` | v1 design notes for Workstream 2 (starting input). Captures source-tier hierarchy, per-stage methodology integration (Admiralty Code / NIST 800-37 / NIST 800-53), citation chain proposal, draft checklists. To be refined into Workstream 2's own plan when it begins. |
+| Four-agents design notes | `docs/four-agents-design-notes.md` | ✅ Committed `dc2b294` | v1 design notes for Workstream 3 (starting input). Captures full personas, authoritative materials lists, boundary discipline, severity gradient, activation criteria. To be refined into Workstream 3's own plan when it begins. |
+| Hook implementation | `.claude/hooks/` + `.claude/git-hooks/` | ✅ Committed `dc2b294` | 5 hook entry scripts + 13 Python modules (7 M-helpers + 4 support libs + 5 hook impls + 1 git-precommit impl) + 1 git-pre-commit shell script. |
+| Bootstrap state | `.tgf/state/source-registry.json`, `.tgf/state/source-org-mapping.json`, `.tgf/state/source-schemas/` | ✅ Committed `dc2b294` | 29 sources, 5 publishers, 8 schemas. Per-machine state (hashes, baselines, research-logs, m8-approvals, hook-overrides, etc.) gitignored — populated lazily on first verified fetch. |
+| Hook registrations | `.claude/settings.json` | ✅ Committed `dc2b294` | All 5 hooks wired via `${CLAUDE_PROJECT_DIR}` placeholders. `.claude/settings.local.json` preserved per DEC-2026-05-20-010. |
+| Smoke test suite | `tests/research-security-smoke-test.sh` | ✅ Committed `dc2b294` | 12 tests (T1–T12); all green. |
+| Pre-commit hook | `.git/hooks/pre-commit` symlink | Local-machine only (not committed) | Symlinks to `.claude/git-hooks/pre-commit-research-security.sh`. Per-clone install required for other machines. |
+| Session log session-01 | `.sessions/2026-05-22-session-01-phase-6-commits-2-3-4-with-correction.md` | On disk, gitignored | Captures design conversation + Phase 6 commits 2/12–4/12 + the correction. |
+| Session log session-02 | `.sessions/2026-05-22-session-02-workstream-1-research-security.md` | On disk, gitignored | Captures the 20-step Workstream 1 build session in detail. |
+| Memory updates | `~/.claude/projects/-home-alt313-TGF/memory/project_tgf_build_phases.md` | Updated post-Workstream 1 | Workstream 1 done; Workstream 2 next; M9 principle and bootstrap discipline persisted. |
 
 ---
 
-## §6 Open Decisions
+## §6 Open Decisions (resolved during Workstream 1 build, kept for history)
 
-Items to resolve at fresh-session restart:
+1. **Where this master plan commits** — RESOLVED: option (b) — folded into Workstream 1's combined commit (`dc2b294`) per user decision at Batch 5 check-in.
 
-1. **Where this master plan commits**:
-   - (a) Standalone commit before Workstream 1 begins (clean history)
-   - (b) Folded into Workstream 1's combined commit (single unit; this plan + RESEARCH-SECURITY.md + implementation plan + hooks all together)
-   - (c) Standalone now but updated post-build with cross-references to the landed Workstream 1 artifacts
+2. **Whether to push the 3 unpushed commits** (`c2e4f8c`, `9940470`, `73d025d`) before starting Workstream 1 — RESOLVED: held during build; pushed alongside Workstream 1 together (all 4 commits now on `origin/main` as of 2026-05-22).
 
-   *Recommendation: (a) — commit this master plan first to give fresh session a clean starting reference; Workstream 1 then proceeds and lands its own combined commit.*
+3. **Build session length** for Workstream 1 — RESOLVED: single session-02 with 5 batches and user check-ins at Steps 6, 9, 14, 17, 20. Natural break points worked as planned.
 
-2. **Whether to push the 3 unpushed commits** (`c2e4f8c`, `9940470`, `73d025d`) before starting Workstream 1, or hold and push everything together later. *Recommendation: hold for now; push when Workstream 1 lands, alongside this master plan + the design docs + hooks.*
+4. **Smoke-test rigor** — RESOLVED: 12 tests as designed; all 12 passing first run.
 
-3. **Build session length** for Workstream 1 — long single session (6–10 hours) vs split into 2–3 shorter sessions. The 20-step build sequence has natural break points at steps 6, 9, 14, 17.
+**New open decisions surfaced during Workstream 1, deferred to relevant workstream:**
 
-4. **Smoke-test rigor** — the 12 tests (T1–T12) in `research-security-implementation-plan.md` §9. Confirmed at checkpoint: deliberately try to slip past each M individually.
+5. **Whether `pre-commit-research-security.sh` becomes `pre-commit` in `.claude/git-hooks/` with a committed `core.hooksPath` setting** so fresh clones inherit the hook automatically — currently a per-clone install via `.git/hooks/pre-commit` symlink. Defer to Workstream 5 or operational maturation.
+
+6. **Whether parameter-history.json M17 wiring should activate during Workstream 2** when Stage 3 (Plan with Governance) work begins — Stage-3 is where parameter values get tracked across fetches, but the hooks don't yet write to parameter-history.json (lazy initialization). Decide during Workstream 2's plan-drafting.
+
+7. **Whether to extend research-security to Read tool** — currently hooks fire on WebFetch only. Read of local files isn't research per se, but if the AI reads cached content fetched earlier, no hooks fire. Mostly mitigated because PreToolUse-Write blocks citations of any source lacking a research-log entry. Revisit if a real evasion appears.
 
 ---
 
