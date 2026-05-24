@@ -2,6 +2,8 @@
 
 The implementation contract for The Governance Framework's six-stage workflow. Phases 4–12 (skills, meta-skills, hooks, stack baselines) build against this specification.
 
+> **v1.1 (2026-05-23):** Authority-backed Stages 1/2/3. Stage 1 grounded in TGF source-tier hierarchy, engineering FMEA-style assumption-checking, and NIST SP 800-39. Stage 2 in NIST RMF Categorize, NIST SP 800-160, and Microsoft SDL. Stage 3 in NIST SP 800-53, NIST CSF 2.0, CIS Controls v8.1, and ISO/IEC 27002 (via the CSF Informative References crosswalk). Source-tier hierarchy formalized. Citation chain target defined as rule → ASVS → CSF 2.0 Subcategory → 800-53 (via CSF IR). Workstream 2 of the framework-hardening sequence.
+
 ---
 
 ## §1 Purpose and Scope
@@ -89,6 +91,18 @@ These three mechanisms are independent — they fire on different signals.
 
 The conceptual separation matters: hooks enforce invariants the workflow stage doesn't know about; skills enforce rules the workflow stage applies; subagents do focused work the orchestrator delegates.
 
+### Source-tier hierarchy
+
+Every cited authoritative source falls into one of three tiers. Tier governs citation discipline across Stage 1 research and Stage 3 plan-with-governance work.
+
+**Tier 1 — Must live-fetch every use.** Living documents whose content can change between fetches. OWASP Cheat Sheets, OWASP ASVS chapters, OWASP Top 10 (year-specific), vendor and framework documentation, CISA advisories. Citation discipline: §2 Sources entry in the citing skill file MUST include a "Date Verified" reflecting the most recent fetch. Re-verification cadence is quarterly per `CLAUDE.md` §14.
+
+**Tier 2 — Publication-level citation acceptable.** Stable formal publications whose content is stable across years. NIST Special Publications (with revision number), NIST FIPS standards, IETF RFCs (with RFC number), ISO/IEC standards (with edition year), W3C Recommendations (with publication date). Citation discipline: cite at `{document-id} (Revision N, Year)` granularity. Live fetch on first use to confirm document existence and current revision; subsequent citations of the same source ID skip re-fetch.
+
+**Tier 3 — Comparative / design-rationale only.** Books, papers, blog posts, conference talks, vendor blog content. Citation discipline: may appear in design rationale within plan documents and architecture docs. Does NOT appear in §2 Sources tables of skill files (per `DECISIONS.md` `DEC-2026-05-17-004` Clause 6).
+
+The research-security hook pipeline (per `docs/RESEARCH-SECURITY.md`) enforces Tier 1 / Tier 2 discipline at the §2-Sources traceability level. Any citation in a skill file must trace to a verified research-log entry for its source ID; the `PreToolUse-Write` hook blocks writes that cite un-verified sources.
+
 ---
 
 ## §3 Per-Stage Specifications
@@ -132,6 +146,26 @@ For planning work: review `PROJECT-CONTEXT.md` for current state, review `DOMAIN
 - *Missing PROJECT-CONTEXT for non-trivial work.* Stage halts and escalates to user; recommend `/tgf:project-context` first.
 - *Stale session logs misleading.* Memory discipline (CLAUDE.md "Before recommending from memory" section) requires verification of cited facts against current code; flag stale claims rather than treating as authoritative.
 
+**Authoritative methodology.** Three disciplines ground Stage 1 research.
+
+1. **TGF source-tier hierarchy** (per §2 Source-tier hierarchy above). The Tier 1 / 2 / 3 framework is the operative source-reliability discipline at TGF's scale. External grading frameworks would be uniformly Tier-1 for OWASP / NIST / MITRE / IETF and add no discriminative value here. The tier hierarchy already separates living-documents (Tier 1) from stable-publications (Tier 2) from design-rationale-only (Tier 3).
+2. **Engineering FMEA-style assumption-checking.** Stage 1 explicitly identifies what the research assumes that, if wrong, invalidates the conclusion. Standard engineering review discipline applied to research output rather than to system designs. Cross-source corroboration (M5) and source-organization independence verification (M12) per `docs/RESEARCH-SECURITY.md` are the operational checks. AI memory alignment (M9) is flagged honestly when prior knowledge appears to confirm a fetched source; memory and source share common upstream and don't count as independent corroboration.
+3. **NIST SP 800-39 — *Managing Information Security Risk: Organization, Mission, and Information System View*.** Threat-intelligence sourcing discipline that distinguishes strategic (long-horizon trends), operational (campaign-level), and tactical (technique-level) intelligence levels. Stage 1 research is implicitly tactical when investigating a specific change, operational when investigating broader patterns, and strategic when investigating framework-level questions.
+
+**Stage 1 checklist** (per skill commit or change):
+
+- [ ] All sources to cite identified at planning time. No "by reference" admissions at write time.
+- [ ] Every Tier 1 source live-fetched this session (timestamp in research-log).
+- [ ] Tier 2 sources confirmed via canonical index (NIST CSRC publication index, IETF datatracker, OWASP repo tags). Citation existence verified per M10.
+- [ ] Tier 3 sources flagged as design-rationale-only. Do not appear in §2 Sources tables of skill files.
+- [ ] Research log written for every fetch (mechanical via `PostToolUse-WebFetch`).
+- [ ] Each fetch passed M3 / M4 / M11 / M13 / M14 / M18 / M19 checks, or has `flagged` status with explicit human review recorded.
+- [ ] Citation-existence verified for every cited document ID (M10).
+- [ ] Adversarial-source threat considered for any Tier 1 source in a high-tampering-risk location.
+- [ ] Where M5 corroboration is required, at least one independent source per claim. M12 independence verified via `source-org-mapping.json`.
+- [ ] AI memory alignment flagged honestly per M9.
+- [ ] Any Tier 3 source used is explicitly justified.
+
 ### Stage 2 — Scope
 
 **Purpose:** define what's changing and what isn't. Bound the work so review can evaluate against a clear contract.
@@ -162,6 +196,26 @@ For planning work: identify questions being answered, decisions needing to be ma
 - *Scope too large for single workflow invocation.* Surface for decomposition recommendation; user may split into multiple workflow invocations or accept the size with Large tier handling.
 - *Trust boundary identification incomplete.* Stage 5 Security Auditor and Red Team will surface gaps; flag for revisiting at that point rather than blocking Stage 2.
 
+**Authoritative methodology.** Four disciplines ground Stage 2 scope work.
+
+1. **NIST SP 800-37 Rev 2 — Risk Management Framework, Categorize step.** Formal scope definition. Identify the system, the information types it touches (PII / PHI / payment / secrets / public), impact levels for confidentiality / integrity / availability (low / moderate / high), and the system boundary. For TGF skill commits, "system" maps to the change context: the files being modified plus their immediate dependencies.
+2. **NIST SP 800-160 Vol 1 Rev 1 — *Engineering Trustworthy Secure Systems*.** System definition and scoping. Identify stakeholders, system functions, external interfaces (which mark trust boundaries), and constraints (regulatory, performance, deployment).
+3. **Microsoft Security Development Lifecycle — threat-modeling scope.** Identify trust boundaries, assets crossing them, and actors on each side. Cited at SDL guidance level per `DECISIONS.md` `DEC-2026-05-17-004` Clause 6 (Tier 3 design-rationale reference).
+4. **STRIDE-per-element**, applied only to trust-boundary-crossing changes. For each element (data flow, process, data store, external entity, trust boundary), consider Spoofing / Tampering / Repudiation / Information disclosure / Denial of service / Elevation of privilege. Integrating STRIDE at scope rather than after-the-fact catches whole categories of issues earlier without the overhead of a separate threat-modeling phase.
+
+**Stage 2 checklist** (per skill commit or change):
+
+- [ ] Files being modified explicitly listed.
+- [ ] Files explicitly out of scope listed.
+- [ ] Change tier identified per `CLAUDE.md` §3 rubric.
+- [ ] Trust boundaries affected explicitly identified (input boundary, output boundary, persistence boundary, network boundary).
+- [ ] Information types touched identified (PII / PHI / payment / secrets / public).
+- [ ] STRIDE-per-element review for trust-boundary-crossing components.
+- [ ] ROADMAP milestone this advances explicitly identified.
+- [ ] Dependencies (other skills, framework artifacts) explicitly identified.
+- [ ] Change-tier scaling for Stage 5 review determined.
+- [ ] Impact-level rationale recorded (low / moderate / high for C/I/A). Informs Stage 5 review depth and waiver bar.
+
 ### Stage 3 — Plan with Governance
 
 **Purpose:** evaluate every applicable skill against the scoped change and produce the governance plan that Stage 4 implements against.
@@ -189,6 +243,47 @@ Apply path-based pre-filtering (per `ARCHITECTURE.md` §19) to identify candidat
 - *Skill rules conflict.* Orchestrator surfaces the conflict to the user with both rules' citations and plain-language impacts; user resolves.
 - *No applicable skills (rare).* Indicates either scope is too narrow (e.g., comment-only change should be Trivial tier) or skill catalog has gaps. CODE-QUALITY almost always applies.
 - *User disagrees with plan.* Revise plan; do not silently implement against the original. Plan revision is normal; pretending consensus is not.
+
+**Authoritative methodology.** Four frameworks ground Stage 3, with NIST SP 800-53 as the structural backbone.
+
+1. **NIST SP 800-53 Rev 5.2.0 — *Security and Privacy Controls for Information Systems and Organizations*** (current as of August 2025). ~1,000 controls across 21 families: Access Control (AC), Awareness and Training (AT), Audit and Accountability (AU), Assessment Authorization and Monitoring (CA), Configuration Management (CM), Contingency Planning (CP), Identification and Authentication (IA), Incident Response (IR), Maintenance (MA), Media Protection (MP), Physical and Environmental Protection (PE), Planning (PL), Program Management (PM), Personnel Security (PS), PII Processing and Transparency (PT), Risk Assessment (RA), System and Services Acquisition (SA), System and Communications Protection (SC), System and Information Integrity (SI), Supply Chain Risk Management (SR), and the 21st family added in Rev 5.2.0. Every rule in every Phase 6+ skill cross-maps to one or more 800-53 control IDs as part of its citation chain.
+2. **NIST CSF 2.0 — Cybersecurity Framework** (2024). Six Functions: Govern (GV, added in 2.0), Identify (ID), Protect (PR), Detect (DE), Respond (RS), Recover (RC). Cross-cutting per-skill mapping: each skill maps to at least one CSF Subcategory. A skill with no Detect-function representation across its rules is a coverage gap worth flagging.
+3. **CIS Controls v8.1 — top-18 prioritized overlay.** Useful as a "minimum viable" filter on which 800-53 controls actually matter at solo-developer / small-org scale. Implementation Group 1 (IG1, essential cyber hygiene) is the most actionable subset.
+4. **ISO/IEC 27002:2022 — international code of practice for information security controls.** Cited via the NIST CSF 2.0 Informative References crosswalk (per `DECISIONS.md` `DEC-2026-05-17-004` Clause 5; ISO/IEC 27002 itself is paywalled). The CSF Informative References map every CSF Subcategory to ISO 27001 and ISO 27002 controls. International alignment matters for adopters with international compliance scope.
+
+**Citation chain target.** For every rule locked in at Stage 3:
+
+```
+Rule (in the skill file)
+  → OWASP ASVS chapter / Top 10 category / CWE ID (existing chain)
+  → NIST CSF 2.0 Subcategory (per-skill cross-cutting mapping)
+  → NIST SP 800-53 control ID (via the NIST CSF 2.0 Informative References crosswalk)
+  → ISO/IEC 27002:2022 control (also via CSF Informative References; optional, for international alignment)
+  → CIS Controls v8.1 Safeguard (prioritized overlay; optional)
+```
+
+The translation from CSF Subcategory through to 800-53 / ISO 27002 / CIS uses the verified `NIST-CSF-2-0-IR` (Informative References) crosswalk, which explicitly publishes those mappings. The translation from ASVS to CSF Subcategory is TGF-synthesized where the mapping is conceptually clear, since OWASP does not publish a canonical ASVS↔CSF crosswalk; honestly flagged in rule citations as `TGF-SYNTHESIS — grounded in [source]` per existing precedent in CONTINUITY and DEBUGGING skills.
+
+This citation chain is the TARGET for new skill commits going forward. Existing Phase 4–6 skills are not retroactively re-mapped by this WORKFLOW.md amendment; that work belongs to the framework-audit and remediation workstreams.
+
+**Where M5 / M8 / M9 / M12 fire at Stage 3** (per `docs/RESEARCH-SECURITY.md` §7.3):
+
+- **M5 (Multi-source corroboration).** Before locking a control with specific parameter values (key lengths, iteration counts, timeout thresholds), verify at least two independent authoritative sources support the parameter. Recorded in the research log and cross-referenced in the Stage 3 plan output.
+- **M12 (Independence verification).** The corroborating sources must come from different publishing organizations per `.tgf/state/source-org-mapping.json`. Two NIST documents don't satisfy M5; NIST plus OWASP plus ISO (via crosswalk) does.
+- **M8 (Human verification).** At control-lock time, the framework surfaces a verification summary. The commit cannot proceed without an explicit approval recorded in `.tgf/state/m8-approvals/`. The Stop hook and the git pre-commit hook enforce this mechanically.
+- **M9 (Memory-alignment honesty).** If AI prior knowledge appears to confirm the cited content, that counts as one source of evidence (the fetched source) rather than two. M9 is recorded in M8 verification summaries; it never substitutes for M5 corroboration.
+
+**Stage 3 checklist** (for each rule or control locked in):
+
+- [ ] Primary citation chain complete: rule → existing standard → NIST CSF 2.0 Subcategory → NIST SP 800-53 control via CSF IR.
+- [ ] NIST CSF 2.0 Informative References consulted for 800-53 / ISO 27002 / CIS extensions where applicable.
+- [ ] M5 multi-source corroboration: at least two independent sources from the research log.
+- [ ] M12 independence verified: corroborating sources from different publishing organizations.
+- [ ] M9 memory-alignment flagged honestly: AI prior knowledge does NOT count as independent corroboration.
+- [ ] M18 exception clauses scanned: any "X is required except when..." patterns explicitly reviewed.
+- [ ] M8 human approval recorded for control-locking parameter values.
+- [ ] Existing-pattern check: does this rule align with how other skills handle similar concerns?
+- [ ] Stage 5 Phase 2 (Security Audit) preview: would the security-auditor agent be likely to flag this?
 
 ### Stage 4 — Implement
 
@@ -221,6 +316,8 @@ For planning work: produce planning artifacts; document decisions in `DECISIONS.
 - *Plan turned out to require revision.* Loop back to Stage 3 with the implementation finding that surfaced the planning gap. Do not silently deviate.
 - *AI-generated code looks plausible but unverified.* Mark `ai_generated_portions` accurately so Stage 5 Verifier dispatches; do not skip the flag because "the code looks right."
 
+**Methodology cross-reference.** Stage 3's citation chain travels with the implementation. Each cited rule's full chain (ASVS → CSF Subcategory → 800-53 via CSF IR → optionally ISO 27002 / CIS) is preserved in the skill's §2 Sources table and at rule-level citations in `rules.md`. Implementation does not introduce new methodology; it executes against the Stage 3 plan.
+
 ### Stage 5 — Four-Pass Review
 
 **Purpose:** verify what was built against what was planned, what is good craftsmanship, what is secure, what is adversarially robust, and what integrates with the project's broader context.
@@ -249,6 +346,11 @@ Dispatch review subagents per tier (per §5 tier scaling table). Each subagent r
 - *Blocking findings (Critical/High that the user has not fixed or waived).* Loop back to Stage 4 with `blocking_findings` per §2 handoff. Stage 6 does not run until all blocking findings are resolved. On Stage 5 re-entry after rework, the orchestrator dispatches a *reduced* subagent set rather than full re-dispatch: the subagents that surfaced the original findings re-run on the changed regions, plus Verifier if the fix includes AI-generated code. Full re-dispatch is reserved for cases where the fix touched files outside the original review scope (broader changes warrant broader review).
 - *Non-blocking findings (Medium/Low).* User decides fix or waive; either way, the finding is logged before Stage 6 commits.
 - *Verifier dispatched but no AI-generated portions were actually flagged.* Indicates `ImplementerOutput.ai_generated_portions` was incomplete in Stage 4. Loop back to Stage 4 to re-flag rather than skipping Verifier — the empirical verification matters.
+
+**Methodology cross-references.**
+
+- **Security Auditor (Phase 2)** applies the NIST 800-53 + CSF 2.0 Subcategory mappings produced at Stage 3 as part of its review. Where a rule's chain is incomplete (e.g., missing CSF Subcategory mapping), the Security Auditor flags it.
+- **Holistic Reviewer (Phase 4)** verifies the Stage 1 research-log → §2 Sources traceability and the Stage 3 citation chain completeness. Missing TGF-synthesis annotations or unjustified Tier 3 source usage surface as Holistic findings.
 
 ### Stage 6 — Commit
 
@@ -908,3 +1010,26 @@ Orchestrator aggregates: 14 findings (3 Critical, 4 High, 7 Medium); deduplicati
 ---
 
 *Phase 3 complete with this commit (2 of 2 per Checkpoint 1 Decision E). Phases 4–12 build against the specifications in §3–§8.*
+
+---
+
+## §10 Methodology Cross-Reference
+
+Single-table summary of which authoritative methodology grounds which workflow stage, with the corresponding source IDs in `.tgf/state/source-registry.json` for traceability.
+
+| Stage | Authoritative methodology | Source IDs |
+|-------|---------------------------|------------|
+| Stage 1 (Research) | TGF source-tier hierarchy (§2 above); engineering FMEA-style assumption-checking; NIST SP 800-39 intelligence-level distinction | `NIST-SP-800-39` |
+| Stage 2 (Scope) | NIST SP 800-37 Rev 2 Categorize step; NIST SP 800-160 Vol 1 Rev 1 system scoping; Microsoft SDL threat-modeling scope; STRIDE-per-element at trust boundaries | `NIST-SP-800-37`, `NIST-SP-800-160-V1`, `MS-SDL` |
+| Stage 3 (Plan with Governance) | NIST SP 800-53 Rev 5.2.0 (backbone); NIST CSF 2.0 (cross-cutting); CIS Controls v8.1 (prioritized overlay); ISO/IEC 27002:2022 (international, via the CSF Informative References crosswalk) | `NIST-SP-800-53`, `NIST-CSF-2-0`, `NIST-CSF-2-0-IR`, `CIS-CONTROLS-V8-1` |
+| Stage 4 (Implement) | No new methodology; the citation chain from Stage 3 travels with the implementation | — |
+| Stage 5 (Four-Pass Review) | Subagent personas reference domain-appropriate authoritative materials (see `docs/four-agents-design-notes.md`) | — |
+| Stage 6 (Commit) | No new methodology; commit and log discipline per `CLAUDE.md` §11 + §13 | — |
+
+**Source-org independence** (M12 per `docs/RESEARCH-SECURITY.md` §4.3) for the WORKFLOW-V2 methodology backbone:
+
+- NIST sources cluster as a single publishing organization. Two NIST documents do not satisfy M5 multi-source corroboration on their own.
+- ISO/IEC 27002 (via the CSF IR crosswalk) and CIS Controls bring different publishing organizations into the chain (ISO and CIS respectively), enabling M5 / M12 independence when corroborating control-parameter values.
+- Microsoft SDL is a vendor source (Tier 3, design-rationale only). Not cited in skill §2 Sources tables.
+
+**On the OWASP ASVS → 800-53 bridge.** OWASP publishes ASVS-to-NIST mappings only at the NIST SP 800-63B (Authentication) level in the ASVS repo's `5.0/mappings/` folder, not at the broader NIST SP 800-53 control catalog level. The TGF citation chain bridges ASVS through CSF 2.0 Subcategories (TGF-synthesized mapping per rule) and then through to 800-53 / ISO 27002 / CIS via the NIST CSF Informative References crosswalk, which IS canonical. Direct ASVS → 800-53 mappings outside the IAM/authentication domain are TGF synthesis honestly flagged at rule-level.
