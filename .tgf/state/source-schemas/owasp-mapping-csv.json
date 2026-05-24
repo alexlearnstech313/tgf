@@ -1,0 +1,11 @@
+{
+  "name": "owasp-mapping-csv",
+  "version": 1,
+  "_note": "Schema for OWASP ASVS crosswalk documents in the ASVS repo's 5.0/mappings/ folder. Files may be CSV, markdown table, or YAML depending on the specific mapping. Identity strings check for ASVS section/control language; tightening per file happens via lazy-baseline.",
+  "checks": {
+    "min_size_bytes": 1500,
+    "required_strings": [
+      "ASVS"
+    ]
+  }
+}

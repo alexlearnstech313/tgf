@@ -1,0 +1,11 @@
+{
+  "name": "nist-csf-ir",
+  "version": 1,
+  "_note": "Permissive schema for the NIST CSF 2.0 Informative References crosswalk (OLIR / CPRT tooling). Dynamic content — the tool serves different views depending on filter parameters. Identity strings are conservative; first fetches will refine.",
+  "checks": {
+    "min_size_bytes": 2000,
+    "required_strings": [
+      "Informative Reference"
+    ]
+  }
+}

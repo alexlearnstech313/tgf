@@ -507,6 +507,263 @@
         "skills/security-error-handling",
         "skills/security-cryptography"
       ]
+    },
+    "NIST-SP-800-37": {
+      "tier": 2,
+      "type": "nist-sp",
+      "publisher": "NIST",
+      "jurisdiction": "US-federal",
+      "primary_url": "https://csrc.nist.gov/pubs/sp/800/37/r2/final",
+      "allow_url_patterns": [
+        "https://csrc.nist.gov/pubs/sp/800/37/*",
+        "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-37*.pdf"
+      ],
+      "expected_schema": "nist-sp",
+      "pinned": false,
+      "last_verified": null,
+      "note": "Registered 2026-05-23 for Workstream 2 (WORKFLOW-V2). RMF Rev 2 — Risk Management Framework. Grounds Stage 2 (Scope) Categorize step methodology in WORKFLOW-V2. Pending first verified fetch under hooks.",
+      "cited_in": [
+        "docs/workstream-2-plan.md"
+      ]
+    },
+    "NIST-SP-800-53": {
+      "tier": 2,
+      "type": "nist-sp",
+      "publisher": "NIST",
+      "jurisdiction": "US-federal",
+      "primary_url": "https://csrc.nist.gov/pubs/sp/800/53/r5/upd1/final",
+      "allow_url_patterns": [
+        "https://csrc.nist.gov/pubs/sp/800/53/*",
+        "https://csrc.nist.gov/projects/cprt/catalog*",
+        "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53*.pdf"
+      ],
+      "expected_schema": "nist-sp",
+      "pinned": false,
+      "last_verified": null,
+      "note": "Registered 2026-05-23 for Workstream 2 (WORKFLOW-V2). Rev 5.1.1 — Security and Privacy Controls Catalog. Backbone for Stage 3 (Plan with Governance) citation chain. Full PDF is ~500 pages; targeted fetches via CSRC control-family browser preferred over whole-document pulls. Pending first verified fetch under hooks.",
+      "cited_in": [
+        "docs/workstream-2-plan.md"
+      ]
+    },
+    "NIST-SP-800-160-V1": {
+      "tier": 2,
+      "type": "nist-sp",
+      "publisher": "NIST",
+      "jurisdiction": "US-federal",
+      "primary_url": "https://csrc.nist.gov/pubs/sp/800/160/v1/r1/final",
+      "allow_url_patterns": [
+        "https://csrc.nist.gov/pubs/sp/800/160/*",
+        "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-160*.pdf"
+      ],
+      "expected_schema": "nist-sp",
+      "pinned": false,
+      "last_verified": null,
+      "note": "Registered 2026-05-23 for Workstream 2 (WORKFLOW-V2). Vol 1 Rev 1 — Systems Security Engineering. Grounds Stage 2 (Scope) system-definition methodology. Pending first verified fetch under hooks.",
+      "cited_in": [
+        "docs/workstream-2-plan.md"
+      ]
+    },
+    "NIST-SP-800-39": {
+      "tier": 2,
+      "type": "nist-sp",
+      "publisher": "NIST",
+      "jurisdiction": "US-federal",
+      "primary_url": "https://csrc.nist.gov/pubs/sp/800/39/final",
+      "allow_url_patterns": [
+        "https://csrc.nist.gov/pubs/sp/800/39/*",
+        "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-39*.pdf"
+      ],
+      "expected_schema": "nist-sp",
+      "pinned": false,
+      "last_verified": null,
+      "note": "Registered 2026-05-23 for Workstream 2 (WORKFLOW-V2). Managing Information Security Risk — Organization, Mission, and Information System View. Grounds Stage 1 (Research) intelligence-level distinction (strategic / operational / tactical). Pending first verified fetch under hooks.",
+      "cited_in": [
+        "docs/workstream-2-plan.md"
+      ]
+    },
+    "NIST-CSF-2-0": {
+      "tier": 2,
+      "type": "nist-csf",
+      "publisher": "NIST",
+      "jurisdiction": "US-federal",
+      "primary_url": "https://www.nist.gov/cyberframework",
+      "allow_url_patterns": [
+        "https://www.nist.gov/cyberframework*",
+        "https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.29*.pdf"
+      ],
+      "expected_schema": "nist-csf",
+      "pinned": false,
+      "last_verified": null,
+      "id_prefix_match": [
+        "CSF-",
+        "NIST-CSF-"
+      ],
+      "note": "Registered 2026-05-23 for Workstream 2 (WORKFLOW-V2). CSF 2.0 (2024 — added Govern function alongside Identify/Protect/Detect/Respond/Recover). Cross-cutting check at Stage 3. Pending first verified fetch under hooks.",
+      "cited_in": [
+        "docs/workstream-2-plan.md"
+      ]
+    },
+    "NIST-CSF-2-0-IR": {
+      "tier": 1,
+      "type": "nist-csf-ir",
+      "publisher": "NIST",
+      "jurisdiction": "US-federal",
+      "primary_url": "https://www.nist.gov/informative-references",
+      "allow_url_patterns": [
+        "https://www.nist.gov/informative-references*",
+        "https://csrc.nist.gov/projects/olir*",
+        "https://csrc.nist.gov/projects/cprt*"
+      ],
+      "expected_schema": "nist-csf-ir",
+      "pinned": false,
+      "last_verified": null,
+      "note": "Registered 2026-05-23 for Workstream 2 (WORKFLOW-V2). CSF 2.0 Informative References crosswalk — bridges CSF Subcategories to NIST 800-53 / ISO 27001 / ISO 27002 / CIS Controls / COBIT. Tier 1 because the OLIR tool is dynamic content (filters + versions change views). The bridge that lets DEC-2026-05-17-004 Clause 5 (paywalled-source) citation discipline work for ISO references. Pending first verified fetch under hooks.",
+      "cited_in": [
+        "docs/workstream-2-plan.md"
+      ]
+    },
+    "OWASP-ASVS-MAPPING-800-53": {
+      "tier": 1,
+      "type": "owasp-mapping-csv",
+      "publisher": "OWASP",
+      "jurisdiction": "international",
+      "primary_url": "https://github.com/OWASP/ASVS/tree/master/5.0/mappings",
+      "allow_url_patterns": [
+        "https://github.com/OWASP/ASVS/tree/master/5.0/mappings*",
+        "https://github.com/OWASP/ASVS/blob/master/5.0/mappings/*",
+        "https://raw.githubusercontent.com/OWASP/ASVS/master/5.0/mappings/*"
+      ],
+      "expected_schema": "owasp-mapping-csv",
+      "pinned": false,
+      "last_verified": null,
+      "note": "Registered 2026-05-23 for Workstream 2 (WORKFLOW-V2). The linchpin for the rule → ASVS → NIST 800-53 citation chain. Mappings folder contains crosswalks between ASVS controls and NIST/CWE/other standards. Claude does not invent ASVS↔800-53 mappings (M9 problem); this document is the canonical bridge. Pending first verified fetch under hooks; exact file names within the folder confirmed at fetch time.",
+      "cited_in": [
+        "docs/workstream-2-plan.md"
+      ]
+    },
+    "CIS-CONTROLS-V8-1": {
+      "tier": 1,
+      "type": "cis-controls",
+      "publisher": "CIS",
+      "jurisdiction": "international",
+      "primary_url": "https://www.cisecurity.org/controls/v8-1",
+      "allow_url_patterns": [
+        "https://www.cisecurity.org/controls/v8-1*",
+        "https://www.cisecurity.org/controls/cis-controls-list*",
+        "https://www.cisecurity.org/controls*",
+        "https://learn.cisecurity.org/cis-controls-download*"
+      ],
+      "expected_schema": "cis-controls",
+      "pinned": false,
+      "last_verified": null,
+      "note": "Registered 2026-05-23 for Workstream 2 (WORKFLOW-V2). CIS Controls v8.1 — top-18 prioritized overlay grouped by Implementation Group (IG1/IG2/IG3). Useful as a 'minimum viable' filter on which 800-53 controls actually matter at solo-developer / small-org scale. Pending first verified fetch under hooks.",
+      "cited_in": [
+        "docs/workstream-2-plan.md"
+      ]
+    },
+    "MITRE-ATTACK-ENTERPRISE": {
+      "tier": 1,
+      "type": "mitre-attack",
+      "publisher": "MITRE",
+      "jurisdiction": "US-federal-contractor",
+      "primary_url": "https://attack.mitre.org/matrices/enterprise/",
+      "allow_url_patterns": [
+        "https://attack.mitre.org/matrices/enterprise*",
+        "https://attack.mitre.org/techniques/enterprise*",
+        "https://attack.mitre.org/techniques/T*",
+        "https://attack.mitre.org/groups/G*",
+        "https://attack.mitre.org/versions/*"
+      ],
+      "expected_schema": "mitre-attack",
+      "pinned": false,
+      "last_verified": null,
+      "note": "Registered 2026-05-23 for Workstream 2 (WORKFLOW-V2). ATT&CK Enterprise matrix — referenced in WORKFLOW-V2 §3 Stage 3 adversarial cross-check. Mobile/ICS variants register when WS3 Red Team agent's persona-build needs them (per workstream-2-plan.md §11 Decision M). Pending first verified fetch under hooks.",
+      "cited_in": [
+        "docs/workstream-2-plan.md"
+      ]
+    },
+    "MITRE-ATLAS": {
+      "tier": 1,
+      "type": "mitre-atlas",
+      "publisher": "MITRE",
+      "jurisdiction": "US-federal-contractor",
+      "primary_url": "https://atlas.mitre.org/",
+      "allow_url_patterns": [
+        "https://atlas.mitre.org/",
+        "https://atlas.mitre.org/techniques/*",
+        "https://atlas.mitre.org/matrices/*",
+        "https://atlas.mitre.org/studies/*",
+        "https://atlas.mitre.org/pdf-files/*"
+      ],
+      "expected_schema": "mitre-atlas",
+      "pinned": false,
+      "last_verified": null,
+      "id_prefix_match": [
+        "AML.",
+        "ATLAS-AML"
+      ],
+      "note": "Registered 2026-05-23 for Workstream 2 (WORKFLOW-V2). ATLAS — Adversarial Threat Landscape for AI Systems. Formalizes citations that were previously implicit in TGF's adversarial-AI design (DEC-2026-05-17-004 Clause 3, RESEARCH-SECURITY.md). Pending first verified fetch under hooks.",
+      "cited_in": [
+        "docs/workstream-2-plan.md"
+      ]
+    },
+    "MS-SDL": {
+      "tier": 3,
+      "type": "vendor-doc",
+      "publisher": "Microsoft",
+      "jurisdiction": "vendor",
+      "primary_url": "https://www.microsoft.com/en-us/securityengineering/sdl/",
+      "allow_url_patterns": [
+        "https://www.microsoft.com/en-us/securityengineering/sdl*",
+        "https://learn.microsoft.com/en-us/security/engineering/sdl*"
+      ],
+      "expected_schema": "vendor-doc",
+      "pinned": false,
+      "last_verified": null,
+      "note": "Registered 2026-05-23 for Workstream 2 (WORKFLOW-V2). Microsoft Security Development Lifecycle — threat-modeling scope reference at Stage 2. Tier 3 (design-rationale only) per workstream-2-plan.md §4.1. Cited in WORKFLOW-V2 §3 Stage 2 methodology cross-reference table but NOT in §2 Sources tables of any skill file (DEC-2026-05-17-004 Clause 6). Pending first verified fetch under hooks.",
+      "cited_in": [
+        "docs/workstream-2-plan.md"
+      ]
+    },
+    "CIA-TRADECRAFT-PRIMER": {
+      "tier": 3,
+      "type": "gov-pdf",
+      "publisher": "CIA",
+      "jurisdiction": "US-federal",
+      "primary_url": "https://www.cia.gov/static/955180a45afe3f5013772c313b16face/Tradecraft-Primer-apr09.pdf",
+      "allow_url_patterns": [
+        "https://www.cia.gov/static/*/Tradecraft-Primer*.pdf",
+        "https://www.cia.gov/library/*/Tradecraft-Primer*.pdf",
+        "https://www.cia.gov/*Tradecraft-Primer*.pdf",
+        "https://www.cia.gov/resources/csi/static/Tradecraft-Primer*.pdf"
+      ],
+      "expected_schema": "gov-pdf",
+      "pinned": false,
+      "last_verified": null,
+      "note": "Registered 2026-05-23 for Workstream 2 (WORKFLOW-V2). CIA A Tradecraft Primer (declassified 2009) — Structured Analytic Techniques (Key Assumptions Check / Quality of Information Check / Analysis of Competing Hypotheses) for Stage 1 Research. Tier 3 (design-rationale only). URL has shifted historically on cia.gov; patterns are permissive across likely path variants. If first fetch fails, search cia.gov for current location and update registry pattern rather than fall back to unofficial mirror (M11 drift risk).",
+      "cited_in": [
+        "docs/workstream-2-plan.md"
+      ]
+    },
+    "JOINT-PUB-2-22-3": {
+      "tier": 3,
+      "type": "gov-pdf",
+      "publisher": "US-DoD",
+      "jurisdiction": "US-federal",
+      "primary_url": "https://armypubs.army.mil/epubs/DR_pubs/DR_a/pdf/web/fm2_22x3.pdf",
+      "allow_url_patterns": [
+        "https://armypubs.army.mil/*fm2*22*",
+        "https://armypubs.army.mil/epubs/DR_pubs/DR_a/pdf/*fm2*",
+        "https://www.jcs.mil/Portals/*/jp2*",
+        "https://www.jcs.mil/Portals/*/Documents/Doctrine/pubs/jp2*"
+      ],
+      "expected_schema": "gov-pdf",
+      "pinned": false,
+      "last_verified": null,
+      "note": "Registered 2026-05-23 for Workstream 2 (WORKFLOW-V2). Public canonical reference for the Admiralty Code (NATO STANAG 2022 itself isn't reliably public). Patterns cover both US Army FM 2-22.3 (Human Intelligence Collector Operations) and Joint Pub 2-0 (Joint Intelligence). Tier 3 (design-rationale only). Pending first verified fetch under hooks.",
+      "cited_in": [
+        "docs/workstream-2-plan.md"
+      ]
     }
   }
 }
