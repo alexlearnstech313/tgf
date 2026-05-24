@@ -102,7 +102,7 @@ Sequenced in dependency order. Each subsection: Goal → Key Artifacts → Autho
 
 ### §3.2 Workstream 2 — WORKFLOW-V2 Standardization
 
-**Status:** ⏳ NEXT. Workstream 1 operational as of 2026-05-22. Workstream 2 begins on next fresh session under hook protection. Will have its own full TGF workflow when it begins (plan → Checkpoint 1 → implement → review → commit).
+**Status:** 🟡 IN PROGRESS as of 2026-05-23. Plan + Checkpoint 1 cleared. Steps 1-3 complete (source registry expansion, Stage 1 research fetches under hooks, WORKFLOW.md amendment). Step 4 (worked example + CLAUDE.md cross-references + closeout) pending. In-flight discoveries folded in as separate commits: M3 schema threshold recalibration for WebFetch AI-summary output, cross-project name softening across docs, IC/military source posture decision (dropped CIA-TRADECRAFT-PRIMER + JOINT-PUB-2-22-3 from registry; Stage 1 methodology reframed to ground in TGF source-tier hierarchy + engineering FMEA practice + NIST SP 800-39, removing Admiralty Code and CIA Structured Analytic Techniques references). See `docs/workstream-2-plan.md` for the active spec.
 
 **Goal:** standardize Stage 1 (Research) / Stage 2 (Scope) / Stage 3 (Plan with Governance) against authoritative-source-backed methodology. Replace principles-only discipline with framework-citation-backed checklists.
 

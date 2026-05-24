@@ -34,7 +34,9 @@ Every coding or planning prompt runs a six-stage workflow: Research → Scope �
 
 ## Status
 
-**Phase 6 of 16 next.** Phases 1–5 complete — repo scaffolding and plugin layout, expanded CLAUDE.md with deeper architecture in `docs/ARCHITECTURE.md`, the workflow specification at `docs/WORKFLOW.md`, three always-on skills (CODE-QUALITY, SECURITY-CORE, CONTINUITY) plus the `tgf-orchestrator` agent and four review subagents, and seven activity skills (DISCOVERY, PROJECT-MANAGEMENT, DESIGN, UI-CRAFT, TESTING, DEBUGGING, DISAGREEMENT). Roughly 10,800 lines of skill content shipped so far. Phase 6 (Foundation Security Skills, 11 skills) is up next — the substantial security push runs through Phases 6/7/8. Not yet ready for adoption.
+**Phase 6 in progress, paused at 4/12 for a framework-hardening detour.** Phases 1–5 complete: repo scaffolding and plugin layout, expanded CLAUDE.md with deeper architecture in `docs/ARCHITECTURE.md`, the workflow specification at `docs/WORKFLOW.md`, three always-on skills (CODE-QUALITY, SECURITY-CORE, CONTINUITY) plus the `tgf-orchestrator` agent and four review subagents, seven activity skills (DISCOVERY, PROJECT-MANAGEMENT, DESIGN, UI-CRAFT, TESTING, DEBUGGING, DISAGREEMENT). Phase 6 (Foundation Security Skills, 11 skills) started: commits 1/12 through 4/12 shipped covering input-validation, output-encoding, error-handling, and cryptography. Phase 6 then paused after commit 4/12 surfaced a structural gap in how the framework was being built; pulled forward a framework-hardening detour to close it. Workstream 1 (research-security infrastructure: M1-M19 hooks operationalized as Claude Code hooks + state + smoke tests) shipped 2026-05-22. Workstream 2 (WORKFLOW-V2 methodology grounding) in progress. Phase 6 resumes from commit 5/12 after all five hardening workstreams complete.
+
+Roughly 16,500 lines of skill content shipped, plus the framework's own research-security infrastructure from Workstream 1. Not yet ready for adoption.
 
 See [`ROADMAP.md`](./ROADMAP.md) for the full 16-phase build plan and current progress. See [`DECISIONS.md`](./DECISIONS.md) for architectural decisions with full reasoning. Full adopter docs (INSTALL, DESIGN-RATIONALE, how-it-works, glossary, FAQ) land in Phase 15.
 
@@ -47,6 +49,4 @@ MIT — see [LICENSE](./LICENSE).
 ---
 
 *Built by DynamIQ Learning LLC.*
-
-<!-- diagnostic push 2026-05-22 -->
 
