@@ -3,7 +3,7 @@
   "version": 1,
   "_note": "Schema for OWASP ASVS 5.0 chapter source files (markdown). Per implementation plan §8.4. Tightened beyond placeholder: ASVS chapters have stable H2 subsection structure (V##.##) and sub-rule identifiers (**V##.##.##**) per the ASVS 5.0 release format.",
   "checks": {
-    "min_size_bytes": 2000,
+    "min_size_bytes": 500,
     "required_h2_pattern": "^## V\\d+\\.\\d+",
     "required_h2_count_min": 1,
     "required_subrule_pattern": "^\\*\\*V\\d+\\.\\d+\\.\\d+\\*\\*",

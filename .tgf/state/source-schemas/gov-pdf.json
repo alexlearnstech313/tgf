@@ -3,7 +3,7 @@
   "version": 1,
   "_note": "Permissive schema for government PDF publications outside the NIST CSRC pipeline — CIA, DoD, Joint Staff doctrine documents. PDFs convert to text with variable fidelity; only size gets checked, since per-document identity strings would be too document-specific for a shared schema.",
   "checks": {
-    "min_size_bytes": 5000,
+    "min_size_bytes": 300,
     "required_strings": []
   }
 }

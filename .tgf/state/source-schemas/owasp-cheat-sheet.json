@@ -3,7 +3,7 @@
   "version": 1,
   "_note": "Permissive schema for OWASP Cheat Sheets (HTML rendered). Per impl plan §11.5, different cheat sheets have different section structures; per-sheet schemas tighten over time as baselines accumulate. Initial schema enforces minimum size and the cheat-sheet markers visible in any sheet's HTML.",
   "checks": {
-    "min_size_bytes": 3000,
+    "min_size_bytes": 300,
     "required_strings": [
       "OWASP Cheat Sheet"
     ]

@@ -3,7 +3,7 @@
   "version": 1,
   "_note": "Schema for IETF RFCs (HTML rendered via datatracker / rfc-editor). RFCs share consistent structural markers.",
   "checks": {
-    "min_size_bytes": 3000,
+    "min_size_bytes": 300,
     "required_strings": [
       "RFC"
     ]

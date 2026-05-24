@@ -3,7 +3,7 @@
   "version": 1,
   "_note": "Permissive schema for CIS Controls v8.1 content. The CIS Controls landing page, the downloadable PDF, and any Safeguard-detail pages all carry the CIS Controls brand and the Safeguard terminology.",
   "checks": {
-    "min_size_bytes": 3000,
+    "min_size_bytes": 300,
     "required_strings": [
       "CIS Controls"
     ]

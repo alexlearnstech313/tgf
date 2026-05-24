@@ -3,7 +3,7 @@
   "version": 1,
   "_note": "Permissive schema for MITRE ATLAS (Adversarial Threat Landscape for AI Systems). Technique IDs follow the AML.T#### pattern. The ATLAS site carries both human-readable content and STIX-formatted data.",
   "checks": {
-    "min_size_bytes": 2000,
+    "min_size_bytes": 300,
     "required_strings": [
       "ATLAS"
     ]

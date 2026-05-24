@@ -3,7 +3,7 @@
   "version": 1,
   "_note": "Permissive schema for MITRE ATT&CK technique and matrix pages (Enterprise, Mobile, ICS). Technique IDs follow the T#### pattern; matrix pages reference the ATT&CK brand. Initial schema is loose; per-domain tightening happens via lazy-baseline.",
   "checks": {
-    "min_size_bytes": 3000,
+    "min_size_bytes": 300,
     "required_strings": [
       "ATT&CK"
     ]

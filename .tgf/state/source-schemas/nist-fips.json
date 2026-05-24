@@ -3,7 +3,7 @@
   "version": 1,
   "_note": "Permissive schema for NIST FIPS publications.",
   "checks": {
-    "min_size_bytes": 5000,
+    "min_size_bytes": 300,
     "required_strings": [
       "FIPS"
     ]

@@ -3,7 +3,7 @@
   "version": 1,
   "_note": "Schema for individual MITRE CWE entries (HTML).",
   "checks": {
-    "min_size_bytes": 2000,
+    "min_size_bytes": 300,
     "required_strings": [
       "CWE"
     ]

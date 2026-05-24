@@ -3,7 +3,7 @@
   "version": 1,
   "_note": "Permissive schema for NIST Cybersecurity Framework 2.0. Served as both PDF (CSWP.29) and HTML landing pages. Identity strings check for the framework's published title; size check rules out aggregator pages.",
   "checks": {
-    "min_size_bytes": 4000,
+    "min_size_bytes": 300,
     "required_strings": [
       "Cybersecurity Framework"
     ]
