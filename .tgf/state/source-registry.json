@@ -724,46 +724,6 @@
       "cited_in": [
         "docs/workstream-2-plan.md"
       ]
-    },
-    "CIA-TRADECRAFT-PRIMER": {
-      "tier": 3,
-      "type": "gov-pdf",
-      "publisher": "CIA",
-      "jurisdiction": "US-federal",
-      "primary_url": "https://www.cia.gov/static/955180a45afe3f5013772c313b16face/Tradecraft-Primer-apr09.pdf",
-      "allow_url_patterns": [
-        "https://www.cia.gov/static/*/Tradecraft-Primer*.pdf",
-        "https://www.cia.gov/library/*/Tradecraft-Primer*.pdf",
-        "https://www.cia.gov/*Tradecraft-Primer*.pdf",
-        "https://www.cia.gov/resources/csi/static/Tradecraft-Primer*.pdf"
-      ],
-      "expected_schema": "gov-pdf",
-      "pinned": false,
-      "last_verified": null,
-      "note": "Registered 2026-05-23 for Workstream 2 (WORKFLOW-V2). CIA A Tradecraft Primer (declassified 2009) — Structured Analytic Techniques (Key Assumptions Check / Quality of Information Check / Analysis of Competing Hypotheses) for Stage 1 Research. Tier 3 (design-rationale only). URL has shifted historically on cia.gov; patterns are permissive across likely path variants. If first fetch fails, search cia.gov for current location and update registry pattern rather than fall back to unofficial mirror (M11 drift risk).",
-      "cited_in": [
-        "docs/workstream-2-plan.md"
-      ]
-    },
-    "JOINT-PUB-2-22-3": {
-      "tier": 3,
-      "type": "gov-pdf",
-      "publisher": "US-DoD",
-      "jurisdiction": "US-federal",
-      "primary_url": "https://armypubs.army.mil/epubs/DR_pubs/DR_a/pdf/web/fm2_22x3.pdf",
-      "allow_url_patterns": [
-        "https://armypubs.army.mil/*fm2*22*",
-        "https://armypubs.army.mil/epubs/DR_pubs/DR_a/pdf/*fm2*",
-        "https://www.jcs.mil/Portals/*/jp2*",
-        "https://www.jcs.mil/Portals/*/Documents/Doctrine/pubs/jp2*"
-      ],
-      "expected_schema": "gov-pdf",
-      "pinned": false,
-      "last_verified": null,
-      "note": "Registered 2026-05-23 for Workstream 2 (WORKFLOW-V2). Public canonical reference for the Admiralty Code (NATO STANAG 2022 itself isn't reliably public). Patterns cover both US Army FM 2-22.3 (Human Intelligence Collector Operations) and Joint Pub 2-0 (Joint Intelligence). Tier 3 (design-rationale only). Pending first verified fetch under hooks.",
-      "cited_in": [
-        "docs/workstream-2-plan.md"
-      ]
     }
   }
 }

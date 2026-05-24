@@ -61,7 +61,7 @@ These are the meta-decisions that shape everything downstream. Recommendations a
 | **D** | NIST CSF 2.0 cross-cutting mapping depth: per-rule, per-skill, or per-phase | **Per-skill** | Per-rule explodes the mapping table without adding precision (a skill's rules usually cluster under 1–3 CSF Subcategories). Per-phase loses information. Per-skill is the sweet spot — one row per skill in the cross-reference table. |
 | **E** | ISO/IEC 27002:2022 sourcing: via NIST/CSF crosswalk OR skip ISO citations entirely | **Via crosswalk** (CSF 2.0 Informative References) | DEC-004 Clause 5 explicitly permits citing paywalled standards via free authoritative crosswalks. CSF 2.0 Informative References map every Subcategory to ISO 27001/27002 controls. International alignment matters for adopters outside US federal context (GDPR adjacency, etc.). |
 | **F** | STRIDE-per-element at Stage 2: apply to every change OR only trust-boundary-crossing changes | **Trust-boundary-only** | STRIDE on a typo fix is theater. STRIDE at the trust boundary catches what matters. Stage 2's scope rubric already identifies trust-boundary impacts; this hooks STRIDE to that trigger. |
-| **G** | Admiralty Code rigor: explicit A–F × 1–6 grading for ALL sources OR Tier-1 presumed A1 + explicit grading for non-Tier-1 only | **Tier-1 presumed A1, explicit grading for Tier-2/3** | OWASP/NIST/MITRE/IETF are uniformly A1; explicit grading every entry is busywork that obscures the real value. The discipline matters when a Tier-3 source threatens to sneak into a governance role ("this Medium blog post is D5 — not authoritative"). |
+| **G** | Source-reliability discipline: import an explicit grading framework (e.g., Admiralty Code) OR use TGF's existing Tier 1/2/3 hierarchy | **TGF tier hierarchy** | Posture choice: avoid IC/military framework citations (NATO STANAG, CIA Tradecraft). The Tier 1/2/3 hierarchy already serves the discriminative purpose. External grading would be uniformly Tier-1 for OWASP/NIST/MITRE/IETF and add no discriminative value. |
 | **H** | `CLAUDE.md` §3 update: touch or leave alone | **Small cross-reference addition only** | The contract in CLAUDE.md §3 stays. Add a sentence noting WORKFLOW.md grounds each stage in named methodology (Admiralty Code / NIST RMF / NIST 800-53). No substantive contract change. |
 | **I** | Commit decomposition: one combined commit OR multiple smaller commits | **3–4 smaller commits** (per [[feedback-commit-message-style]] portfolio framing) | (1) source registry + schemas + first verified fetches; (2) WORKFLOW.md amendment; (3) worked example + cross-reference table; (4) closeout (CLAUDE.md cross-ref, framework-hardening-plan §3.2 status update, session log). Easier portfolio-skim than one giant commit. |
 | **J** | `parameter-history.json` M17 wiring: now or defer | **Defer to WS1 amendment** | Hook infrastructure work (write path activation) belongs in WS1's domain. WS2 identifies the need; WS1's next amendment wires it. |
@@ -103,12 +103,11 @@ This is **Build Step 1** and must complete before any other Stage 1 fetch. M15 b
 | Source ID | Document | Primary URL pattern | Schema |
 |-----------|----------|---------------------|--------|
 | `MS-SDL` | Microsoft Security Development Lifecycle (threat-modeling scope reference at Stage 2) | `microsoft.com/en-us/securityengineering/sdl/*` | NEW: `vendor-doc` (permissive) |
-| `CIA-TRADECRAFT-PRIMER` | CIA *A Tradecraft Primer* (declassified 2009; structured analytic techniques at Stage 1) | `cia.gov/.../Tradecraft Primer-apr09.pdf`, `cia.gov/static/.../tradecraft-primer.pdf` | NEW: `gov-pdf` |
-| `JOINT-PUB-2-22-3` | US Army FM 2-22.3 / Joint Pub 2-0 (Admiralty Code public reference; Joint Intelligence) | `armypubs.army.mil/.../FM 2-22.3.pdf`, `jcs.mil/.../jp2_0.pdf` | NEW: `gov-pdf` |
 
 **Excluded explicitly:**
 
-- **NATO STANAG 2022 itself** — not reliably public. Use the US Army FM 2-22.3 or Joint Intelligence publication as the public-canonical reference for the Admiralty Code. Cite Admiralty Code by name + the public reference document.
+- **NATO STANAG 2022 / Admiralty Code source-reliability framework** — IC/military sources skipped per posture decision. No .mil or intelligence-community URLs in the registry. Stage 1 source-reliability discipline grounds in TGF's own Tier 1/2/3 hierarchy instead. See §5.1.
+- **CIA Tradecraft Primer / structured analytic techniques** — same posture decision. Stage 1's assumption-checking and corroboration discipline grounds in engineering FMEA practice and the existing M5 / M12 mitigations per `RESEARCH-SECURITY.md`.
 - **ISO/IEC 27002:2022** as a fetched source — paywalled per DEC-004 Clause 5. Citations route through `NIST-CSF-2-0-IR` (Informative References) crosswalk only.
 - **ISO/IEC/IEEE 15288:2023** — paywalled, same routing. Note that this is referenced in design-notes for terminology; if citation is needed, use the NIST 800-160 references to 15288 instead.
 
@@ -122,8 +121,7 @@ New schema definitions needed:
 - `cis-controls.json` — permissive (size + identity strings "CIS Controls", "Safeguard")
 - `mitre-attack.json` — permissive (size + identity strings "Technique", "T1*" or "T0*" ID pattern)
 - `mitre-atlas.json` — permissive (size + identity strings "ATLAS", "AML.")
-- `vendor-doc.json` — permissive (size only — vendor docs vary wildly in structure)
-- `gov-pdf.json` — permissive (size + identity strings derived from canonical document title)
+- `vendor-doc.json` — permissive (size only; vendor docs vary wildly in structure)
 
 Tightening per type can happen as baselines accumulate per Workstream 1's lazy-baseline approach. Schemas land permissive and tighten over time.
 
@@ -131,10 +129,8 @@ Tightening per type can happen as baselines accumulate per Workstream 1's lazy-b
 
 Current publishers: OWASP / NIST / IETF / ISO / MITRE. Add:
 
-- **CIS** (Center for Internet Security) — non-profit, US-based, distinct from NIST
-- **DoD-Joint-Staff** (for FM 2-22.3 / JP 2-0) — US-federal, distinct from NIST/CIA
-- **CIA** — US-federal, distinct from NIST/DoD (intelligence community)
-- **Microsoft** — vendor, distinct from all framework bodies
+- **CIS** (Center for Internet Security), non-profit, US-based, distinct from NIST
+- **Microsoft**, vendor, distinct from all framework bodies
 
 This matters for M12 independence verification: when WORKFLOW-V2 §3 Stage 3 cites two sources for a control parameter, M12 checks they're from different organizations. NIST + ISO (via crosswalk) is independent. NIST + CIS overlay is independent. NIST + Microsoft is independent. Two NIST documents are NOT independent.
 
@@ -160,10 +156,10 @@ What WORKFLOW.md §3 (Per-Stage Specifications) gains for each stage. The stage'
 
 **New sub-section: §3 Stage 1 — Authoritative Methodology**
 
-Three frameworks ground the Stage 1 work:
+Three disciplines ground the Stage 1 work:
 
-1. **Admiralty Code** (NATO source-reliability × information-credibility grading; reference: US Army FM 2-22.3 / Joint Pub 2-0 for public canonical text). Stage 1 produces fetches that get implicitly graded — Tier-1 sources presumed A1 (completely reliable + multi-source confirmed); non-Tier-1 sources require explicit grading. Per **Approach Decision G**.
-2. **CIA Structured Analytic Techniques** (CIA *Tradecraft Primer*, 2009 declassified). Stage 1 applies (a) Key Assumptions Check — what does the research assume that, if wrong, invalidates the conclusion? (b) Quality of Information Check — what's the source reliability per the Admiralty grade? (c) Analysis of Competing Hypotheses (ACH) — when sources disagree, lay out competing interpretations and evaluate.
+1. **TGF source-tier hierarchy** (per §6.1). Tier 1 = living documents requiring live fetch (OWASP Cheat Sheets, ASVS chapters, vendor docs). Tier 2 = stable formal publications acceptable at publication-level citation (NIST SP, FIPS, RFCs, ISO via crosswalk). Tier 3 = comparative / design-rationale only (not in skill §2 Sources tables). The tier hierarchy IS the source-reliability discipline at TGF's scale. Per **Approach Decision G**: explicit external grading frameworks (Admiralty Code etc.) would be uniformly Tier-1 for OWASP/NIST/MITRE/IETF and add no discriminative value, and IC/military framework citations are out of posture for this project.
+2. **Engineering FMEA-style assumption-checking.** Stage 1 explicitly identifies what the research assumes that, if wrong, invalidates the conclusion. Standard engineering review discipline applied to research output rather than to a system design. Cross-source corroboration (M5) and independence verification (M12) per `docs/RESEARCH-SECURITY.md` are the operational checks; AI memory alignment (M9) flagged honestly when prior knowledge appears to confirm a fetched source.
 3. **NIST SP 800-39** (Risk Management Strategy) — threat-intelligence sourcing discipline distinguishing strategic (long-horizon trends), operational (campaign-level), and tactical (technique-level) intelligence levels. Stage 1 research output is implicitly tactical when investigating a specific change; operational/strategic when investigating broader patterns.
 
 **New sub-section: §3 Stage 1 — Checklist**
@@ -180,7 +176,7 @@ Per skill commit / per change:
 - [ ] Adversarial-source threat considered for any Tier-1 source in a high-tampering-risk location (vendor documentation behind CDN edge, repos with weak access controls)
 - [ ] Where M5 corroboration is required, at least one independent source per claim (M12 independence verified via source-org-mapping)
 - [ ] AI-memory-alignment flag honest — if AI prior knowledge confirms the fetched content, that's one source of evidence, not two (M9)
-- [ ] If any source got an Admiralty Code grade below A2, explicit rationale for relying on it OR escalate to a stronger source
+- [ ] Any Tier-3 source used is explicitly justified. Tier-3 (books, papers, blog posts, vendor blog content) does NOT appear in skill §2 Sources tables; it appears only in design-rationale notes within plan documents
 
 ### §5.2 Stage 2 — Scope
 
@@ -290,7 +286,7 @@ A single-table summary of which methodology grounds which stage, so adopters and
 
 | Stage | Authoritative methodology | Source IDs in registry |
 |-------|---------------------------|------------------------|
-| Stage 1 (Research) | Admiralty Code (source reliability × credibility); CIA Structured Analytic Techniques (KAC / QoIC / ACH); NIST SP 800-39 (intelligence-level distinction) | `JOINT-PUB-2-22-3` (Admiralty Code public reference); `CIA-TRADECRAFT-PRIMER`; `NIST-SP-800-39` |
+| Stage 1 (Research) | TGF source-tier hierarchy (per §6.1); engineering FMEA-style assumption-checking; NIST SP 800-39 (intelligence-level distinction) | `NIST-SP-800-39` |
 | Stage 2 (Scope) | NIST SP 800-37 Rev 2 Categorize step; NIST SP 800-160 Vol 1 Rev 1 system scoping; Microsoft SDL threat-model scope; STRIDE-per-element at trust boundaries | `NIST-SP-800-37`; `NIST-SP-800-160-V1`; `MS-SDL` |
 | Stage 3 (Plan w/ Governance) | NIST SP 800-53 Rev 5 (backbone); NIST CSF 2.0 (cross-cutting); CIS Controls v8.1 (prioritized overlay); ISO/IEC 27002:2022 (international, via crosswalk) | `NIST-SP-800-53`; `NIST-CSF-2-0`; `NIST-CSF-2-0-IR`; `CIS-CONTROLS-V8-1`; `OWASP-ASVS-MAPPING-800-53` |
 | Stage 4 (Implement) | (no new methodology; citation chain travels with implementation) | — |
@@ -302,7 +298,7 @@ A single-table summary of which methodology grounds which stage, so adopters and
 WORKFLOW.md header gains:
 
 - Version line: `v1.1` (was implicitly v1 from Phase 3 commit `2853047`).
-- One-line changelog at the top: "v1.1 (2026-05-23): Authority-backed Stages 1/2/3 against Admiralty Code, NIST RMF Categorize, and NIST 800-53 + CSF 2.0 + CIS v8.1 + ISO 27002 (via crosswalk). Source-tier hierarchy formalized. Citation chain target defined as rule → ASVS → 800-53 → CSF 2.0 Subcategory. (Workstream 2.)"
+- One-line changelog at the top: "v1.1 (2026-05-23): Authority-backed Stages 1/2/3. Stage 1 grounded in TGF source-tier hierarchy, engineering FMEA-style assumption-checking, and NIST SP 800-39. Stage 2 in NIST RMF Categorize, NIST SP 800-160, and Microsoft SDL. Stage 3 in NIST 800-53, CSF 2.0, CIS v8.1, and ISO 27002 (via crosswalk). Source-tier hierarchy formalized. Citation chain target defined as rule → ASVS → 800-53 → CSF 2.0 Subcategory. (Workstream 2.)"
 
 No file-rename, no separate WORKFLOW-V2.md (per Approach Decision A).
 
@@ -458,7 +454,7 @@ Confirm or override each (recommendations carry from §3):
 - **D.** CSF 2.0 cross-cutting depth: per-rule, per-skill, or per-phase? (Recommend: per-skill.)
 - **E.** ISO sources: via crosswalk or skip entirely? (Recommend: via crosswalk per DEC-004 Clause 5.)
 - **F.** STRIDE at Stage 2: every change or only trust-boundary-crossing? (Recommend: trust-boundary-only.)
-- **G.** Admiralty Code rigor: explicit for all sources or Tier-1 presumed A1? (Recommend: Tier-1 presumed A1 + explicit for Tier-2/3.)
+- **G.** Source-reliability discipline: import an explicit grading framework or use TGF's tier hierarchy? (Recommend: TGF tier hierarchy; avoids IC/military framework citations.)
 - **H.** CLAUDE.md update: touch or leave alone? (Recommend: small cross-reference addition only.)
 - **I.** Commit decomposition: one combined or 3–4 smaller? (Recommend: 3–4 smaller per portfolio framing.)
 - **J.** M17 parameter-history wiring: now or defer? (Recommend: defer to WS1 amendment.)

@@ -38,19 +38,6 @@
       "type": "nonprofit-foundation",
       "primary_domains": ["cisecurity.org", "learn.cisecurity.org"]
     },
-    "US-DoD": {
-      "full_name": "United States Department of Defense",
-      "jurisdiction": "US-federal",
-      "type": "government-military",
-      "primary_domains": ["armypubs.army.mil", "jcs.mil", "dtic.mil"],
-      "_note": "Covers both Army (FM-series field manuals) and Joint Staff (JP-series joint publications). Both fall under the same DoD doctrinal review pipeline; M12 between FM 2-22.3 and JP 2-0 correctly does NOT count as independent corroboration."
-    },
-    "CIA": {
-      "full_name": "Central Intelligence Agency",
-      "jurisdiction": "US-federal",
-      "type": "government-intelligence",
-      "primary_domains": ["cia.gov"]
-    },
     "Microsoft": {
       "full_name": "Microsoft Corporation",
       "jurisdiction": "vendor",
@@ -68,8 +55,7 @@
       ["NIST-SP-800-53", "CIS-CONTROLS-V8-1"],
       ["NIST-CSF-2-0", "OWASP-ASVS-MAPPING-800-53"],
       ["MITRE-ATLAS", "NIST-SP-800-37"],
-      ["MS-SDL", "NIST-SP-800-160-V1"],
-      ["CIA-TRADECRAFT-PRIMER", "NIST-SP-800-39"]
+      ["MS-SDL", "NIST-SP-800-160-V1"]
     ],
     "examples_not_independent": [
       ["OWASP-ASVS-V1", "OWASP-CHEAT-XSS"],
@@ -81,8 +67,7 @@
       ["NIST-SP-800-37", "NIST-SP-800-39"],
       ["MITRE-CWE", "MITRE-ATLAS"],
       ["MITRE-CWE", "MITRE-ATTACK-ENTERPRISE"],
-      ["OWASP-ASVS-V1", "OWASP-ASVS-MAPPING-800-53"],
-      ["JOINT-PUB-2-22-3", "JOINT-PUB-2-22-3"]
+      ["OWASP-ASVS-V1", "OWASP-ASVS-MAPPING-800-53"]
     ],
     "memory_alignment_note": "M9: AI prior knowledge consistent with a fetched source is NOT a second corroborating observation. Memory and source share a common upstream (training data + fetched document may both derive from the same root). Memory alignment is recorded in M8 verification summaries but never counted toward M5 corroboration."
   }
