@@ -489,7 +489,7 @@ Confirmed NOT in Phase 6:
 - **Phase 10 — Compliance Regulatory Skills.** GDPR/CCPA/HIPAA/PCI-DSS/SOC2 — load only when PROJECT-CONTEXT scope warrants.
 - **Phase 11 — Meta-Skills.** PROJECT-CONTEXT, DOMAIN-RESEARCH, BASELINE-AUDIT, SKILL-FORGE, framework-health.
 - **Phase 12 — Hook Library.** Phase 6 may surface candidate hook patterns (e.g., pre-commit secret detection, pre-deploy SBOM check) — capture as future-hook candidates in plan-adjustments at session close, but don't implement them.
-- **Phase 13 — Stack Baselines** (LabList / AdaptivIQ / BLETRAP bridge skills).
+- **Phase 13, Stack Baselines** (per-stack bridge skills).
 - **Phase 14 — Slash Commands** beyond what activity skills auto-generate.
 - **Phase 15 — Full Documentation.**
 - **`settings.json` activation mechanism uncertainty** (carried from Phase 4 closeout). Phase 11 verifies.

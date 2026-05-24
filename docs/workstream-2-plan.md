@@ -480,7 +480,7 @@ Explicit list of "we identified it, we're not doing it here":
 - **New Claude Code hooks for explicit Stage 1→2 and Stage 3→4 gates.** Defer to WS1 amendment if downstream enforcement (PreToolUse-Write, Stop, git pre-commit) proves insufficient in practice. (Per Decision B.)
 - **`parameter-history.json` (M17) wiring.** WS1 amendment when first triggered. (Per Decision J.)
 - **Four review agents implementation.** WS3 builds against WORKFLOW-V2's stages. (Per `framework-hardening-plan.md` §3.3.)
-- **Stack-baseline-specific workflow variants** (LabList / AdaptivIQ / BLETRAP). Phase 13 (Stack Baselines) territory.
+- **Stack-baseline-specific workflow variants** for individual adopter stacks. Phase 13 (Stack Baselines) territory.
 - **Compliance-skill-specific workflow variants** (HIPAA-mode, PCI-DSS-mode, etc.). Phase 10 (Compliance Skills) territory.
 - **Tightening source schemas to per-document strict shape.** WS1's lazy-baseline approach lets schemas tighten over time; new schemas land permissive in WS2.
 - **`templates/SKILL.md.template` update to require Stage 3 citation chain.** Defer — wait until WS3 and WS4 inform what the template should require by default. WS2 documents the target; the template change can be a WS5 deliverable or a separate template-update commit.
@@ -525,7 +525,7 @@ The non-obvious traps to watch for during build:
 
 Per [[feedback-commit-message-style]]:
 
-- TGF commits land on Alt's LabList portfolio as DEV work.
+- TGF commits land on the developer's public portfolio repo as DEV work.
 - Commit messages authored in Alt's voice — direct, slightly informal where natural, no hype or marketing-speak, describes the actual deliverable.
 - Subject lines: action-oriented, plain language (not catalog-style "Workstream 2: foo (bar)" labels).
 - Body: cover what was built, what the moving parts are, what the design choices were, what's intentionally NOT in scope. Reader understands the change without opening the diff.

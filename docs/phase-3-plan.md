@@ -261,7 +261,7 @@ All five decisions resolved. Implementation cleared.
 
 **Decision C — Hook contract organization: RESOLVED.** Per-event as primary structure (one section per `SessionStart`, `PreToolUse`, etc.) to match Phase 12's `.claude/hooks/<EventName>/` directory layout. A "Hooks by purpose" cross-reference table at the §6 opening shows which events serve safety / workflow / governance purposes — solves the per-purpose lookup case without restructuring.
 
-**Decision D — Worked example domains: RESOLVED.** Generic examples (typo fix, auth middleware refactor, billing feature with PII + payments + webhooks). WORKFLOW.md is the framework spec, not the framework's own usage demo. Phase 13 (Stack Baselines) is the right place for LabList/AdaptivIQ/BLETRAP-specific traces.
+**Decision D — Worked example domains: RESOLVED.** Generic examples (typo fix, auth middleware refactor, billing feature with PII + payments + webhooks). WORKFLOW.md is the framework spec, not the framework's own usage demo. Phase 13 (Stack Baselines) is the right place for stack-specific traces.
 
 **Decision E — Commit grouping: RESOLVED.** Two commits. First: §1, §2, §4, §5, §6, §9 (scaffolding + schemas + tables + hook contracts + reference). Second: §3, §7, §8 (per-stage spec, debugging variant, worked examples). Structure-before-content respects the dependency order in §5.
 

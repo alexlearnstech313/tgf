@@ -22,7 +22,7 @@ The hook author (Anthropic, per plugin manifest) built a documented kill switch 
 
 1. **Add `env.ENABLE_SECURITY_REMINDER = "0"` to `.claude/settings.local.json`** for the TGF project. The file is already gitignored per Claude Code's `settings.local.json` convention, so the override does not appear in the public repo and does not affect adopters who install TGF as a plugin in their own projects.
 
-2. **The plugin remains enabled in user-level `~/.claude/settings.json`.** Other projects (LabList, AdaptivIQ, BLETRAP, etc.) retain the hook unchanged. The disable is scoped to TGF only.
+2. **The plugin remains enabled in user-level `~/.claude/settings.json`.** Other projects retain the hook unchanged. The disable is scoped to TGF only.
 
 3. **Defense substitution is explicit, not implicit.** TGF's four-pass review (per `docs/WORKFLOW.md` §4) covers the same risk surface as the hook with stronger contextual analysis: substring scans cannot distinguish documentation that *discusses* `exec()` from code that *calls* `exec()`; the four-pass Code Review + Security Audit + Red Team + Holistic passes can and do. SECURITY-CORE's anti-patterns (Phase 4 commit 3/6) cover the hardcoded-credentials, custom-crypto, disabled-TLS, broken-algorithms, secret-logging, SQL injection, authorization-bypass, and shell-injection categories. Future Phase 6/7 skills extend depth.
 
@@ -32,7 +32,7 @@ The hook author (Anthropic, per plugin manifest) built a documented kill switch 
 
 **Alternatives considered:**
 
-- **Disable the `security-guidance` plugin entirely in user-level settings.** Rejected. Overly broad — LabList, AdaptivIQ, BLETRAP all benefit from the hook in their non-security-documentation contexts. Dropping a security layer should be scoped and documented, not blanket-applied across unrelated projects.
+- **Disable the `security-guidance` plugin entirely in user-level settings.** Rejected. Overly broad. Other projects benefit from the hook in their non-security-documentation contexts. Dropping a security layer should be scoped and documented, not blanket-applied across unrelated projects.
 
 - **Modify the hook source to skip TGF paths.** Rejected. The hook lives in the plugin marketplace cache and would be reset on plugin update. Brittle, hostile to future plugin maintainers, and creates upstream-drift risk.
 

@@ -343,7 +343,7 @@ This is surfaced as an open decision rather than a unilateral change. The implic
 - ✅/❌ Every framework-enforced section marked with comment
 - ✅/❌ Every adopter-customized section marked with comment + placeholder content
 - ✅/❌ Header explains customization convention
-- ✅/❌ No reference to TGF's own development artifacts (LabList, AdaptivIQ, BLETRAP) — adopter-agnostic
+- ✅/❌ No reference to TGF's own development artifacts, adopter-agnostic
 
 ---
 

@@ -165,8 +165,6 @@ WCAG 2.2 conformance levels:
 
 Most projects target AA. The discipline at design time: pick AA as target, make design choices that don't preclude AA conformance, run automated checks (axe-core, Lighthouse) plus manual checks (keyboard navigation walkthrough, screen reader spot-checks).
 
-For TGF-specific projects: LabList serves learners broadly including users who rely on assistive tech; AdaptivIQ similar; accessibility is part of all three projects' user populations.
-
 **Related anti-patterns:** AP-6 (accessibility as afterthought) (see `anti-patterns.md`)
 
 ---
