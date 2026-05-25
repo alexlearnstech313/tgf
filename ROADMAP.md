@@ -4,7 +4,7 @@ The Governance Framework v1 — 16-phase build plan. Path A scope (full v1 with 
 
 > ROADMAP is living documentation. Items here are committed to. Milestones with target dates that slip get explicit revision, not silent extension. Update at session close when phase status changes or milestones progress.
 
-**Current focus:** Framework-hardening detour in progress between Phase 6 commits 4/12 and 5/12. Workstream 1 (research-security infrastructure: M1-M19 hooks + state + smoke tests) ✅ complete 2026-05-22. Workstream 2 (WORKFLOW-V2 methodology grounding) in progress. Workstreams 3-5 (four review agents, audit of existing work, remediation) deferred. Phase 6 resumes from commit 5/12 after all five hardening workstreams complete.
+**Current focus:** Framework-hardening detour in progress between Phase 6 commits 4/12 and 5/12. Workstream 1 (research-security infrastructure: M1-M19 hooks + state + smoke tests) ✅ complete 2026-05-22. Workstream 2 (WORKFLOW-V2 methodology grounding) ✅ complete 2026-05-25. Workstream 3 (four review agents — fleshing out scaffolds with personas + skill preloading + tool-permission restrictions + scoped activity logs) ⏳ NEXT. Workstreams 4-5 (audit of existing work + remediation) deferred. Phase 6 resumes from commit 5/12 after all five hardening workstreams complete.
 
 ---
 
@@ -20,7 +20,7 @@ The Governance Framework v1 — 16-phase build plan. Path A scope (full v1 with 
 | 5 | Activity Skills (7 — grew from 6 mid-phase per Decision F) | ✅ Complete |
 | 6 | Foundation Security Skills (11) | 🟡 In progress (4/12 shipped, paused for framework-hardening) |
 | 7 | Extended Security Skills (22) | ⬜ Not started |
-| 8 | AI-Specific Security Skills (8+1 adversarial) | ⬜ Not started |
+| 8 | AI-Specific Security Skills (8+2 — adversarial + dev-environment) | ⬜ Not started |
 | 9 | Operations & Quality Skills (7) | ⬜ Not started |
 | 10 | Compliance Regulatory Skills (5) | ⬜ Not started |
 | 11 | Meta-Skills (5) | ⬜ Not started |
@@ -128,7 +128,7 @@ Skills every project needs regardless of stack:
 
 CIA triad, architectural (defense-in-depth, secure-architecture, zero-trust, least-privilege, assumed-breach), IAM-OAuth-OIDC, data layer (encryption, classification), application (api, webhooks, cors-csp, file-uploads), threat management (threat-modeling, attack-surface), operations (incident-response, detection-monitoring, vulnerability-management), privacy (data-handling, consent).
 
-### Phase 8 — AI-Specific Security Skills (8 + 1 Adversarial-AI)
+### Phase 8 — AI-Specific Security Skills (8 + 2: Adversarial-AI + Dev-Environment)
 
 - `security-ai-prompt-injection`
 - `security-ai-output-handling`
@@ -139,6 +139,7 @@ CIA triad, architectural (defense-in-depth, secure-architecture, zero-trust, lea
 - `security-ai-model-governance`
 - `security-ai-research-integrity` (operationalizes DEC-2026-05-17-004 — fires when meta-skills fetch external content for skill generation or domain research)
 - `security-adversarial-ai` (framework's own resistance to manipulation)
+- `security-development-environment` (AI tooling itself as attack surface — Claude Code config protection, VS Code/MCP extension vetting, AI tool credential isolation; informed by 2026 supply-chain attacks targeting `~/.claude/` configs. Stage 1 research required against CISA advisories, official Anthropic security guidance, and OWASP Top 10 for LLMs via M15 allow-list before Stage 4 write.)
 
 ### Phase 9 — Operations & Quality Skills (7)
 
@@ -174,7 +175,7 @@ Reference shell scripts for:
 
 - **Safety** (universal, always active): `block-dangerous-git`, `block-secrets-commit`, `block-destructive-db`
 - **Workflow** (mode-gated): `verify-session-log`, `verify-tests-pass`, `verify-findings-resolved`, `verify-roadmap-updated`
-- **Governance** (mode-gated): `block-runtime-skill-changes`, `log-security-operations`, `detect-edit-loops`
+- **Governance** (mode-gated): `block-runtime-skill-changes`, `log-security-operations`, `detect-edit-loops`, `preserve-governance-state-precompact` (PreCompact event — snapshots active workflow stage, open findings, and unflushed decisions before context compaction, restored on SessionStart to prevent governance discipline loss across compaction boundaries)
 
 Mode-aware profiles wired in via `.claude/hooks/profile.json`.
 
@@ -232,8 +233,8 @@ Five workstreams pulled forward after Phase 6 commit 4/12 surfaced a structural 
 | WS | Description | Status |
 |----|-------------|--------|
 | 1 | Research-Security Infrastructure (M1-M19 operationalized as Claude Code hooks + state + smoke tests + git pre-commit defense-in-depth) | ✅ Complete (commit `dc2b294`, 2026-05-22) |
-| 2 | WORKFLOW-V2 Methodology Grounding (authority-back Stages 1-3 against NIST RMF Categorize, NIST 800-53, NIST CSF 2.0, CIS Controls v8.1, ISO 27002 via CSF Informative References crosswalk; formalize source-tier hierarchy; define citation chain target) | 🟡 In progress (Steps 1-3 complete; Step 4 closeout pending) |
-| 3 | Four Review Agents (flesh out code-reviewer / security-auditor / red-team / holistic-reviewer from scaffolds to operational subagents with rich personas + skill preloading + authoritative materials citations) | ⏸️ Deferred until WS2 complete |
+| 2 | WORKFLOW-V2 Methodology Grounding (authority-back Stages 1-3 against NIST RMF Categorize, NIST 800-53, NIST CSF 2.0, CIS Controls v8.1, ISO 27002 via CSF Informative References crosswalk; formalize source-tier hierarchy; define citation chain target) | ✅ Complete (2026-05-25) |
+| 3 | Four Review Agents (flesh out code-reviewer / security-auditor / red-team / holistic-reviewer from scaffolds to operational subagents with rich personas + skill preloading + authoritative materials citations + explicit per-role tool-permission restrictions + scoped subagent activity logs capturing dispatch context and findings as structured JSON) | ⏳ NEXT |
 | 4 | Audit of Existing Work (apply new discipline retroactively to Phase 4-6 commits 1/12-4/12 + always-on skills + foundational docs; produce remediation list) | ⏸️ Deferred until WS3 complete |
 | 5 | Remediation (address audit findings; per-skill remediation commits; then Phase 6 commit 5/12 resumes) | ⏸️ Deferred until WS4 complete |
 
@@ -246,12 +247,13 @@ Phase 6 commits 5/12 through 12/12 are gated behind the hardening workstreams co
 | ID | Milestone | Target | Confidence | Status |
 |----|-----------|--------|------------|--------|
 | M6 | Phase 6 complete (foundation security skills — 11 skills) | TBD | medium | 🟡 in progress, paused at 4/12 for framework-hardening |
-| MH | Framework-hardening detour complete (Workstreams 1-5 between Phase 6 commits 4/12 and 5/12) | TBD | medium | 🟡 in progress (WS1 done, WS2 active) |
+| MH | Framework-hardening detour complete (Workstreams 1-5 between Phase 6 commits 4/12 and 5/12) | TBD | medium | 🟡 in progress (WS1+WS2 done, WS3 next) |
 
 ## Completed Milestones
 
 | ID | Milestone | Completed | Notes |
 |----|-----------|-----------|-------|
+| MH-2 | Framework-hardening Workstream 2: WORKFLOW-V2 methodology grounding | 2026-05-25 | Plan + Checkpoint 1 cleared (`98626fe`); Step 1 source registry expansion — 12 sources, 8 schemas, 4 publishers (`9b30631`); Step 2 Stage 1 research fetches under M1–M19 hooks (14 fetches across 13 unique sources, all `verified` in research-log); in-flight discoveries folded in as separate commits — IC/military source posture decision dropping CIA-TRADECRAFT-PRIMER + JOINT-PUB-2-22-3 and reframing Stage 1 methodology against TGF source-tier hierarchy + engineering FMEA + NIST SP 800-39 (`f95550e`), M3 schema threshold recalibration for WebFetch AI-summary output (`9eb4ab6`), cross-project name softening (`b48576d`); Step 3 WORKFLOW.md authority-backed methodology amendment for Stages 1-3 (`d4e5da9`); status docs freshening (`a48ee83`); closing commit Step 4 — worked example for `security-input-validation` Rule 5.1 full citation chain demonstrating ASVS V2.2.2 → CSF 2.0 PR.PS → NIST 800-53 SI-10/SI-15 → ISO 27002 8.26 → CIS Control 16 with TGF-synthesis honestly flagged for the non-IAM ASVS→CSF bridge, CLAUDE.md §1 + §3 + adopter template cross-references to WORKFLOW.md §3, bundled planning-hygiene (`docs/parking-lot.md` capturing 6 deferred items + ROADMAP Phase 8/12/WS3 amendments adding `security-development-environment` skill + PreCompact governance-state hook + explicit subagent tool restrictions and activity logs as WS3 deliverables + CLAUDE.md §9 dev-environment skill index sync). Methodology learning surfaced during Step 4: OWASP publishes ASVS-to-NIST mapping only at 800-63B (IAM/authentication) level, not broader 800-53 — so ASVS V2 (non-IAM) bridges to 800-53 via TGF-synthesized CSF 2.0 Subcategory then through the verified CSF IR crosswalk; documented at WORKFLOW.md §3 Stage 3. |
 | MH-1 | Framework-hardening Workstream 1: research-security infrastructure | 2026-05-22 | Commit `dc2b294` (42 files, 6615 insertions). 5 hook entry scripts + 13 Python modules + git pre-commit hook + state infrastructure (29 sources bootstrapped, 5 publishers, 8 schemas; per-machine state lazy-loaded). 12-test smoke suite (T1-T12) all green. Pre-commit hook installed locally via symlink. Hooks active on next session start via `.claude/settings.json`. See `docs/RESEARCH-SECURITY.md` and `docs/research-security-implementation-plan.md`. |
 | M5 | Phase 5 complete (activity skills — 7 skills: discovery, project-management, design, ui-craft, testing, debugging, disagreement) | 2026-05-20 | Eight implementation commits: `563da7e` DISCOVERY (811 lines) · `bce6bfa` PROJECT-MANAGEMENT (934 lines) · `2f8bc2e` DESIGN (1015 lines) · `45fc38d` plan amendment adding UI-CRAFT per Decision F · `404840e` UI-CRAFT (1220 lines, mid-phase addition closing the design-craft / anti-AI-slop gap) · `db4d8bc` TESTING (1260 lines) · `c34417e` DEBUGGING (1237 lines) · `489a491` DISAGREEMENT (1144 lines) · closing commit closeout. Plus `4f3a5f8` plan draft · `2247b2a` Checkpoint 1 clearance (Decisions A-E resolved without new ADRs). Phase 5 grew from 6 → 7 skills mid-phase per Decision F when user surfaced that DESIGN's "decision discipline" scope didn't cover design-craft / anti-AI-slop — UI-CRAFT added with authoritative grounding (Apple HIG, Material Design 3, Nielsen heuristics, WCAG 2.2) and high-craft reference site studies (Stripe, Vercel, Linear, Monogram, Kraken) per DEC-004 Clause 6 as comparative pattern references. Seven activity skills total 7621 lines across 21 files. Stage 1 plan adjustments captured: Apple HIG / Material Design 3 SPA-rendered and unfetchable via WebFetch — cited by reference at foundation level (same pattern as PMBOK/BABOK paywalled). ISTQB site returned 403 to WebFetch — cited by reference at syllabus level (v4.0 October 2023). OWASP WSTG v4.2 confirmed current; v5.0 in development. Cross-skill web maturity demonstrably composing: DISAGREEMENT references SECURITY-CORE hard-refusal items + CONTINUITY waiver protocol; UI-CRAFT cross-refs DESIGN; TESTING cross-refs SECURITY-CORE + DESIGN + UI-CRAFT; DEBUGGING cross-refs CONTINUITY audit-trail + DISCOVERY Five Whys + TESTING regression. |
 | M4 | Phase 4 complete (always-on skills: CODE-QUALITY, SECURITY-CORE, CONTINUITY + agents/ scaffolds) | 2026-05-20 | Six implementation commits: `ea9a0bb` template refactor · `1157e8c` CODE-QUALITY (845 lines) · `b49715d` SECURITY-CORE (1156 lines) · `511f585` CONTINUITY (1080 lines) · `d4abbb0` agents/ (5 scaffolds + plugin settings.json) · closing commit closeout. Plus `b302eb6` README voice rewrite + plugin.json URLs (pre-publish housekeeping; first public push to `github.com/alexlearnstech313/tgf`) and `7c81170` DEC-2026-05-20-010 (security-guidance plugin hook disabled for TGF via env override, since the hook is hostile to security documentation by design). Plan-adjustments captured at session close: OWASP ASVS 5.0 chapter numbering completely reorganized from 4.x (caught at Stage 1 spot-check during SECURITY-CORE); AP-9 (disabled-authentication middleware) gap caught in Stage 5 Phase 4 holistic review during SECURITY-CORE. Three always-on skills total 3081 lines across 9 files; agents 122 lines across 6 files. |
@@ -266,4 +268,4 @@ Phase 6 commits 5/12 through 12/12 are gated behind the hardening workstreams co
 
 ---
 
-*Last updated: 2026-05-23.*
+*Last updated: 2026-05-25.*

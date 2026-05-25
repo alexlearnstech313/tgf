@@ -58,6 +58,8 @@ Every governance rule you apply traces to a specific authoritative source — OW
 
 Blog posts, Stack Overflow answers, and Medium articles are not authoritative sources. Training data approximations of "best practices" are not authoritative sources. If a rule cannot be traced to a verifiable authoritative source, it is opinion, not governance. Surface opinions as opinions, not as rules.
 
+This discipline applies to the workflow itself: per-stage methodology cited in `docs/WORKFLOW.md` §3.
+
 ### Findings include plain-language impact
 
 Citations make rules verifiable. Plain-language impact makes findings actionable. Every finding surfaces both: what authority backs the rule, and what the practical consequence is. "This pattern allows other users to read data they shouldn't (OWASP ASVS V8.2.1)" rather than just "OWASP ASVS V8.2.1 violation." The user shouldn't need to read OWASP to understand what's at stake.
@@ -128,6 +130,8 @@ The research stage produces understanding. It is the foundation everything else 
 
 Skip conditions: trivial changes (typos, comments, formatting) where there's no codebase context to gather.
 
+`docs/WORKFLOW.md` §3 specifies the authoritative methodology grounding this stage.
+
 ### Stage 2: Scope
 
 Define what's changing and what isn't. This is where the work gets bounded so review can be meaningful.
@@ -145,6 +149,8 @@ For planning work: identify what questions are being answered, what decisions ne
 
 The scope stage produces a clear definition of work. It is the contract for what review will evaluate against.
 
+`docs/WORKFLOW.md` §3 specifies the authoritative methodology grounding this stage.
+
 ### Stage 3: Plan with Governance
 
 This is where every applicable skill in the catalog evaluates the change context. Each skill self-determines applicability based on what the change actually does — files modified, imports added, operations performed, data flows affected.
@@ -158,6 +164,8 @@ Which skills are loaded at all depends on project mode (see §15). An exploratio
 When in doubt, load. The cost of loading an unneeded skill is small. The cost of not loading a needed skill is governance failure.
 
 This stage is the rigor multiplier. It is what makes the framework comprehensive rather than selective.
+
+`docs/WORKFLOW.md` §3 specifies the authoritative methodology grounding this stage.
 
 ### Stage 4: Implement
 

@@ -266,6 +266,25 @@ The translation from CSF Subcategory through to 800-53 / ISO 27002 / CIS uses th
 
 This citation chain is the TARGET for new skill commits going forward. Existing Phase 4–6 skills are not retroactively re-mapped by this WORKFLOW.md amendment; that work belongs to the framework-audit and remediation workstreams.
 
+**Worked example: `security-input-validation` Rule 5.1.** The abstract chain rendered concretely against an existing rule. Phase 6 commit 1/12 cites Rule 5.1 — *Validate at the Trust Boundary, Not Inside Business Logic* — at the rule level against `OWASP ASVS 5.0 V2.2.2`, with the broader §2 Sources table extending into ASVS V2/V4 chapters, OWASP Top 10:2025 A05, OWASP Cheat Sheet — Input Validation, NIST SP 800-218 SSDF PW.5, CWE-20, and CWE-1287. WORKFLOW-V2 extends that chain through the methodology backbone:
+
+```
+Rule 5.1 — Validate at the Trust Boundary, Not Inside Business Logic
+  → OWASP ASVS 5.0 V2.2.2                                                       [existing — rule-level]
+  → OWASP Top 10:2025 A05 (Injection)                                           [existing — §2 Sources]
+  → CWE-20 (Improper Input Validation)                                          [existing — §2 Sources]
+  → NIST SP 800-218 v1.1 SSDF PW.5                                              [existing — §2 Sources]
+  → NIST CSF 2.0 PR.PS (Platform Security) — input-validation subcategory       [TGF-SYNTHESIS — illustrative bridge from ASVS V2.2.2 into platform-security family; exact CSF 2.0 Subcategory ID re-verified at rule-level update during WS4/WS5]
+  → NIST SP 800-53 Rev 5.2.0 SI-10 (Information Input Validation)               [VERIFIED via NIST-CSF-2-0-IR crosswalk from PR.PS family]
+  → NIST SP 800-53 Rev 5.2.0 SI-15 (Information Output Filtering)               [VERIFIED via NIST-CSF-2-0-IR crosswalk — adjacent control covering the output side of the same trust-boundary concern]
+  → ISO/IEC 27002:2022 8.26 (Application security requirements)                 [VERIFIED via NIST-CSF-2-0-IR crosswalk]
+  → CIS Controls v8.1 — Control 16 (Application Software Security), Safeguard 16.10 (Apply Secure Design Principles)  [VERIFIED via NIST-CSF-2-0-IR crosswalk; CIS IG1 prioritized overlay]
+```
+
+**Methodology learning surfaced by this worked example.** The WS2 plan §8 originally proposed bridging ASVS V2.2.2 directly to 800-53 via the `OWASP-ASVS-MAPPING-800-53` source. Stage 1 research (WS2 Step 2) confirmed that OWASP publishes its ASVS-to-NIST mapping only at the NIST SP 800-63B (Authentication) level — i.e., for ASVS V6 (Authentication) and adjacent IAM domains, not for V2 (Validation, Sanitization, and Encoding). The corrected chain bridges from ASVS through a TGF-synthesized CSF 2.0 Subcategory and then through to 800-53 / ISO 27002 / CIS via the verified CSF Informative References crosswalk. This is the discipline the chain demonstrates: every link is either crosswalk-verified against a Tier-1 source or honestly flagged as `TGF-SYNTHESIS` with the grounding source noted.
+
+**Scope boundary.** This example does not retroactively update `skills/security-input-validation/SKILL.md` Rule 5.1's rule-level citation or §2 Sources table. Retroactive remap of Phase 4–6 skills against WORKFLOW-V2 is WS4/WS5 territory. The example illustrates the target chain shape; the actual rule update lands during framework audit and remediation, where the CSF 2.0 Subcategory text gets re-verified live against `NIST-CSF-2-0` and the M5 multi-source corroboration is re-run on the bridge.
+
 **Where M5 / M8 / M9 / M12 fire at Stage 3** (per `docs/RESEARCH-SECURITY.md` §7.3):
 
 - **M5 (Multi-source corroboration).** Before locking a control with specific parameter values (key lengths, iteration counts, timeout thresholds), verify at least two independent authoritative sources support the parameter. Recorded in the research log and cross-referenced in the Stage 3 plan output.
