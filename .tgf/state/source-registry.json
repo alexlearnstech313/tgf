@@ -724,6 +724,24 @@
       "cited_in": [
         "docs/workstream-2-plan.md"
       ]
+    },
+    "CLAUDE-CODE-DOCS": {
+      "tier": 1,
+      "type": "vendor-doc",
+      "publisher": "Anthropic",
+      "jurisdiction": "vendor",
+      "primary_url": "https://code.claude.com/docs/en/sub-agents",
+      "allow_url_patterns": [
+        "https://code.claude.com/docs/en/*",
+        "https://code.claude.com/docs/*"
+      ],
+      "expected_schema": "vendor-doc",
+      "pinned": false,
+      "last_verified": null,
+      "note": "Claude Code official documentation including subagents, skills, MCP, hooks, etc.",
+      "cited_in": [
+        "workstream-3-four-review-agents"
+      ]
     }
   }
 }
