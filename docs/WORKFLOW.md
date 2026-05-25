@@ -529,7 +529,7 @@ type ImplementerOutput = {
 
 ### Role: Code Reviewer
 
-Phase 1 of four-pass review. Evaluates craftsmanship. Fresh context — does not share the Implementer's mental model.
+Phase 1 of four-pass review. Evaluates craftsmanship. Fresh context — does not share the Implementer's mental model. See `agents/code-reviewer.md` for full persona, authoritative materials, severity gradient application, and tool-restriction rationale.
 
 ```typescript
 type CodeReviewerInput = {
