@@ -8,6 +8,37 @@ Per `CLAUDE.md` §11: all findings get fixed, formally waived in WAIVER-LOG, or 
 
 ---
 
+## ERR-2026-05-25-004: `security-cryptography` skill carries adversarial-citation gaps (zero MITRE ATT&CK technique-IDs, zero attribution-report citations across all 7 rules)
+
+**Severity:** medium
+
+**Status:** open
+
+**Owner:** WS4 (queued — do not address during WS3 per Risk 5)
+
+**Target resolution:** WS4 (Audit of existing work) — for each rule in `skills/security-cryptography/rules.md`, add a "Documented adversary use" sub-section pairing the rule's defensive citation with ATT&CK technique-IDs at technique-level and one or two attribution-report references at report-and-date level. Verify each ATT&CK ID via WebFetch under M15 against the current ATT&CK framework version (technique numbering changes between versions). Apply the resulting dual-citation pattern as the template for Phase 6 commits 5/12+ so the same gap doesn't propagate.
+
+**Originating context:** WS3 Build Step 4 smoke test A (`.tgf/state/agent-activity/red-team/447ddead-9a9e-4530-910e-69f6bf16a7f5.json`) dispatched the Red Team persona against `73d025d` (Phase 6 commit 4/12 — `security-cryptography`). The agent caught a structural gap distinct from the citation-chain depth issue (ERR-003) and the comment-discipline issue (ERR-001): the skill contains zero MITRE ATT&CK technique-ID references, zero ATT&CK Group attributions, and zero attribution-report citations across any of its 7 rules. Six concrete findings surfaced:
+
+- **RT-F-01 (medium) — Rule 5.7 (TLS) missing ATT&CK technique-IDs.** T1040 (Network Sniffing), T1557 (Adversary-in-the-Middle), T1573.002 (Encrypted Channel: Asymmetric Cryptography), T1562.010 (Impair Defenses: Downgrade Attack) all map to the failure modes Rule 5.7 prevents. None cited. Public attribution: CISA AA22-279A, Mandiant M-Trends 2024.
+- **RT-F-02 (high) — Rule 5.2 PQC paragraph missing adversary-timeline framing.** The harvest-now-decrypt-later threat envelope (NSA CNSA 2.0, 2022; ENISA Post-Quantum Cryptography Integration Study, 2022) is current for any project handling multi-decade-confidentiality data, not future. Skill silence on adversary tier weakens urgency framing. ATT&CK reference: T1040 as the bulk-collection primitive enabling harvest phase.
+- **RT-F-03 (high) — Rule 5.5 KDF missing bcrypt 72-byte input truncation AND memory-hard KDF as DoS amplifier.** The Okta AD/LDAP delegated-authentication advisory (Oct 2024) shipped on the bcrypt-72-byte class. KDF login endpoints are also a DoS amplification primitive (ATT&CK T1499.003 Application Exhaustion Flood) at the parameter values the skill recommends.
+- **RT-F-04 (medium) — Rule 5.6 (Key Lifecycle) missing adversary-use citations.** T1552.004 (Unsecured Credentials: Private Keys), T1606.001 (Forge Web Credentials: Web Cookies / SAML tokens), T1648 (Serverless Execution abuse for credential access). Public attribution: SolarWinds 2020 Golden SAML disclosure (Mandiant/FireEye, 2020-12); CrowdStrike GTR 2024 cloud-native trends.
+- **RT-F-05 (medium) — Rule 5.4 (CSPRNG) missing environment-class failure modes.** Container early-boot entropy starvation, fork-safety considerations, userspace PRNG wrappers. Canonical historical example: CVE-2008-0166 Debian OpenSSL key-generation entropy bug (2006-2008). Skill cedes failure mode to "modern stacks handle this transparently" without verification step.
+- **RT-F-06 (low) — Fail-mode behavior not systematically specified.** What state does the system enter when Argon2id verification raises an exception under memory pressure? When TLS cert validation fails mid-renewal? When KEK rotation succeeds for new writes but old-KEK destruction fails? Each is a transient adversarial window. ATT&CK T1556 sub-techniques as adversary motivation for fail-closed discipline.
+
+Plus 10 `scenarios_tested` entries (4 exploitable, 4 mitigated, 2 out_of_scope) enumerating attack-tree analysis at structural level.
+
+**Plain-language impact:** the skill teaches the defender what to do without naming which documented adversaries exploit the gaps when the defense is incomplete. Findings sourced from this skill by the Red Team subagent in production will produce only the defensive half of CLAUDE.md §1's "citation + plain-language-impact" pair, weakening downstream adversarial-review output. The cryptographic guidance itself is substantively correct (no hard-refusal-list violations); the defect is in the threat-intel side of the citation discipline.
+
+**Per WS3 plan Risk 5:** smoke tests on `73d025d` may surface real Phase 6 commit 4/12 gaps. These are WS4 findings, NOT WS3 remediation. The Red Team itself surfaced this; the Red Team will not be dispatched to fix it (per `agents/red-team.md` §7 final bullet — see also dispatch `3d3824de-d599-4094-bb53-962d8eb553ec` confirming the boundary held against both Edit/Write and offensive-Bash refusal prongs).
+
+**Related:** ERR-2026-05-25-001 (Code Reviewer F-003 — inline code comments narrate line-by-line), ERR-2026-05-25-003 (Security Auditor F-001 through F-006 — citation-chain depth gaps). All three entries point to WS4 work on the same skill. Separate entries because remediation paths differ: comment cleanup (ERR-001) vs deeper-citation rework (ERR-003) vs additional-citation-type addition (this entry, ERR-004).
+
+**Candidate-citation caveat:** all ATT&CK technique-IDs and attribution-report references above are training-data-sourced per the Red Team's M9 self-discipline. WS4 remediation MUST verify each via WebFetch under M15 against current ATT&CK / CISA / Mandiant content before committing them into skill text.
+
+---
+
 ## ERR-2026-05-25-003: `security-cryptography` skill carries citation-chain depth gaps (M9 confirmation-gap pattern manifesting in a control-locking skill file)
 
 **Severity:** high

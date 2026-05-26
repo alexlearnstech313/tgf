@@ -570,7 +570,7 @@ type SecurityAuditorOutput = {
 
 ### Role: Red Team
 
-Phase 3 of four-pass review. Adversarial perspective.
+Phase 3 of four-pass review. Adversarial perspective. See `agents/red-team.md` for full persona, non-negotiable §3 boundary discipline (defensive output only — no offensive tooling, exploitation walk-throughs, or operational attack details), Bash-tool defensive-only discipline per Decision C Checkpoint 1 amendment, and authoritative materials (MITRE ATT&CK / Groups / ATLAS at technique-ID level + public attribution at report-and-date level).
 
 ```typescript
 type RedTeamInput = {
