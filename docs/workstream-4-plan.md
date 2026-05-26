@@ -43,11 +43,15 @@ Eleven decisions to resolve. Each has a recommendation; Alt's role at Checkpoint
 
 ### Decision B — Dispatch mechanism: TGF-as-installed-plugin vs general-purpose proxy
 
-**Recommendation:** **Install TGF as a Claude Code plugin first** so dispatches run under real platform-level `tools:` restriction. This closes ERR-2026-05-25-002 (the platform-level validation gap that WS3 smoke tests deliberately deferred). The audit findings will be more faithful, and the platform-restriction validation gets done as a side-effect of WS4 work rather than as a separate ticket.
+**Recommendation (original):** Install TGF as a Claude Code plugin first so dispatches run under real platform-level `tools:` restriction. This closes ERR-2026-05-25-002 (the platform-level validation gap that WS3 smoke tests deliberately deferred). The audit findings will be more faithful, and the platform-restriction validation gets done as a side-effect of WS4 work rather than as a separate ticket.
 
-**Alternative considered:** Continue via `general-purpose` agent proxy (same pattern as WS3 smoke tests). Rejected — WS4 is the audit pass, the quality of findings is what determines WS5 backlog quality, and persona-level-only validation is a known gap. WS3's smoke-test transcripts already validated persona discipline; WS4 should validate platform-level dispatch.
+**Alternative considered:** Continue via `general-purpose` agent proxy (same pattern as WS3 smoke tests). Initially rejected — WS4 is the audit pass, the quality of findings is what determines WS5 backlog quality, and persona-level-only validation is a known gap.
 
-**Risk:** plugin install adds a setup step. Mitigation: TGF is already structured as a plugin per `DEC-2026-05-19-007` and `DEC-2026-05-19-009`; install is mechanical (`/plugin install` against the TGF directory or equivalent). If install fails for any reason, fall back to proxy dispatch with the limitation explicitly noted (same pattern as WS3).
+**Checkpoint 1 amendment (2026-05-26):** Original rejection overridden. **WS4 uses `general-purpose` agent proxy throughout** (same as WS3 smoke tests). Rationale surfaced during Checkpoint 1: TGF is a "half-completed plugin" — `.claude-plugin/plugin.json` + `marketplace.json` stubs exist from Phase 1 scaffolding, but Phase 6 5/12-12/12 + Phase 7 (22 extended security skills) + Phase 8 (10 AI-specific skills) + Phase 9 (7 ops/quality) + Phase 10 (5 compliance) + Phase 11 (5 meta-skills) + Phase 12 (hook library) + Phase 14 (slash commands `/tgf:*`) are all unbuilt. Installing as a v0.1.0 plugin during WS4 would set a precedent of "TGF is installable now" when ~70% of advertised content is missing.
+
+Plugin install + ERR-2026-05-25-002 resolution are properly **Phase 14 work** (Slash Commands + Plugin Integration). WS4 dispatches via proxy; ERR-002 stays open and gets resolved during Phase 14 alongside the slash commands + full plugin polish. This is the more honest separation.
+
+**Consequence on plan:** Build Step 2 (TGF plugin install + smoke verification) is **DROPPED**. Commit count drops from ~21 to ~20. Risk 1 (Plugin install friction) is moot. Self-reference concern (TGF agents reviewing TGF as plugin) is moot. The proxy-dispatch limitation noted in WS3 smoke-test transcripts carries forward to WS4 audit transcripts.
 
 ### Decision C — Two-track audit methodology
 
@@ -107,15 +111,22 @@ Both tracks run per artifact. Findings from both flow into Decision D routing.
 
 ### Decision H — Foundational docs audit depth
 
-**Recommendation:** **Holistic-reviewer-only dispatch, structural-level review, sample-not-full.** Foundational docs (CLAUDE.md 1073 lines, WORKFLOW.md 911+ lines amended by WS2, ARCHITECTURE.md, DECISIONS.md, RESEARCH-SECURITY.md) are large; full per-line audit is prohibitive. Holistic-reviewer evaluates:
-- Cross-document consistency (does CLAUDE.md §3 still match WORKFLOW.md §3 post-WS2 amendments?)
-- DEC-2026-05-26-011 §2 Sources discipline application (do foundational docs cite at depth?)
-- Conceptual-integrity drift (have the WS1-WS3 additions introduced foreign concepts foundational docs don't acknowledge?)
-- Cross-references (do CLAUDE.md / WORKFLOW.md cross-references still resolve correctly after recent WORKFLOW.md amendments?)
+**Recommendation (original):** Holistic-reviewer-only dispatch, structural-level review, sample-not-full. Foundational docs are large (CLAUDE.md 1073 lines, WORKFLOW.md 911+ lines amended by WS2, ARCHITECTURE.md, DECISIONS.md, RESEARCH-SECURITY.md); holistic-only focused on cross-doc consistency / DEC-2026-05-26-011 application / conceptual-integrity drift / cross-references.
 
-Output is one per-foundational-doc finding cluster, not per-line findings.
+**Alternative considered:** Full audit of foundational docs by all four agents. Initially rejected — disproportionate effort for the value; foundational docs are structurally different from skill files (they're guidance, not executable rules).
 
-**Alternative considered:** Full audit of foundational docs by all four agents. Rejected — disproportionate effort for the value; foundational docs are structurally different from skill files (they're guidance, not executable rules).
+**Checkpoint 1 amendment (2026-05-26):** Original rejection overridden. **All four agents dispatched on each foundational doc** (CLAUDE.md, WORKFLOW.md, ARCHITECTURE.md, DECISIONS.md, RESEARCH-SECURITY.md). Holistic-reviewer remains the primary finding-producing dispatch; code-reviewer / security-auditor / red-team add coverage for distinct lenses on prose-heavy content.
+
+**Persona-fit note for prose-heavy dispatch:**
+
+- **code-reviewer on foundational docs** evaluates prose quality, internal consistency, comment-vs-content discipline, naming truthfulness (when docs introduce terminology). Stretches the persona (which was designed for code diffs) but produces findings the holistic synthesizer may miss at the line level.
+- **security-auditor on foundational docs** evaluates whether the document correctly describes security expectations against authoritative sources (e.g., does CLAUDE.md §5 universal-critical list match CLAUDE.md §5 / OWASP ASVS / CWE current state?). Real check; novel application.
+- **red-team on foundational docs** evaluates adversarial gaps in framework guidance — "if an adversary were trying to subvert TGF discipline by manipulating the framework's own description of itself (e.g., prompt-injecting an adopter's CLAUDE.md fetch), what gaps in the guidance enable that?" Novel and potentially high-value application of the red-team persona.
+- **holistic-reviewer** remains the synthesizer per the original recommendation.
+
+Expected output volume per doc: holistic-reviewer findings dominate; other agents produce thinner finding sets but those that surface are differentially valuable (the lens-specific finding the holistic wouldn't surface).
+
+**Consequence on plan:** Foundational-doc dispatches increase from ~5 (holistic-only) to ~20 (4 agents × 5 docs). Total dispatch count rises from ~46 to ~57. Effort estimate adjusted in §11. New Risk 9 (persona-fit on prose-heavy content) added in §12.
 
 ### Decision I — Activity-log transcript storage
 
@@ -207,12 +218,13 @@ After all 18 per-artifact audits complete (or sampled at the halfway point), the
 | 12 | `skills/continuity/` | Phase 4 | code-reviewer + holistic | **Always-on skill** — preloaded by holistic-reviewer (recursive but acceptable per Decision E note) |
 | 13 | `skills/security-core/` | Phase 4 | code-reviewer + security-auditor + holistic | **Always-on skill** — preloaded by security-auditor (recursive but acceptable); shipped pre-WS2 so Stage 1 methodology was pre-WORKFLOW-V2 |
 | 14 | `skills/code-quality/` | Phase 4 | code-reviewer + holistic | **Always-on skill** — preloaded by code-reviewer (recursive but acceptable) |
-| 15 | `CLAUDE.md` | Foundational | holistic only (per Decision H) | 1073 lines; structural review |
-| 16 | `docs/WORKFLOW.md` | Foundational | holistic only | 911+ lines; recently amended by WS2 — check cross-doc consistency |
-| 17 | `docs/ARCHITECTURE.md` | Foundational | holistic only | Extended sections §15-§22; check WS1-WS3 consistency |
-| 18 | `DECISIONS.md` | Foundational | holistic only | Check ADR cross-references and amendments (DEC-005 amended by DEC-009, etc.) |
+| 15 | `CLAUDE.md` | Foundational | **All four** (per Decision H Checkpoint 1 amendment) | 1073 lines; full audit per amended Decision H |
+| 16 | `docs/WORKFLOW.md` | Foundational | **All four** | 911+ lines; recently amended by WS2 — check cross-doc consistency + adversarial-framing on guidance |
+| 17 | `docs/ARCHITECTURE.md` | Foundational | **All four** | Extended sections §15-§22; check WS1-WS3 consistency |
+| 18 | `DECISIONS.md` | Foundational | **All four** | Check ADR cross-references and amendments (DEC-005 amended by DEC-009, etc.) |
+| 19 | `docs/RESEARCH-SECURITY.md` | Foundational | **All four** | Added per Decision H Checkpoint 1 amendment scope (it's a foundational doc); M1-M19 framework reference |
 
-Total: 18 targets, ~46 dispatches across all agents.
+Total: **19 targets, ~57 dispatches** across all agents (post-Decision-H amendment). Original pre-amendment count was 18 targets / ~46 dispatches.
 
 ## §6 Finding Routing
 
@@ -227,18 +239,17 @@ Cross-target patterns (per §4.3) → `docs/workstream-5-plan-backlog.md` "Cross
 
 ## §7 Build Sequence
 
-Per Decision F (one commit per artifact):
+Per Decision F (one commit per artifact). **Updated post-Checkpoint-1 amendments:** Build Step 2 (plugin install) is DROPPED per Decision B amendment; foundational-doc count goes from 4 to 5 (RESEARCH-SECURITY added) and dispatch matrix expands to all-four per Decision H amendment.
 
-1. **Build Step 1 — WS4 plan + Checkpoint 1** (Commits 1/21 + 2/21)
-2. **Build Step 2 — TGF plugin install + smoke verification** (Commit 3/21, per Decision B). Verifies dispatched agents run under real platform-level `tools:` restriction. Sanity check: re-dispatch one of the WS3 transcripts and confirm output matches.
-3. **Build Step 3 — Audit target 1 (security-cryptography)** (Commit 4/21). Validation target per Decision K. Comparison against WS3-known findings.
-4. **Build Step 4 — Audit targets 2-4 (Phase 6 skills 1/12-3/12)** (Commits 5/21-7/21).
-5. **Build Step 5 — Audit targets 5-11 (Phase 5 activity skills)** (Commits 8/21-14/21).
-6. **Build Step 6 — Audit targets 12-14 (Phase 4 always-on skills)** (Commits 15/21-17/21).
-7. **Build Step 7 — Audit targets 15-18 (foundational docs)** (Commits 18/21-21/21... actually 18-20 since one slot becomes Build Step 8).
-8. **Build Step 8 — Cross-target holistic synthesis + WS4 closeout + WS5 plan v1** (Commit 21/21, possibly bundling). Cross-target pattern dispatch (per §4.3). ROADMAP update (WS4 ✅ complete, WS5 next). `framework-hardening-plan.md` §3.4 status flip. WS5 plan v1 as starting input for WS5.
+1. **Build Step 1 — WS4 plan + Checkpoint 1** (Commits 1/22 + 2/22)
+2. **Build Step 2 — Audit target 1 (security-cryptography)** (Commit 3/22). Validation target per Decision K. Comparison against WS3-known findings (ERR-001 + ERR-003 + ERR-004 + F-H04 + F-H05). **First-target validation gate.**
+3. **Build Step 3 — Audit targets 2-4 (Phase 6 skills 1/12-3/12)** (Commits 4/22-6/22).
+4. **Build Step 4 — Audit targets 5-11 (Phase 5 activity skills)** (Commits 7/22-13/22).
+5. **Build Step 5 — Audit targets 12-14 (Phase 4 always-on skills)** (Commits 14/22-16/22).
+6. **Build Step 6 — Audit targets 15-19 (foundational docs, all four agents per Decision H amendment)** (Commits 17/22-21/22). Five commits: CLAUDE.md, WORKFLOW.md, ARCHITECTURE.md, DECISIONS.md, RESEARCH-SECURITY.md.
+7. **Build Step 7 — Cross-target holistic synthesis + WS4 closeout + WS5 plan v1** (Commit 22/22, possibly bundling). Cross-target pattern dispatch (per §4.3). ROADMAP update (WS4 ✅ complete, WS5 next). `framework-hardening-plan.md` §3.4 status flip. WS5 plan v1 as starting input for WS5.
 
-**Realistic commit count: 20-22** depending on whether plugin install (Build Step 2) splits into multiple commits and whether Build Step 8 bundles.
+**Realistic commit count: 21-23** depending on whether Build Step 7 bundles closeout + WS5-plan-v1 + cross-target synthesis into one commit or splits.
 
 **Sequencing flexibility:** if any per-artifact audit surfaces findings that block subsequent audits (e.g., a CLAUDE.md inconsistency that affects how skills are interpreted), pause sequential audit, file the blocking finding to ERROR-LOG, and either escalate to Alt or work around (audit-aware-of-known-gap).
 
@@ -253,14 +264,14 @@ Two layers:
 - Critical/High findings → ERROR-LOG entry verified to follow ERR-001-004 format.
 - Medium/Low findings → backlog entry verified to include severity, target, remediation hint.
 
-### §8.2 First-target validation (Build Step 3 only)
+### §8.2 First-target validation (Build Step 2 only — was Build Step 3 pre-amendment)
 
 Per Decision K: validation against `73d025d` findings WS3 already surfaced (ERR-001 + ERR-003 + ERR-004 + F-H04 + F-H05). Comparison criteria:
 - Audit reproduces 5 of 5 prior findings → audit methodology validated; proceed with confidence.
 - Audit reproduces 3-4 of 5 → investigate missed findings; possibly persona/dispatch issue.
 - Audit reproduces ≤2 of 5 → halt audit; deep investigation of dispatch correctness before proceeding.
 
-### §8.3 WS4 closeout validation (Build Step 8)
+### §8.3 WS4 closeout validation (Build Step 7 — was Build Step 8 pre-amendment)
 
 Cross-target holistic dispatch verifies no obvious audit gaps (e.g., a skill class that should have produced findings producing zero). WS5 plan v1 generated from the backlog has reasonable work-package structure for WS5 to attack.
 
@@ -271,16 +282,16 @@ Eleven decisions to confirm or amend. Each has a recommendation in §3.
 | ID | Decision | Recommendation |
 |---|---|---|
 | A | Audit ordering strategy | Approve — sequential per-artifact, reverse-chronological |
-| B | Dispatch mechanism | **Approve — install TGF as plugin first** (closes ERR-002 as side-effect) |
+| B | Dispatch mechanism | **Approved with amendment 2026-05-26** — proxy-first (general-purpose dispatch, same as WS3 smoke tests); plugin install + ERR-002 resolution deferred to Phase 14. Build Step 2 (plugin install) DROPPED. |
 | C | Two-track audit methodology | Approve — mechanical (Track 1) + agent dispatch (Track 2) per artifact |
 | D | Finding routing | Approve — severity-based; Critical/High → ERROR-LOG, Medium/Low → backlog doc |
 | E | Per-artifact dispatch matrix | Approve — all four for Phase 6 security; selective for others |
 | F | Per-artifact commit boundary | Approve — one commit per audited artifact; ~21 commits total |
 | G | §2 Sources retroactive rigor | Approve — bidirectional check only; re-fetch is WS5 work |
-| H | Foundational docs audit depth | Approve — holistic-reviewer-only, structural sample, not per-line |
+| H | Foundational docs audit depth | **Approved with amendment 2026-05-26** — all four agents on each foundational doc (5 docs total: CLAUDE.md, WORKFLOW.md, ARCHITECTURE.md, DECISIONS.md, RESEARCH-SECURITY.md). Persona-fit note in §3 Decision H body. New Risk 9. |
 | I | Activity-log transcript storage | Approve — same `.tgf/state/agent-activity/` pattern as WS3 |
 | J | WS5 backlog format | Approve — two-doc (ERROR-LOG for Critical/High + workstream-5-plan-backlog.md for Medium/Low) |
-| K | Per-audit sanity check | Approve — none except Build Step 3 first-target validation against WS3-known findings |
+| K | Per-audit sanity check | Approve — none except Build Step 2 first-target validation against WS3-known findings (Build Step 2 post-amendment; was Build Step 3 pre-amendment) |
 
 Anticipated discussion topics:
 - Whether to skip plugin install (Decision B) if it's known to be friction-heavy — would fall back to proxy with explicit ERR-002 carry-forward
@@ -301,26 +312,25 @@ Anticipated discussion topics:
 
 Per `docs/framework-hardening-plan.md` §3.4: "1-2 sessions for audit itself + 1-3 sessions for remediation (Workstream 5)." This was conservative; revised estimate:
 
+**Updated post-Checkpoint-1 amendments.** Build Step 2 (plugin install) dropped per Decision B amendment; Build Step 6 expands per Decision H amendment (5 foundational docs × 4 agents instead of 4 docs × 1 agent).
+
 | Build Step | Commits | Effort estimate |
 |---|---|---|
-| 1 (plan + Checkpoint 1) | 2 | This session (~30 min for plan; Checkpoint 1 is fast) |
-| 2 (plugin install + verification) | 1 | ~15-30 min if install is mechanical; up to 1 session if friction |
-| 3 (first artifact: security-cryptography validation) | 1 | ~45 min (~3-4 dispatches + Track 1 mechanical + validation comparison) |
-| 4 (Phase 6 skills 1/12-3/12) | 3 | ~2 hours (3 artifacts × ~40 min each) |
-| 5 (Phase 5 activity skills) | 7 | ~2-3 hours (lighter dispatch matrix per Decision E) |
-| 6 (Phase 4 always-on skills) | 3 | ~1.5 hours |
-| 7 (foundational docs) | 4 | ~2 hours (holistic-only dispatches per Decision H, but larger artifacts) |
-| 8 (cross-target synthesis + closeout + WS5 plan) | 1 | ~1 hour |
+| 1 (plan + Checkpoint 1) | 2 | This session (~30 min for plan; Checkpoint 1 ~30 min walk) |
+| 2 (first artifact: security-cryptography validation) | 1 | ~45 min (~3-4 dispatches + Track 1 mechanical + validation comparison) |
+| 3 (Phase 6 skills 1/12-3/12) | 3 | ~2 hours (3 artifacts × ~40 min each) |
+| 4 (Phase 5 activity skills) | 7 | ~2-3 hours (lighter dispatch matrix per Decision E) |
+| 5 (Phase 4 always-on skills) | 3 | ~1.5 hours |
+| 6 (foundational docs, all four agents per amended Decision H) | 5 | ~3-4 hours (5 docs × 4 agents = ~20 dispatches; large-doc handling adds latency per Risk 9) |
+| 7 (cross-target synthesis + closeout + WS5 plan) | 1 | ~1 hour |
 
-**Total: ~10-12 hours, realistic 2-3 sessions of focused work.** Push timing per WS3 precedent: at WS4 closeout or earlier per Alt's call.
+**Total: ~11-13 hours, realistic 2-3 sessions of focused work.** Modest increase from pre-amendment ~10-12 hours due to Decision H expansion partly offset by Decision B simplification. Push timing per WS3 precedent: at WS4 closeout or earlier per Alt's call.
 
 ## §12 Risks
 
-### Risk 1 — Plugin install friction blocks Decision B
+### Risk 1 — Plugin install friction blocks Decision B (RESOLVED post-Checkpoint-1)
 
-**Probability:** medium. **Impact:** high (fall back to proxy = ERR-002 stays open).
-
-**Mitigation:** Build Step 2 includes plugin install + smoke verification. If install fails within ~30 min of attempts, document the failure mode (becomes a Phase 12 follow-up) and proceed with proxy dispatch per WS3 precedent. ERR-002 stays open, scoped to a future plugin-install fix.
+**Status:** RESOLVED via Decision B amendment. WS4 uses proxy dispatch from the start; no plugin install attempted. ERR-2026-05-25-002 stays open and gets resolved during Phase 14 (Slash Commands + Plugin Integration) when plugin install is the actual work. This risk no longer applies to WS4.
 
 ### Risk 2 — Audit findings overwhelm WS5 plan scope
 
@@ -363,6 +373,27 @@ Per `docs/framework-hardening-plan.md` §3.4: "1-2 sessions for audit itself + 1
 **Probability:** low. **Impact:** low (the refinements are consistent across all four agents).
 
 **Mitigation:** All four agents shipped with the same R4 + R10 baseline applied during WS3. Per-agent refinements (R1-R3, R5-R9) are agent-specific and don't cross dispatch boundaries. No mitigation needed beyond verifying agent files at WS4 start.
+
+### Risk 9 — Full four-agent dispatch on prose-heavy foundational docs may produce thin findings from non-holistic agents (added post-Checkpoint-1 per Decision H amendment)
+
+**Probability:** medium-high. **Impact:** low-medium (low-signal findings consume dispatch effort without proportionate value).
+
+**Mitigation:** Per the persona-fit note in §3 Decision H, code-reviewer / security-auditor / red-team are being applied to content they weren't designed for (prose / docs rather than code / skill files). Expect:
+- holistic-reviewer produces dominant finding count per foundational doc
+- other three produce thinner finding sets — but findings that surface are differentially valuable (lens-specific concerns the holistic misses)
+- if code-reviewer / security-auditor / red-team produce zero findings on a foundational doc, that's acceptable (the dispatch confirmed no lens-specific concerns) rather than a methodology failure
+
+If pattern is "consistently zero findings from one agent across 3+ docs," consider reverting that agent's dispatch on remaining foundational docs (mid-step amendment) to save effort. Capture the observation as a learning for any future Phase-14-style foundational-doc audit work.
+
+### Risk 10 — Large-document handling under dispatch (added post-Checkpoint-1 per Decision H amendment)
+
+**Probability:** medium. **Impact:** medium (agents may truncate, miss content, or produce shallow findings on 1000+ line docs).
+
+**Mitigation:** Foundational docs CLAUDE.md (1073 lines), WORKFLOW.md (911+ lines), and ARCHITECTURE.md are substantial. The agents weren't designed for that scale of single-input review.
+
+Options if observed: (a) chunk the doc and dispatch per section (e.g., CLAUDE.md §1-§7 in one dispatch, §8-§14 in another, then §15-§22 in a third for the architecture sections); (b) restrict per-dispatch focus to specific check categories rather than full review; (c) accept shallower findings per dispatch and rely on the cross-target holistic-synthesis at Build Step 7 to catch what individual dispatches missed.
+
+Default plan: full-doc dispatch first; chunk if results show truncation/shallowness. Pre-emptive chunking would add per-target commit boundary complexity.
 
 ## §13 Commit Discipline
 
