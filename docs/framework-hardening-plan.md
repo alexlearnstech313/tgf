@@ -2,7 +2,7 @@
 
 > **Status:** v1 master plan — written 2026-05-22, locked at checkpoint same day. Orchestrates all framework-hardening work between Phase 6 commit 4/12 (security-cryptography, landed `73d025d`) and Phase 6 commit 5/12 (security-secrets-management, deferred).
 >
-> **Progress:** Workstream 1 ✅ COMPLETED + PUSHED 2026-05-22 (commit `dc2b294`, on `origin/main`). Workstreams 2–5 still deferred to their own workflows. See §3 for per-workstream status.
+> **Progress:** Workstream 1 ✅ COMPLETED + PUSHED 2026-05-22 (commit `dc2b294`, on `origin/main`). Workstream 2 ✅ COMPLETED 2026-05-25 (`609c4e6` closeout). Workstream 3 ✅ COMPLETED 2026-05-26 (six commits per Decision J; closeout this commit). Workstreams 4-5 still deferred to their own workflows. See §3 for per-workstream status.
 >
 > **Scope:** this is a *master plan* that sequences five workstreams. Only Workstream 1 (research-security infrastructure) has a detailed implementation plan in this repo (`docs/research-security-implementation-plan.md`). **Workstreams 2–5 are mentioned with goals + dependencies + rationale, but each MUST have its own full TGF workflow — plan → Checkpoint 1 approval → implement → four-pass review → commit — when it begins.** This plan does not substitute for per-workstream planning.
 
@@ -129,7 +129,7 @@ Sequenced in dependency order. Each subsection: Goal → Key Artifacts → Autho
 
 ### §3.3 Workstream 3 — Four Review Agents
 
-**Status:** Deferred until Workstreams 1 + 2 operational. Will have its own full TGF workflow when it begins.
+**Status:** ✅ COMPLETED 2026-05-26. Plan + Checkpoint 1 cleared (`506807b`, `4878577`). Four per-agent commits: Code Reviewer (`a9dd2d3`, 147-line operational agent + smoke tests), Security Auditor (`37e2ac9`, 217-line operational agent + cross-agent R4 boundary refinement applied to all four), Red Team (`959ca53`, 247-line operational agent with non-negotiable §3 boundary discipline + R5/R6/R7 from smoke tests), Holistic Reviewer + closeout bundled (this commit, 290-line operational agent with §7 §2-Sources-traceability check + R8/R9/R10). Ten persona refinements R1-R10 surfaced by smoke-test learning. Eight smoke-test transcripts captured at `.tgf/state/agent-activity/<role>/` (gitignored per Decision D). DEC-2026-05-26-011 captures the §2 Sources discipline rules. Four WS4-queued ERROR-LOG entries on Phase 6 commit 4/12 + 2 additional Holistic Reviewer findings (F-H04, F-H05) captured in activity-log transcript for WS4 discovery. **Bootstrap-problem structural validation passed** — Holistic Reviewer dispatch confirmed with high confidence that the §7 check would have caught the §2 Sources discipline violation on the original `b67765e`. The framework can now catch its own past failure pattern. See `docs/workstream-3-plan.md` for the spec and `docs/ROADMAP.md` MH-3 for commit summary.
 
 **Goal:** flesh out the four review agents from scaffolds (Phase 4 commit `d4abbb0`) to operational subagents with rich personas + skill preloading + authoritative-materials citations. Address the bootstrap problem (orchestrator playing all four roles) by establishing separate-agent review for high-stakes changes.
 

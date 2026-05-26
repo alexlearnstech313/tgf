@@ -218,7 +218,8 @@ Events relevant to research security:
 | L2 state | `.tgf/state/parameter-history.json` | cross-session parameter values (M17, future use) |
 | L2 state | `.tgf/state/baseline-updates.json` | audit log of baseline replacements |
 | L2 state | `.tgf/state/hook-debug.log` | newline-delimited JSON debug records from every hook execution |
-| L3 persona | (deferred to Workstream 3) | `agents/security-auditor.md` etc. will preload this document |
+| L2 state | `.tgf/state/agent-activity/<role>/<dispatch_id>.json` | per-dispatch transcripts for the four review agents (code-reviewer, security-auditor, red-team, holistic-reviewer); orchestrator writes on subagent return per Decision E of `docs/workstream-3-plan.md`; gitignored per Decision D (per-machine operational state) |
+| L3 persona | Operationalized in Workstream 3 (✅ 2026-05-26) | `agents/code-reviewer.md`, `agents/security-auditor.md`, `agents/red-team.md`, `agents/holistic-reviewer.md` — each preloads its skill set via the `skills:` frontmatter mechanism |
 | L4 gates | enforced via L1 hooks at Stage 1→2 / 3→4 / 5→6 transitions | (no separate file — gating is hook behavior) |
 | L5 human | M8 approval format documented in §5.5 | author writes `m8-approvals/{timestamp}-{change-id}.json` |
 | Tests | `tests/research-security-smoke-test.sh` | 12-test suite (T1–T12) deliberately attempting to slip past each M |

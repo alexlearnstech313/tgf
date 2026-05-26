@@ -6,6 +6,39 @@ Each decision captures: what was decided, when, why, what alternatives were cons
 
 ---
 
+## DEC-2026-05-26-011: §2 Sources discipline — citation-traceability rules for skill files
+
+**Decided:** Operationalize three citation-traceability rules for `skills/<name>/` files. (1) Every source listed in a skill's `§2 Sources` table or frontmatter `sources:` list MUST be cited at rule level in `rules.md` or `anti-patterns.md`. A source listed in §2 but never cited at rule level is removed from both surfaces — "verified by reference" is not a valid verification status. (2) Sub-section references within a registered source use `§<section-name>` suffix (e.g., `OWASP-CHEAT-CS §Key Management`); sub-sections do NOT require separate `source-registry.json` entries — the parent source's allow-url-pattern covers the page. (3) For skills defining control-locking parameters (cryptographic parameters, security thresholds, anything downstream rules depend on as a numerical floor), all cited authoritative sources MUST be fetched at Stage 1 under M15-gated WebFetch rather than recalled from training-data memory — the framework's premise is authoritative-source verification, not memory.
+
+**Date:** 2026-05-26
+
+**Context:** Phase 6 commit 4/12 (`b67765e` → corrected as `73d025d`) shipped the `security-cryptography` skill with three §2 Sources discipline gaps that the original holistic-review pass missed. The in-session correction in `73d025d` removed two cheat sheets that were listed in §2 but never cited at rule level (`OWASP-CHEAT-KM`, `OWASP-CHEAT-TLS`), upgraded the parameter-source cheat sheet from "verified by reference" to actually-verified, and rewrote the §2 footer prose to explain the demotion. The correction was right; the *rule* the correction implied was not captured anywhere discoverable. Holistic-Reviewer smoke test against `73d025d` during WS3 Build Step 5 (dispatch `ead5f5cf-13b1-4e41-8837-d6e123c0255e`) surfaced this gap as F-H02 with high confidence that the resulting agent persona's §7 §2 Sources traceability check would catch the same failure mode going forward. Capturing the rules as an ADR now closes F-H02 immediately rather than queuing for WS4 — the gap the framework was built to address gets fixed while context is fresh.
+
+**Decision:**
+
+1. **§2-to-rule-level traceability is mandatory and bidirectional.** Every source in §2 / frontmatter `sources:` must have ≥1 rule-level citation in `rules.md` or `anti-patterns.md`; every rule-level citation must resolve to a source in §2 / `source-registry.json`. The Holistic Reviewer's §7 check (per `agents/holistic-reviewer.md`) operationalizes this at review time. An executable hook-side check enforcing the same invariant is a candidate follow-up — captured in the Holistic Reviewer's WS3 smoke test transcript at `.tgf/state/agent-activity/holistic-reviewer/ead5f5cf-13b1-4e41-8837-d6e123c0255e.json` (F-H04) and discoverable by WS4 when WS4 runs.
+
+2. **Sub-section citation convention** uses `§<section-name>` suffix within a registered source: `OWASP-CHEAT-CS §Key Management`, `NIST-SP-800-57 §5.3`. Section-anchor allow-url-patterns may be registered in `source-registry.json` if hook-side verification needs them, but the default assumption is the parent source's allow-pattern covers section anchors. Do NOT register sub-sections as separate sources (that splits the source-tree unnecessarily and breaks the M12 independence check).
+
+3. **Stage 1 live-fetch discipline for control-locking-parameter skills.** When a skill defines parameters that other code or downstream rules depend on as numerical floors (Argon2id memory, RSA bits, TLS versions, KDF iteration counts, etc.), the Stage 1 research phase MUST live-fetch all cited authoritative sources under M15-gated WebFetch. Training-data recall of parameter values is the M9 confirmation-gap pattern — the framework's primary defense layer fails if parameter values float against memory rather than against verified source content.
+
+4. **Verification status strings** are restricted to: a date in `YYYY-MM-DD` format indicating actual fetch under hooks; `pending` for sources registered but not yet fetched; or `null` for sources cited but not requiring fetch (Tier 1 stable publications per Decision B of `docs/workstream-3-plan.md`). The string "verified by reference" is **deprecated** — it was the pattern that allowed `b67765e`'s gap to land.
+
+**Alternatives considered:**
+
+- **Defer the rules to WS4 as remediation findings only.** Rejected — the rules apply going forward to Phase 6 commits 5/12–12/12 and all future skill commits, not just retroactively to commit 4/12. Capturing as ADR now prevents the same gap from recurring in commits not yet written.
+- **Encode the rules entirely in the Holistic Reviewer persona without an ADR.** Rejected — agent-level enforcement is the operational defense, but the *rule* needs a discoverable address for skill authors who write rules.md before the Holistic Reviewer reviews them. ADR + agent persona is defense in depth.
+- **Wait for an executable hook-side check before adopting the rules.** Rejected — the hook is a Phase 11/12 candidate (see ERR-2026-05-26-005). The rules apply now via agent-level review; the hook hardens the enforcement layer later.
+
+**Downstream consequences:**
+
+- Phase 6 commits 5/12 through 12/12 author skill files under these rules.
+- The Holistic Reviewer persona's §7 check (`agents/holistic-reviewer.md`) is the enforcement surface at review time.
+- The existing ERR-2026-05-25-003 entry on `security-cryptography` citation-chain depth issues remains open as WS4 work — those findings are the residual of pre-ADR authoring.
+- Future skill-template documentation should reference this DEC explicitly under "§2 Sources discipline."
+
+---
+
 ## DEC-2026-05-20-010: Disable `security-guidance` plugin hook for TGF via project-local env override
 
 **Decided:** Add `env.ENABLE_SECURITY_REMINDER = "0"` to TGF's project-local `.claude/settings.local.json` (gitignored) to disable the `security-guidance@claude-plugins-official` plugin's substring-scan hook for TGF only. The hook trips on the substring patterns TGF's security skills exist to document as anti-patterns; TGF's four-pass review covers the same risk surface with stronger contextual analysis. Other projects retain the hook unchanged.

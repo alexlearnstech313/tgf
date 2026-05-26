@@ -591,7 +591,7 @@ type RedTeamOutput = {
 
 ### Role: Holistic Reviewer
 
-Phase 4 of four-pass review. TGF-specific integration verification (the value TGF adds over generic review).
+Phase 4 of four-pass review. TGF-specific integration verification (the value TGF adds over generic review). See `agents/holistic-reviewer.md` for full persona, synthesizer role across the focused three agents, Stage 5 Phase 4 canonical checks (per `CLAUDE.md` §3 Stage 5 Phase 4), the §2 Sources traceability check added post-commit-4/12 (the check the original holistic-review pass missed on `b67765e`), and authoritative materials (conceptual foundations / architecture and evolution / systems thinking / scale operations / formal architecture standards).
 
 ```typescript
 type HolisticReviewerInput = {
