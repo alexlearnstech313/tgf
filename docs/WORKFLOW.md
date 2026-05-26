@@ -549,7 +549,7 @@ type CodeReviewerOutput = {
 
 ### Role: Security Auditor
 
-Phase 2 of four-pass review. Applies applicable security skills' rules.
+Phase 2 of four-pass review. Applies applicable security skills' rules. See `agents/security-auditor.md` for full persona, authoritative materials (Tier 1/2 live-cite vs Tier 1 stable reference-only per Decision B), severity gradient including the CLAUDE.md §5 hard-refusal list, and M8 control-locking verification activation per `docs/RESEARCH-SECURITY.md` §5.5.
 
 ```typescript
 type SecurityAuditorInput = {
