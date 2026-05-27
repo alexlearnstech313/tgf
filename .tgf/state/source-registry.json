@@ -742,6 +742,68 @@
       "cited_in": [
         "workstream-3-four-review-agents"
       ]
+    },
+    "PLAIN-LANG-GOV": {
+      "tier": 1,
+      "type": "plain-language-guidelines",
+      "publisher": "U.S. Federal Plain Language Action and Information Network (PLAIN) / U.S. General Services Administration (digital.gov)",
+      "jurisdiction": "US-federal",
+      "primary_url": "https://digital.gov/guides/plain-language",
+      "allow_url_patterns": [
+        "https://digital.gov/guides/plain-language",
+        "https://digital.gov/guides/plain-language/*",
+        "https://digital.gov/resources/plain-language*",
+        "https://www.plainlanguage.gov/guidelines/*",
+        "https://www.plainlanguage.gov/guidelines",
+        "https://www.plainlanguage.gov/resources/checklists/checklist/"
+      ],
+      "expected_schema": "plain-language-guidelines",
+      "pinned": false,
+      "last_verified": null,
+      "note": "Federal Plain Language Guidelines (2011, periodically updated). Authoritative anchor for plain-English operational discipline. Mandated by the Plain Writing Act of 2010 (Public Law 111-274) for U.S. federal agency communications; widely adopted as civilian-comms standard. Tier 1 living document — periodic refresh required. Registered 2026-05-27 for CLAUDE.md §2 communication amendment + future communication skill. Primary URL updated 2026-05-27 from plainlanguage.gov to digital.gov after observed 301 redirect; legacy plainlanguage.gov patterns retained in allow-list for backward compatibility with prior content references. See ERR-2026-05-27-007 for hook-handling context.",
+      "cited_in": [
+        "CLAUDE.md",
+        "docs/communication-skill-plan.md"
+      ]
+    },
+    "MS-WRITING-STYLE": {
+      "tier": 1,
+      "type": "technical-writing-style-guide",
+      "publisher": "Microsoft",
+      "jurisdiction": "vendor",
+      "primary_url": "https://learn.microsoft.com/en-us/style-guide/welcome/",
+      "allow_url_patterns": [
+        "https://learn.microsoft.com/en-us/style-guide/*",
+        "https://learn.microsoft.com/en-us/style-guide/welcome",
+        "https://learn.microsoft.com/en-us/style-guide/welcome/"
+      ],
+      "expected_schema": "technical-writing-style-guide",
+      "pinned": false,
+      "last_verified": null,
+      "note": "Microsoft Writing Style Guide — public technical communication standard widely adopted across the tech industry. Covers voice, terminology, audience awareness, accessibility, inclusive language, and technical content patterns. Tier 1 living document. Registered 2026-05-27 for CLAUDE.md §2 communication amendment + future communication skill.",
+      "cited_in": [
+        "CLAUDE.md",
+        "docs/communication-skill-plan.md"
+      ]
+    },
+    "GOOGLE-DOC-STYLE": {
+      "tier": 1,
+      "type": "technical-writing-style-guide",
+      "publisher": "Google",
+      "jurisdiction": "vendor",
+      "primary_url": "https://developers.google.com/style",
+      "allow_url_patterns": [
+        "https://developers.google.com/style/*",
+        "https://developers.google.com/style"
+      ],
+      "expected_schema": "technical-writing-style-guide",
+      "pinned": false,
+      "last_verified": null,
+      "note": "Google Developer Documentation Style Guide — peer to Microsoft Writing Style Guide; widely-cited open standard for developer-facing technical communication. Covers structure, voice, code samples, accessibility, and audience-tailored content. Tier 1 living document. Registered 2026-05-27 for CLAUDE.md §2 communication amendment + future communication skill.",
+      "cited_in": [
+        "CLAUDE.md",
+        "docs/communication-skill-plan.md"
+      ]
     }
   }
 }

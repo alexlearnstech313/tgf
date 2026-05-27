@@ -8,6 +8,56 @@ Per `CLAUDE.md` §11: all findings get fixed, formally waived in WAIVER-LOG, or 
 
 ---
 
+## ERR-2026-05-27-007: Research-security hook chain has at least two real bugs surfaced during in-session use — URL→source_id mismatch on redirect response + silent skip of a successful fetch
+
+**Severity:** high
+
+**Status:** open
+
+**Owner:** WS1 follow-up (the research-security infrastructure was built in WS1; bugs in that infrastructure route there)
+
+**Target resolution:** WS1 follow-up session — investigate the PostToolUse:WebFetch hook scripts in `hooks/scripts/` (or wherever the M3/M4/M11/M13/M14/M15/M18/M19 chain dispatches from). Three specific defects to reproduce and fix:
+
+1. **URL→source_id matching breaks on redirect responses.** When `WebFetch` receives an HTTP 301 redirect response (679 bytes of redirect-notice text rather than actual content), the hook should either (a) recognize it as a redirect and skip baselining, or (b) baseline against the redirect-target URL after the caller re-fetches. It currently does neither — it baselines the redirect-notice text against an *unrelated* `source_id`. Specifically, during this session the fetch `https://www.plainlanguage.gov/guidelines/` returned a 301; the hook recorded it in the research-log as `source_id: GOOGLE-DOC-STYLE` and saved a 679-byte baseline file `source-baselines/GOOGLE-DOC-STYLE.md` containing the redirect notice. The `PLAIN-LANG-GOV` source_id that should have received the verification record got nothing.
+
+2. **The third fetch in a multi-fetch session was silently skipped.** Within the same session I issued three `WebFetch` calls in parallel: Microsoft (succeeded, logged correctly), plainlanguage.gov (redirected, mislabeled per defect #1), and developers.google.com (succeeded with real content visible to the caller, but **no research-log entry was written at all**). M-layer enforcement was effectively bypassed for that fetch — the caller received content that wasn't schema-scanned (M3), pattern-scanned (M4), or hashed (M13/M11). This is worse than defect #1: defect #1 corrupts the audit trail; this one means there is no audit trail.
+
+3. **Cross-wiring of source_id and URL in the verification report.** Independent of the redirect issue, the PostToolUse hook surface emitted a verification message claiming `WebFetch VERIFIED — GOOGLE-DOC-STYLE (https://www.plainlanguage.gov/guidelines/)`. Even if the redirect handling were correct, the hook's own surface-level reporting paired a `source_id` with a URL that has no entry mapping it to that source_id in `.tgf/state/source-registry.json`. PLAIN-LANG-GOV (where `plainlanguage.gov/*` is registered) and GOOGLE-DOC-STYLE (where `developers.google.com/style/*` is registered) have disjoint allow_url_patterns; no fuzzy match should have placed them together.
+
+**Originating context:** Session `ea9df28f-f56f-4b88-8c5e-99d8f9536a2c` (2026-05-27). During the CLAUDE.md §2 communication-discipline amendment, three `WebFetch` calls were issued in parallel to verify newly-registered sources (PLAIN-LANG-GOV, MS-WRITING-STYLE, GOOGLE-DOC-STYLE). The Microsoft fetch produced a correct verification record. The plainlanguage.gov fetch returned a 301 redirect to `https://digital.gov/guides/plain-language` (the canonical Federal Plain Language Guidelines have moved to digital.gov); the hook saved this redirect as a poisoned baseline for GOOGLE-DOC-STYLE. The Google fetch returned real content (style-guide sections listed in the WebFetch response visible to the caller) but the hook produced no research-log entry. Evidence captured at observation time: `.tgf/state/research-logs/ea9df28f-f56f-4b88-8c5e-99d8f9536a2c.json` lines 51-95 (the wrong entry); `.tgf/state/source-baselines/GOOGLE-DOC-STYLE.md` (the 679-byte 301 redirect-notice baseline). These artifacts are deleted as part of the same commit that files this entry, but the contents are preserved verbatim above.
+
+Verbatim wrong log entry preserved here for the investigation:
+```
+"url": "https://www.plainlanguage.gov/guidelines/",
+"source_id": "GOOGLE-DOC-STYLE",
+"content_hash": "26a379a0113e936f029aca380fa9825483d96e59a46294a34ccf0a69811c2f42",
+"status": "verified",
+"first_pinning": true,
+"first_baseline": true
+```
+
+Verbatim poisoned baseline content preserved (679 bytes, file `source-baselines/GOOGLE-DOC-STYLE.md`):
+```
+{'bytes': 679, 'code': 301, 'codeText': 'Moved Permanently', 'result': 'REDIRECT DETECTED: The URL redirects to a different host.\n\nOriginal URL: https://www.plainlanguage.gov/guidelines/\nRedirect URL: https://digital.gov/guides/plain-language\nStatus: 301 Moved Permanently\n\nTo complete your request, I need to fetch content from the redirected URL. Please use WebFetch again with these parameters:\n- url: "https://digital.gov/guides/plain-language"\n...
+```
+
+**Plain-language impact:** The research-security infrastructure (M1-M19) is the framework's primary defense against unverified citations propagating into skill content and downstream artifacts. The infrastructure's own integrity is the load-bearing assumption underneath every citation-chain rule in every skill. If the hook chain silently mis-attributes verifications, falsely marks redirect responses as verified content, or skips fetches without logging, then **every citation that claims "verified under M15 WebFetch on date X" loses its evidentiary basis** until the hook chain is reproven correct. This is not a per-skill finding — it's a framework-foundation finding. WS1 closed with the assumption the M-layer was operational; this entry contests that assumption with concrete evidence and requests reverification.
+
+**Cleanup steps taken in this commit:**
+- Deleted `.tgf/state/source-baselines/GOOGLE-DOC-STYLE.md` (the poisoned 301-redirect baseline).
+- Voided the wrong entry in `.tgf/state/research-logs/ea9df28f-f56f-4b88-8c5e-99d8f9536a2c.json` (set `source_id` to `VOIDED`, captured the original wrong values in the findings array for the WS1-follow-up investigation).
+- Removed the poisoned `GOOGLE-DOC-STYLE` pin from `.tgf/state/source-hashes.json` — the entry had stored hash `26a379a0...` with `url_at_capture: https://www.plainlanguage.gov/guidelines/`, an internally-contradictory pin (the URL has no allow_url_patterns mapping to GOOGLE-DOC-STYLE). On re-fetch of the correct URL, M13 blocked because it compared real Google content against the poisoned pin; cleanup of source-hashes.json unblocked the re-fetch.
+- Updated `PLAIN-LANG-GOV` registry entry: `primary_url` now points to `https://digital.gov/guides/plain-language` (canonical content moved); `allow_url_patterns` extended to include the digital.gov location plus the legacy plainlanguage.gov pattern for redirect handling.
+- Re-fetched both sources under corrected URLs in this same session; new (correctly attributed) research-log entries replace the broken state.
+
+**Third defect cataloged during cleanup:** the hook chain stores pinned hashes in `.tgf/state/source-hashes.json` (separate from the per-source baseline files in `source-baselines/`). When defect #1 occurred (URL→source_id misattribution on a redirect), the bad pin landed in source-hashes.json *as well as* the bad baseline in source-baselines/. Future cleanup of mis-attributed fetches must touch both locations; investigation should determine whether the M13 check should refuse to pin when `url_at_capture` is not in the source_id's `allow_url_patterns` (a structural integrity check that would have rejected the bad pin at write time).
+
+**What this entry does NOT do:** identify the specific defect in the hook scripts. That investigation belongs to WS1 follow-up — the hook code in `hooks/scripts/` needs to be read and the specific dispatch / matching logic traced. This entry captures evidence and acknowledges the bug; remediation requires hook-script work.
+
+**Related:** WS1 commit `dc2b294` (2026-05-22) shipped the research-security infrastructure. The defects here mean WS1 needs follow-up. None of the WS1 smoke tests evidently caught these specific patterns (multi-fetch session with mid-stream redirect; >2 fetches in a single session). WS1 follow-up should add regression tests covering those cases.
+
+---
+
 ## ERR-2026-05-27-006: `security-cryptography` (and Phase 6 security skills generally) lack systematic fail-closed behavior specification (Apple goto-fail / CVE-2014-1266 class)
 
 **Severity:** high
