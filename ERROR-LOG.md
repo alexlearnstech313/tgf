@@ -12,9 +12,9 @@ Per `CLAUDE.md` §11: all findings get fixed, formally waived in WAIVER-LOG, or 
 
 **Severity:** high
 
-**Status:** open
+**Status:** fixed 2026-05-27 (commit pending — same session as discovery). Regression tests still owed (see "Remaining work" below).
 
-**Owner:** WS1 follow-up (the research-security infrastructure was built in WS1; bugs in that infrastructure route there)
+**Owner:** Closed by `hook_research_posttool_webfetch.py` rewrite in same session as discovery. Regression test coverage remains queued for WS1 follow-up.
 
 **Target resolution:** WS1 follow-up session — investigate the PostToolUse:WebFetch hook scripts in `hooks/scripts/` (or wherever the M3/M4/M11/M13/M14/M15/M18/M19 chain dispatches from). Three specific defects to reproduce and fix:
 
@@ -52,9 +52,40 @@ Verbatim poisoned baseline content preserved (679 bytes, file `source-baselines/
 
 **Third defect cataloged during cleanup:** the hook chain stores pinned hashes in `.tgf/state/source-hashes.json` (separate from the per-source baseline files in `source-baselines/`). When defect #1 occurred (URL→source_id misattribution on a redirect), the bad pin landed in source-hashes.json *as well as* the bad baseline in source-baselines/. Future cleanup of mis-attributed fetches must touch both locations; investigation should determine whether the M13 check should refuse to pin when `url_at_capture` is not in the source_id's `allow_url_patterns` (a structural integrity check that would have rejected the bad pin at write time).
 
-**What this entry does NOT do:** identify the specific defect in the hook scripts. That investigation belongs to WS1 follow-up — the hook code in `hooks/scripts/` needs to be read and the specific dispatch / matching logic traced. This entry captures evidence and acknowledges the bug; remediation requires hook-script work.
+**What this entry does NOT do:** identify the specific defect in the hook scripts. ~~That investigation belongs to WS1 follow-up~~ — investigation and fix completed in the same session as discovery (2026-05-27). Root cause and fix captured below.
 
-**Related:** WS1 commit `dc2b294` (2026-05-22) shipped the research-security infrastructure. The defects here mean WS1 needs follow-up. None of the WS1 smoke tests evidently caught these specific patterns (multi-fetch session with mid-stream redirect; >2 fetches in a single session). WS1 follow-up should add regression tests covering those cases.
+**Root cause (identified post-cleanup, fixed in same session):**
+
+The PostToolUse hook (`.claude/hooks/lib/hook_research_posttool_webfetch.py`) was reading `source_id` from a session-keyed handoff file `pretool-context/<session_id>.json` written by the PreToolUse hook. The file is keyed **only by session_id**, not by URL — meaning multiple WebFetch calls within the same session shared the same handoff file. Race condition sequence for the failing scenario (3 parallel fetches):
+
+1. PreToolUse(Microsoft) writes pretool-context with `source_id: MS-WRITING-STYLE`.
+2. PostToolUse(Microsoft) reads it (correctly), processes, deletes the file.
+3. PreToolUse(plainlanguage.gov) writes pretool-context with `source_id: PLAIN-LANG-GOV`.
+4. PreToolUse(Google) **overwrites** pretool-context with `source_id: GOOGLE-DOC-STYLE` (last writer wins).
+5. PostToolUse(plainlanguage.gov) reads the file but finds Google's source_id → **mislabels plainlanguage.gov content (which is itself a 301 redirect notice) as GOOGLE-DOC-STYLE**, baselines and pins, deletes the file.
+6. PostToolUse(Google) finds no file → falls through to `passthrough()` → **no research-log entry written for the actual Google content**.
+
+Plus the unrelated-but-compounding defect: `_extract_content` has no detection for HTTP 301/302/etc. responses. The 679-byte redirect-notice text fell through to `str(tool_response)` (line 56 of original) and was treated as if it were source content for M-layer checks (most of which "passed" because none of them check for HTTP status).
+
+**Fix applied (`hook_research_posttool_webfetch.py`, three changes):**
+
+1. **HTTP redirect/error detection at the top of `main()`.** If `tool_response` is a dict with `code` >= 300, log `redirect_or_error_skipped`, emit a context message saying the fetch is NOT recorded as verified, clean up any stale pretool-context, and return. Redirect bodies never reach the baseline or pin writes.
+
+2. **URL → source_id resolution direct from registry.** PostToolUse no longer reads source_id from the session-keyed pretool-context. Instead, it calls `source_registry.lookup_url(url)` at processing time using the same registry logic PreToolUse uses. Each PostToolUse invocation has its own `tool_input.url`; no shared state, no race. The pretool-context file is still written by PreToolUse and cleaned up by PostToolUse, but it is no longer authoritative for any source attribution decision.
+
+3. **Defense-in-depth pin and baseline guards.** Added `_url_matches_source(url, source_id)` helper that re-runs `source_registry.lookup_url(url)` and refuses to either pin (`_pin_hash_if_missing`) or baseline (in `main()`) when the URL does not resolve to the source_id at write time. Catches any future upstream confusion before it lands in `source-hashes.json` or `source-baselines/`.
+
+**Verification (same session, post-fix):**
+
+Single re-fetch of `https://learn.microsoft.com/en-us/style-guide/welcome/` produced `WebFetch BLOCKED-PENDING-REVIEW — MS-WRITING-STYLE` with correct URL→source_id attribution and M11/M13 drift detection running against the existing baseline (rather than the pre-fix "no_baseline" behavior). Three-fetch parallel scenario (the original failure mode) produced three distinct correct outcomes: `digital.gov/guides/plain-language` → `PLAIN-LANG-GOV`; `developers.google.com/style` → `GOOGLE-DOC-STYLE`; `plainlanguage.gov/guidelines/` (redirect) → HTTP 301 cleanly skipped with no baseline written. No cross-wiring observed.
+
+**Remaining work (still owed to WS1 follow-up):**
+
+- **Regression tests** covering: (a) multi-fetch in a single session, (b) mid-stream redirect, (c) >2 fetches in parallel, (d) URL→source_id mismatch defense-in-depth. The fix is verified ad-hoc in the same session but lacks automated test coverage. WS1 follow-up adds those tests so future hook changes can't reintroduce the same bug class.
+- **Consider eliminating PreToolUse's pretool-context write entirely** — it's no longer functionally load-bearing post-fix; the file is vestigial. Removing it simplifies the hook surface and eliminates a state file. Defer the decision until the regression tests land so the change has a verifiable safety net.
+- **Adjacent issue (not in scope here):** the digital.gov and learn.microsoft.com pages show ~2 prose-line drift between consecutive fetches on the same day (probably render-timestamp noise). M13 blocks on any hash difference, so every re-fetch of these sources will currently trigger blocked-pending-review. Worth a separate ERR if it becomes operationally painful; not opening one yet because the fix discovered today doesn't cause this behavior (it's preexisting).
+
+**Related:** WS1 commit `dc2b294` (2026-05-22) shipped the research-security infrastructure. The defects here were not caught at build time because the WS1 smoke tests evidently did not exercise multi-fetch + redirect + >2-parallel patterns. WS1 follow-up regression tests address this directly.
 
 ---
 

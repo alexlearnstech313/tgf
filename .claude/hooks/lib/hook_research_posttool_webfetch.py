@@ -28,6 +28,7 @@ from . import (
     m18_exception_clause,
     m19_html_hidden,
     research_log,
+    source_registry,
 )
 
 
@@ -82,8 +83,30 @@ def _load_schema(schema_id: str | None) -> dict[str, Any] | None:
     )
 
 
+def _url_matches_source(url: str, source_id: str) -> bool:
+    """Defense-in-depth check (ERR-2026-05-27-007): verify URL → source_id resolves.
+
+    Refuse to pin or baseline if the URL does not resolve to source_id via
+    the registry's allow_url_patterns. Catches the failure mode where upstream
+    source resolution drifted (e.g., from the previous pretool-context race
+    condition) and would otherwise have stored a poisoned pin.
+    """
+    return source_registry.lookup_url(url) == source_id
+
+
 def _pin_hash_if_missing(source_id: str, content_hash: str, url: str) -> bool:
-    """Write the pinned hash if no hash is pinned yet for this source."""
+    """Write the pinned hash if no hash is pinned yet for this source.
+
+    Defense-in-depth: refuse to pin if the URL does not match the source's
+    allow_url_patterns. See ERR-2026-05-27-007.
+    """
+    if not _url_matches_source(url, source_id):
+        common.log_debug(
+            "posttool_webfetch",
+            "pin_refused_url_source_mismatch",
+            {"source_id": source_id, "url": url},
+        )
+        return False
     hashes_path = common.state_path("source-hashes.json")
     data = common.load_json(hashes_path, default={"version": 1, "hashes": {}})
     if source_id in data.get("hashes", {}):
@@ -176,22 +199,90 @@ def main() -> int:
 
     url = (tool_input.get("url") or "").strip()
 
-    pretool_path = common.state_path(PRETOOL_CONTEXT_DIR, f"{session_id}.json")
-    pretool = common.load_json(pretool_path, default=None) or {}
+    # ERR-2026-05-27-007 fix (a): Detect HTTP redirect / error responses BEFORE
+    # any source attribution or M-layer processing. Redirect bodies are not
+    # source content; baselining them poisons the M-layer state. The caller is
+    # expected to re-issue the fetch against the redirect target (which must
+    # itself match the source's allow_url_patterns) for verification to land.
+    if isinstance(tool_response, dict):
+        http_code = tool_response.get("code")
+        if isinstance(http_code, int) and http_code >= 300:
+            common.log_debug(
+                "posttool_webfetch",
+                "redirect_or_error_skipped",
+                {"session_id": session_id, "url": url, "http_code": http_code},
+            )
+            common.add_context(
+                f"WebFetch returned HTTP {http_code} for {url}. "
+                f"Research-security checks skipped — redirect/error responses are not "
+                f"source content. Re-fetch the redirect target (if one was indicated) "
+                f"against a URL covered by the source's allow_url_patterns. "
+                f"This fetch is NOT recorded as verified.",
+                event="PostToolUse",
+            )
+            # Best-effort cleanup of any stale pretool-context for this session.
+            pretool_path = common.state_path(PRETOOL_CONTEXT_DIR, f"{session_id}.json")
+            try:
+                pretool_path.unlink(missing_ok=True)
+            except Exception:
+                pass
+            return 0
 
-    source_id = pretool.get("source_id")
-    source_type = pretool.get("type")
-    schema_id = pretool.get("expected_schema")
-    pinned_hash = pretool.get("pinned_hash")
-    tier = pretool.get("tier")
-
-    if not source_id:
+    # ERR-2026-05-27-007 fix (b): Resolve source_id directly from URL via the
+    # registry, NOT from the session-keyed pretool-context file. The pretool-
+    # context approach races between parallel fetches in the same session (last
+    # writer wins; first reader deletes; subsequent readers see either the wrong
+    # source_id or no context at all). Per-URL resolution is race-free because
+    # each PostToolUse invocation has its own tool_input.url.
+    if not url:
         common.log_debug(
             "posttool_webfetch",
-            "no_pretool_context",
-            {"session_id": session_id, "url": url},
+            "missing_url",
+            {"session_id": session_id},
         )
         common.passthrough()
+
+    source_id = source_registry.lookup_url(url)
+    if source_id is None:
+        # URL did not resolve. Either M15 was bypassed somehow, the registry
+        # changed between PreToolUse and PostToolUse, or the URL is malformed.
+        # Bail without baselining/pinning unknown content.
+        common.log_debug(
+            "posttool_webfetch",
+            "url_not_in_registry",
+            {"session_id": session_id, "url": url},
+        )
+        common.add_context(
+            f"WebFetch PostToolUse: URL {url} does not match any source in "
+            f".tgf/state/source-registry.json. M15 should have blocked this fetch pre-tool. "
+            f"No research-log entry written; no baseline/pin updated.",
+            event="PostToolUse",
+        )
+        pretool_path = common.state_path(PRETOOL_CONTEXT_DIR, f"{session_id}.json")
+        try:
+            pretool_path.unlink(missing_ok=True)
+        except Exception:
+            pass
+        return 0
+
+    source_meta = source_registry.get_source(source_id) or {}
+    source_type = source_meta.get("type")
+    schema_id = source_meta.get("expected_schema")
+    tier = source_meta.get("tier")
+
+    # Pinned hash also re-derived from source-hashes.json (previously read from
+    # pretool-context — same race risk; same fix).
+    hashes_data = common.load_json(
+        common.state_path("source-hashes.json"),
+        default={"hashes": {}},
+    )
+    pinned_hash = (
+        hashes_data.get("hashes", {})
+        .get(source_id, {})
+        .get("sha256")
+    )
+
+    pretool_path = common.state_path(PRETOOL_CONTEXT_DIR, f"{session_id}.json")
 
     raw_content = _extract_content(tool_response)
     if not raw_content:
@@ -249,10 +340,21 @@ def main() -> int:
         if not pinned_hash:
             pinned_now = _pin_hash_if_missing(source_id, content_hash, url)
         if baseline is None:
-            baseline_now = True
-            path = common.state_path(BASELINES_DIR, f"{source_id}.md")
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(normalized, encoding="utf-8")
+            # Defense-in-depth (ERR-2026-05-27-007): refuse to baseline if the
+            # URL does not match the source's allow_url_patterns. Mirrors the
+            # _pin_hash_if_missing guard so a poisoned attribution cannot land
+            # in either the SHA-256 pin store OR the baseline file.
+            if _url_matches_source(url, source_id):
+                baseline_now = True
+                path = common.state_path(BASELINES_DIR, f"{source_id}.md")
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(normalized, encoding="utf-8")
+            else:
+                common.log_debug(
+                    "posttool_webfetch",
+                    "baseline_refused_url_source_mismatch",
+                    {"source_id": source_id, "url": url},
+                )
 
     fetch_record = {
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
