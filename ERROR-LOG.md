@@ -8,6 +8,49 @@ Per `CLAUDE.md` §11: all findings get fixed, formally waived in WAIVER-LOG, or 
 
 ---
 
+## ERR-2026-05-27-006: `security-cryptography` (and Phase 6 security skills generally) lack systematic fail-closed behavior specification (Apple goto-fail / CVE-2014-1266 class)
+
+**Severity:** high
+
+**Status:** open
+
+**Owner:** WS5 (queued — remediation work after WS4 closes)
+
+**Target resolution:** WS5 — add a universal principle to `skills/security-cryptography/SKILL.md` §4 (or a new Rule 5.8) mandating fail-closed behavior, then specify per existing rule: Rule 5.1 (padding-verification failure is fail-closed); Rule 5.3 (AEAD tag failure is fail-closed; never return decryption attempt's plaintext to caller); Rule 5.5 (KDF backend unavailable is fail-closed at startup — refuse to start the auth subsystem rather than start degraded); Rule 5.6 (KMS unreachable is fail-closed for operations requiring fresh crypto; cached-key fallback only with explicit time-bounded waiver); Rule 5.7 (cert-validation failure is fail-closed — surface to user / log, never retry with verification disabled). Add a new anti-pattern covering "cryptographic exception silently swallowed" (catch + ignore, catch + log + continue, default-value-on-error). Reference CVE-2014-1266 (Apple goto-fail) by attribution under M15 WebFetch verification. Apply pattern to forthcoming Phase 6 commits 5/12–12/12 (security-secrets-management, security-iam-*, security-database, etc.) so the discipline propagates.
+
+**Originating context:** WS4 Build Step 2 — Red Team agent dispatch (`fd7ee64e-e740-4b17-ae15-44d7e15c4f5c`) against `skills/security-cryptography/` at `73d025d`. Finding F-RT-06 surfaced as the only High-severity item across all four agents' 35 combined findings. The skill specifies the right cryptographic primitives but does not systematically specify what state the system enters when a cryptographic operation fails — the canonical class of failure being Apple's 2014 SSL signature-verification bypass (CVE-2014-1266), where a duplicated `goto fail;` line caused the verifier to skip the rest of the verification chain and accept invalid signatures for a year+ in shipped iOS / macOS code. The algorithms were correct; the fail-mode handling wasn't.
+
+Concrete gaps surfaced:
+- **Rule 5.1 + AP-6 (RSA padding):** canonical pattern shows the library raising an exception; the rule does not require calling code to fail closed vs fail open.
+- **Rule 5.3 + AP-2 (AEAD tag verification):** canonical pattern says "raises InvalidTag on tamper"; the rule does not mandate that calling code MUST treat InvalidTag as fail-closed. AI-generated code is well-documented to wrap such exceptions in broad `try / except Exception: pass` blocks that swallow the error.
+- **Rule 5.5 (KDF backend unavailable):** if the bcrypt / argon2 library is missing or fails to load, fail-open (treat any password as matching) is the goto-fail equivalent; fail-closed (refuse to authenticate anyone) is correct. The rule doesn't specify.
+- **Rule 5.6 (KMS unreachable):** if the KMS API call fails or times out, does the application fail-closed (refuse the operation, return error) or fall back to cached key / default key / skip? The rule doesn't surface this.
+- **Rule 5.7 (TLS handshake fails):** the rule mandates no plaintext fallback; it doesn't address what the client does on cert-validation failure (surface vs retry with verification disabled vs silently proceed).
+
+**Plain-language impact:** Steady-state cryptographic correctness is necessary but not sufficient. The historical record shows the most damaging crypto failures are transition / failure-mode bugs, not algorithm choice bugs (Apple's goto-fail bypassed SSL signature checks for a year+ via a duplicated line of code; the algorithms were fine; the fail-mode wasn't). Without an explicit fail-closed mandate at rule level, reviewers applying the skill in Stage 5 Phase 2 catch the algorithm choice but miss the catch-and-continue patterns that swallow cryptographic exceptions. AI-generated code's well-documented tendency to wrap exceptions in broad try/except for "robustness" compounds this — the skill should make fail-closed behavior a structural requirement so the goto-fail class doesn't ship under the framework's discipline.
+
+**Related:** ERR-2026-05-25-004 (red-team adversarial-citation gaps — same dispatch surfaces ATT&CK technique-ID coverage as a separate finding); F-RT-11 (algorithm-confusion class, JWT none-alg etc.) and F-RT-12 (detection telemetry gap) in `.tgf/state/agent-activity/red-team/fd7ee64e-e740-4b17-ae15-44d7e15c4f5c.json` — both Medium-severity sibling findings on the same dispatch, routed to WS5 backlog rather than ERROR-LOG.
+
+---
+
+## ERR-2026-05-27-005: No executable check enforces the §2 Sources discipline rule (DEC-2026-05-26-011); enforcement depends entirely on agent vigilance
+
+**Severity:** medium
+
+**Status:** open
+
+**Owner:** Phase 11/12 (Hook Library) — surfaced now so the gap is on a discoverable backlog rather than implicit
+
+**Target resolution:** Phase 11/12 — implement a Stop-event hook (Python script in `hooks/scripts/`) that parses each touched `SKILL.md`'s frontmatter `sources:` list and §2 Sources table, greps the corresponding `rules.md` and `anti-patterns.md` for each source ID (applying `id_prefix_match` normalization from `.tgf/state/source-registry.json` — e.g., `OWASP-TOP10-A04` resolves through `OWASP-TOP10-2025`), and exits 2 with a structured message on any source-listed-but-not-cited violation. Reverse direction (rule-level citation not resolvable in §2 / source-registry) is partly covered by existing M11/M14 research-log infrastructure; the hook closes the forward-direction gap.
+
+**Originating context:** WS3 Build Step 5 holistic-reviewer smoke test (`ead5f5cf-13b1-4e41-8837-d6e123c0255e`) originally surfaced this as F-H04. WS4 Build Step 2 holistic-reviewer dispatch (`0dfc528d-4807-4551-93ae-3f7aa981ca05`) reproduced the finding (F-HR-01) and additionally caught that **the orchestrator's dispatch prompt claimed this was "tracked in ERR-2026-05-26-005"** — a fabricated ID. ERR-2026-05-26-005 did not exist in `ERROR-LOG.md` (highest extant entry was ERR-2026-05-25-004). The gap was therefore one layer worse than the dispatch assumed: not just deferred, but not even logged. This entry remediates the meta-gap by actually creating the ERR entry the dispatch claimed already existed.
+
+**Plain-language impact:** DEC-2026-05-26-011 captures the §2 Sources discipline rule (every source listed in a skill's §2 must have at least one rule-level citation; "verified by reference" is not a valid status). The Holistic Reviewer persona's §7 operationalizes the check at review time. But agent-only enforcement is brittle — agent context-window pressure, persona drift, or a future skill-author bypassing review will silently re-introduce the original `b67765e` failure pattern (cheat sheets listed in §2 but never cited at rule level). One missed review is enough to regress. A mechanical hook-side check makes the invariant unbypassable for the most common authoring path.
+
+**Related:** ERR-2026-05-25-003 (citation-chain depth gaps on the same skill — same family of failure mode, addressed at agent layer). DEC-2026-05-26-011 (the rule this hook would enforce). The hook itself is one of several candidate hook scripts cataloged for Phase 12 (Hook Library); this entry queues it for explicit implementation rather than implicit "we'll get to it."
+
+---
+
 ## ERR-2026-05-25-004: `security-cryptography` skill carries adversarial-citation gaps (zero MITRE ATT&CK technique-IDs, zero attribution-report citations across all 7 rules)
 
 **Severity:** medium
