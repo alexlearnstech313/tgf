@@ -211,7 +211,7 @@ How PROJECT-MANAGEMENT participates in the six-stage workflow (per `docs/WORKFLO
 <!-- SECTION: subagent-context -->
 ## §9 Subagent Context
 
-**Preloaded by:** None directly. PROJECT-MANAGEMENT activates at the orchestrator level during Stage 1/Stage 2 planning operations. The `holistic-reviewer` subagent (Phase 4) references PROJECT-MANAGEMENT principles when checking ROADMAP alignment during Stage 5 Phase 4 review, but does not preload the full skill — the principles in §4 are sufficient for the alignment check.
+**Preloaded by:** `holistic-reviewer` (Phase 4) — the full skill content injects into the holistic-reviewer subagent context at startup via its `skills:` frontmatter (verified in `agents/holistic-reviewer.md`), used when checking ROADMAP alignment during Stage 5 Phase 4 review. PROJECT-MANAGEMENT also activates at the orchestrator level during Stage 1/Stage 2 planning operations. *(Corrected WS5: the prior "None directly … does not preload the full skill" predated the Workstream-3 agent wiring, 2026-05-26.)*
 
 **Critical rules for orchestrator use (when not preloaded):**
 

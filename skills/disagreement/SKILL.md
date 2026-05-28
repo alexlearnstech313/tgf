@@ -219,7 +219,7 @@ How DISAGREEMENT participates in the six-stage workflow (per `docs/WORKFLOW.md`)
 <!-- SECTION: subagent-context -->
 ## §9 Subagent Context
 
-**Preloaded by:** None directly. DISAGREEMENT is a meta-skill applicable to all subagents and the orchestrator. The orchestrator coordinates user-facing pushback; subagents apply the severity gradient when their findings surface friction.
+**Preloaded by:** `holistic-reviewer` (Phase 4) — the full skill content injects into the holistic-reviewer subagent context at startup via its `skills:` frontmatter (verified in `agents/holistic-reviewer.md`). DISAGREEMENT remains a meta-skill applicable to all subagents and the orchestrator: the orchestrator coordinates user-facing pushback; subagents apply the severity gradient when their findings surface friction. *(Corrected WS5: the prior "None directly" predated the Workstream-3 agent wiring, 2026-05-26.)*
 
 **Critical rules for orchestrator use (when not preloaded):**
 

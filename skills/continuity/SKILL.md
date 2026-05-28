@@ -214,7 +214,7 @@ How CONTINUITY participates in the six-stage workflow (per `docs/WORKFLOW.md`).
 <!-- SECTION: subagent-context -->
 ## §9 Subagent Context
 
-**Preloaded by:** `holistic-reviewer` (primary — CONTINUITY is the holistic-review-specific skill). Per `DEC-2026-05-19-007`, the full skill content injects into the holistic-reviewer subagent context at startup via the agent definition's `skills:` field.
+**Preloaded by:** `tgf-orchestrator` (always-on — CONTINUITY is one of the three always-on skills injected into every main-session context); `code-reviewer` and `holistic-reviewer` (review subagents). Per `DEC-2026-05-19-007`, the full skill content injects into each of these agents' context at startup via the agent definition's `skills:` field (verified against `agents/tgf-orchestrator.md`, `agents/code-reviewer.md`, `agents/holistic-reviewer.md`).
 
 **Critical rules for review use (when consulted but not preloaded):**
 

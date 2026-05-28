@@ -210,7 +210,7 @@ How DESIGN participates in the six-stage workflow (per `docs/WORKFLOW.md`).
 <!-- SECTION: subagent-context -->
 ## §9 Subagent Context
 
-**Preloaded by:** None directly. DESIGN activates at the orchestrator level during Stage 2/Stage 3 for design-shaped work. The `holistic-reviewer` subagent (Phase 4) references DESIGN principles when checking architectural fit during Stage 5 Phase 4 review but does not preload the full skill.
+**Preloaded by:** `holistic-reviewer` (Phase 4) — the full skill content injects into the holistic-reviewer subagent context at startup via its `skills:` frontmatter (verified in `agents/holistic-reviewer.md`), used when checking architectural fit during Stage 5 Phase 4 review. DESIGN also activates at the orchestrator level during Stage 2/Stage 3 for design-shaped work. *(Corrected WS5: the prior "None directly … does not preload" predated the Workstream-3 agent wiring, 2026-05-26.)*
 
 **Critical rules for orchestrator use (when not preloaded):**
 

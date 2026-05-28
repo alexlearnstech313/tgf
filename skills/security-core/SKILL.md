@@ -252,7 +252,7 @@ How SECURITY-CORE participates in the six-stage workflow and four-pass review (p
 <!-- SECTION: subagent-context -->
 ## §9 Subagent Context
 
-**Preloaded by:** `security-auditor` (primary — all rules); `red-team` (rules as floor; full content for AP-based attack scenario seeding). Per `DEC-2026-05-19-007`, the full skill content injects into these subagent contexts at startup via the agent definition's `skills:` field.
+**Preloaded by:** `tgf-orchestrator` (always-on — SECURITY-CORE is one of the three always-on skills injected into every main-session context); `security-auditor` (primary — all rules); `red-team` (rules as floor; full content for AP-based attack scenario seeding). Per `DEC-2026-05-19-007`, the full skill content injects into each of these agents' context at startup via the agent definition's `skills:` field.
 
 **Critical rules for review use (when consulted but not preloaded):**
 

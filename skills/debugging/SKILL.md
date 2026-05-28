@@ -227,7 +227,7 @@ Termination conditions per `docs/WORKFLOW.md` §7: bug fixed (reproduction no lo
 <!-- SECTION: subagent-context -->
 ## §9 Subagent Context
 
-**Preloaded by:** None directly. Per Phase 5 Checkpoint 1 Decision D, DEBUGGING activates at the orchestrator level during the debugging variant of the workflow. Phase 11 (orchestration meta-skill) decides whether a dedicated `debugger` subagent earns its place.
+**Preloaded by:** `holistic-reviewer` (Phase 4) — the full skill content injects into the holistic-reviewer subagent context at startup via its `skills:` frontmatter (verified in `agents/holistic-reviewer.md`). Per Phase 5 Checkpoint 1 Decision D, DEBUGGING also activates at the orchestrator level during the debugging variant of the workflow; Phase 11 (orchestration meta-skill) decides whether a dedicated `debugger` subagent earns its place. *(Corrected WS5: the prior "None directly" predated the Workstream-3 agent wiring, 2026-05-26.)*
 
 **Critical rules for orchestrator use (when not preloaded):**
 

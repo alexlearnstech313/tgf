@@ -219,7 +219,7 @@ How CODE-QUALITY participates in the six-stage workflow and four-pass review (pe
 <!-- SECTION: subagent-context -->
 ## §9 Subagent Context
 
-**Preloaded by:** `code-reviewer` (primary — all rules); `holistic-reviewer` (Rule 5.6 for solo-maintainability check). Per `DEC-2026-05-19-007`, the full skill content injects into these subagent contexts at startup via the agent definition's `skills:` field.
+**Preloaded by:** `tgf-orchestrator` (always-on — CODE-QUALITY is one of the three always-on skills injected into every main-session context); `code-reviewer` (primary — all rules); `holistic-reviewer` (Rule 5.6 solo-maintainability check). Per `DEC-2026-05-19-007`, the full skill content injects into each of these agents' context at startup via the agent definition's `skills:` field.
 
 **Critical rules for review use (when consulted but not preloaded):**
 
