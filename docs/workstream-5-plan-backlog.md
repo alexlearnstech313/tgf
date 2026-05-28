@@ -356,6 +356,53 @@ Red-team also surfaced **F-RT-01** (zero ATT&CK technique-IDs across all 7 rules
 - **Self-referential correctness on highest-stakes claims** (holistic): Rule 5.4's "accept after one round (below hard-refusal)" matches §5; the hard-refusal carve-out correctly mirrors §5. The skill describes orchestrator behavior matching what §5 prescribes.
 - **Honest TGF-SYNTHESIS labeling** per DEC-2026-05-17-004 — synthesis acknowledged, not fabricated as external citation.
 
+### §3.6 Target 6 — `skills/debugging/` (Audit completed 2026-05-28 — Build Step 4, second Phase 5 activity skill)
+
+**Audit context:** WS4 Build Step 4 Target 6 (per-skill commit 8/22). Same two-track methodology. Decision E selective dispatch: code-reviewer + holistic-reviewer only. Phase 5 activity skill grounded in Agans' 9 rules, Five Whys, scientific method.
+
+**Activity logs (Track 2 dispatch transcripts):**
+- code-reviewer: `.tgf/state/agent-activity/code-reviewer/38ffa3c4-0330-48d9-be33-17a78551c69b.json`
+- holistic-reviewer: `.tgf/state/agent-activity/holistic-reviewer/16af4741-97e4-4dd6-b989-c946ff8353db.json`
+
+**Routed to ERROR-LOG.md:** none (0 Critical/High findings).
+
+**Routed here (Medium/Low — 11 entries: 3 Medium, 8 Low; F-CR-DBG-05 + F-HR-DBG-03 are formalizations/cross-references of the Track 1 §2 gaps, not net-new severity):**
+
+#### Track 1 — Mechanical compliance findings
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| T1-DBG-01 | Medium | SKILL.md §7 (L209) vs §2 | §7 cites "OWASP LLM Top 10:2025 LLM09:2025" but OWASP-LLM is NOT in the §2 Sources table. Bidirectional gap. | Add OWASP-LLM row to §2 (matching disagreement's format). | Bidirectional traceability (CROSS-CLUSTER — reproduces Phase 6 pattern #1) |
+| T1-DBG-02 | Low | SKILL.md/rules.md/anti-patterns.md (9 sites) vs §2 | CONTINUITY referenced 9× at rule level (Rule 5.1/5.3/5.6) but not in §2. Sibling `disagreement` DID list CONTINUITY in §2 — debugging is the inconsistent sibling. | Add CONTINUITY cross-reference row to §2 covering 5.1/5.3/5.6. | Bidirectional traceability (CROSS-CLUSTER) |
+| T1-DBG-03 | Low | SKILL.md §2 'Date Verified' col (L69-71) | AGANS-9 / TOYODA-5W / SCIENTIFIC-METHOD use "reference (book; stable since publication)" / "reference (stable)" prose — the DEC-2026-05-26-011-deprecated "reference"-as-verification-status class. | Use 'n/a (stable book/methodology)' or a provenance note distinct from the date column. | §2 verification-date convention; closer to the explicitly-deprecated string than Target 5's T1-D-03 |
+
+#### Code-reviewer findings (Track 2)
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| F-CR-DBG-01 | Low | SKILL.md L146, L155; anti-patterns.md L315, L630 (4 sites) | 2 of 7 rule-anchor slugs truncated at the comma: Rule 5.4 ("...Root Cause, Not Symptom Patch") and Rule 5.7 ("...Hypotheses, Not Conclusions") drop the post-comma tail vs GitHub auto-slug. | Update 4 sites to full auto-slugs, or add explicit HTML anchors. | Per-skill nav fix; **reproduces Phase 5 anchor-slug pattern at n=2** |
+| F-CR-DBG-02 | Medium | anti-patterns.md CP-5 L439-446, L449-457 | CP-5 states a fabricated specific as a confirmed observation: "stripe.HTTPClient default pool size is 5". Stripe Node SDK pooling is governed by Node https.Agent (historical default maxSockets Infinity); no documented Stripe 'default of 5'. A skill whose §7 warns against fabricated specifics models one. Fix mechanism (httpAgent/maxSockets/maxNetworkRetries) is sound. | Reword 'confirmed' claim to the mechanism, not a fabricated number; mark illustrative; VERIFY against current Stripe SDK; add `import https`. | Per-skill accuracy; **NEW Phase 5 candidate: fabricated-specific-in-teaching-example** |
+| F-CR-DBG-03 | Low | anti-patterns.md CP-6 L563-565 | CP-6 off-by-one lists two candidate conditions as parallel 'OR' but the first (`< array.length` vs `<= array.length - 1`) is EQUIVALENT/harmless; only the second is the real off-by-one. Muddies a skill whose Rule 5.2 is 'reason from observation.' | Tighten to the real defect only. | Per-skill craftsmanship |
+| F-CR-DBG-04 | Low | SKILL.md L75 (§2) vs rules.md L7 | Same citation-granularity discipline attributed to two sources across files: §2 cites "Phase 4 CP1 Decision A"; rules.md cites "DEC-2026-05-17-004". Both valid (Decision A refines DEC-004 Clause 2) but split; siblings cite both together. | Align both files: 'Decision A (refining DEC-2026-05-17-004 Clause 2)'. | Per-skill traceability; within-skill variant of Phase 6 pattern #5 |
+| F-CR-DBG-05 | Low | SKILL.md §2 vs §7 L209 + rule-level CONTINUITY | Formalizes T1-DBG-01 + T1-DBG-02. §2 omits OWASP-LLM (cited §7) and CONTINUITY (cited 9×). disagreement lists both → debugging inconsistent. Temporal: debugging shipped 2026-05-20, six days before DEC-011 (2026-05-26) codified the bidirectional rule. | Add both §2 rows. | Formalizes Track 1; Phase 6 pattern #1 |
+
+#### Holistic-reviewer findings (Track 2)
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| F-HR-DBG-01 | **Medium** | SKILL.md §8 L224 | **Routing drift vs WORKFLOW.md §7.** §8 routes "worked-around" bugs to WAIVER-LOG; §7 + CONTINUITY Rule 5.3 + CLAUDE.md §11 route them to ERROR-LOG (Resolved-with-workaround) + a new ERROR-LOG entry for the open root cause. WAIVER-LOG = consciously-not-fixed; ERROR-LOG = actionable-being-worked. Also contradicts the skill's own AP-4 (anti-patterns.md L369). | Reword §8 to ERROR-LOG routing (WAIVER-LOG only for consciously-permanent root-cause acceptance); keep the Rule 5.3 citation. | **HIGHEST-PRIORITY Target 6 item** — governs how orchestrator closes out bugs; wrong routing propagates to adopters |
+| F-HR-DBG-02 | Low | SKILL.md §8 L221 | Reviewer-attribution drift: §8 says "Holistic Reviewer (per CONTINUITY) checks that the cause was identified"; WORKFLOW.md §7 Stage-5 assigns the Holistic Reviewer to regression risk. Root-cause-found is Rule 5.4 (Five Whys), not a Holistic-Reviewer job. | Drop the reviewer attribution or attach CONTINUITY to its real (decision-documentation) function. | Per-skill §7 fidelity |
+| F-HR-DBG-03 | Low | SKILL.md §2 vs §7/§5/§8 | Integration-lens framing of the §2 gap (cross-ref T1-DBG-01/02 + F-CR-DBG-05; NOT re-scored). Citation-surface conceptual integrity: every source a skill leans on should round-trip through §2. | Add OWASP-LLM + CONTINUITY §2 rows; add OWASP-LLM to frontmatter. | Cross-reference only |
+
+#### Positive notes (preserved in activity logs)
+
+- **WORKFLOW.md §7 stage-LABEL fidelity is clean** (holistic): §8's six debugging-variant labels match §7's table AND CLAUDE.md §3's debugging-variant sentence one-to-one; the four termination conditions match. The drifts are in stage prose, not the skeleton.
+- **Agans 9-rule mapping fully accurate** (code-reviewer): 5.1↔#2, 5.2↔#3, 5.3↔#5, 5.5↔#6, 5.6↔#8 verified; 'not promoted' set #1/#4/#7/#9 correct. No mis-numbering.
+- **All CONTINUITY cross-references factually correct** by number+title (5.1 session log, 5.3 three-log routing, 5.6 capture-WHY) — the §2 gap is registration, not accuracy.
+- **ARCHITECTURE.md §16 reference is sound and load-bearing**: Rule 5.2 (observe don't reason) + Rule 5.7 (AI output is hypothesis) are §16's discipline applied to bugs.
+- **Self-referential safety**: a skill governing how the orchestrator debugs correctly subordinates AI debug output to verification + empirical execution, and even names AI as a possible "false fresh view."
+- **CP-3 revert/reapply necessary-AND-sufficient verification** is exemplary in-line debugging discipline.
+
 ## §4 Cross-Target Patterns (Updated 2026-05-28 after Target 4 audit — Build Step 3 CLOSED — n=4)
 
 **Build Step 3 closes with all 4 Phase 6 commits 1/12-4/12 audited.** The full audited Phase 6 cluster (4 of 4 skills) confirms the following framework-wide patterns at 100% reproduction. WS5 plan v1 should structure work-packages around these patterns (efficient: fix once, apply across all 11 Phase 6 skills + future Phase 7+ skills) rather than per-skill (inefficient: fix 11+ times).
@@ -410,9 +457,9 @@ With four of 19 audit targets complete, the following patterns are **CONFIRMED c
 
 WS5 plan v1 should structure work-packages around: (a) the 6 confirmed n=4 cross-target patterns; (b) the 1 pattern BROKEN at n=2 (cheat-sheet section-anchor — cite output-encoding + input-validation as exemplars); (c) the new at-n=2 cross-target pattern (#7 unregistered-cited); (d) the 2 framework-level questions (hard-refusal calibration; TGF synthesis convention); (e) the per-skill bug fixes (e.g., F-CR-IV-01 pydantic v1/v2 mix; F-CR-OE-01 Jinja2 e(quote=True); F-CR-OE-02 RFC 4180 misattribution); (f) the per-skill rule completeness extensions (DOMPurify config, identifier allow-list, mixed-context emission, LLM channel, schema-library coercion, Unicode homoglyph, parser-stage hardening, state-machine bypass).
 
-### Phase 5 cluster cross-target tracking (Build Step 4 — opened 2026-05-28; n=1 at Target 5 `disagreement`)
+### Phase 5 cluster cross-target tracking (Build Step 4 — opened 2026-05-28; n=2 at Targets 5-6 `disagreement`, `debugging`)
 
-**Framing:** Build Step 4 audits Phase 5 activity skills — a different cluster from the Phase 6 security skills (different domain, source profile, template age). Per the Build Step 4 dispatch framing, Phase 6's 6 n=4 patterns are NOT assumed to carry over. The first Phase 5 data point (Target 5) confirms the framing: **only 2 of 6 Phase 6 patterns reproduce on `disagreement`; 4 do not.**
+**Framing:** Build Step 4 audits Phase 5 activity skills — a different cluster from the Phase 6 security skills (different domain, source profile, template age). Per the Build Step 4 dispatch framing, Phase 6's 6 n=4 patterns are NOT assumed to carry over. The first Phase 5 data point (Target 5) confirmed the framing: **only 2 of 6 Phase 6 patterns reproduce on `disagreement`; 4 do not.** Target 6 (`debugging`) holds the same shape (see Target 6 update below).
 
 Phase 6 pattern reproduction at Phase 5 n=1:
 
@@ -430,6 +477,20 @@ Phase 6 pattern reproduction at Phase 5 n=1:
 - **disagreement↔communication turf overlap (F-HR-DIS-04).** Forward-compat with the queued Phase 5+ communication skill. Cohort-level, not per-skill.
 
 **Decision E dispatch-matrix note:** selective dispatch (code-reviewer + holistic-reviewer only; NO security-auditor/red-team) worked cleanly on `disagreement` — no low-signal noise, both agents produced substantive lens-appropriate findings (code-reviewer: craftsmanship/citation accuracy; holistic: §5-fidelity/integration). Confirms Decision E's rationale; 2-agent dispatch was materially faster than the Phase 6 4-agent cluster as predicted in WS4 plan §11.
+
+**Target 6 (`debugging`) update — n=2:**
+
+Phase 6 pattern reproduction holds the same 2-of-6 shape as Target 5:
+- **#1 §2 bidirectional (no fitness function): REPRODUCES** (T1-DBG-01 OWASP-LLM + T1-DBG-02 CONTINUITY omitted from §2; F-CR-DBG-05). **Now n=2 in Phase 5 cluster** — and notably `disagreement` got this RIGHT (listed both), so within Phase 5 it's inconsistent application, not universal omission. Strengthens the cross-cluster case for the ERR-005 fitness function.
+- **#4 refresh-cadence: REPRODUCES** (mild — uniform 12-month over 3 stable books/methodologies + 1 living ATLAS). n=2.
+- **#5 skill→DEC-2026-05-26-011 trace gap: REPRODUCES (temporal)** — debugging shipped 2026-05-20, six days before DEC-011; its §2 gaps are exactly what DEC-011 now forbids. (On Target 5 this was N/A; here it surfaces because debugging's §2 omissions are the kind DEC-011 governs.) Plus a within-skill DEC-attribution split (F-CR-DBG-04).
+- **#2 verification-date asymmetry: N/A** (frontmatter and §2 carry the same posture). **#3 forward-ref phase-attribution: BROKEN/does-not-reproduce** (internally consistent). **#6 ATT&CK technique-ID: N/A** (cites ATLAS at framework level by design).
+
+Phase 5 candidate-pattern status:
+- **anchor-slug-correctness: CONFIRMED at n=2.** Both `disagreement` and `debugging` have exactly 2 of 7 rule anchors broken, both truncated where the rule-header title contains a comma/`+`. This is now a solid Phase 5 cluster pattern: **rule-header titles with internal punctuation reliably produce truncated cross-reference anchors.** WS5 should sweep all Phase 5 (and Phase 6) skills for header-punctuation anchor mismatches, and consider a skill-template lint.
+- **section-restatement-drift: DOES NOT GENERALIZE beyond living-doc-operationalizing skills.** disagreement's drift risk came from inlining the *living* CLAUDE.md §5. debugging restates Agans (a stable book) and WORKFLOW.md §7 (TGF-internal, changes only via deliberate edits) — near-zero drift risk. Refines the Target 5 candidate: the pattern is **"inlining a LIVING framework artifact"** (CLAUDE.md sections), not "restating any source." Watch skills that operationalize CLAUDE.md/WORKFLOW.md sections specifically.
+- **NEW candidate — fabricated-specific-in-teaching-example (n=1, F-CR-DBG-02):** an activity skill's worked-example dialogue states an invented technical specific ("Stripe default pool size of 5") as a *confirmed observation* — the very failure mode the skill teaches against. Watch other Phase 5 skills with concrete code/config dialogues (`testing`, `ui-craft`) for invented specifics presented as fact.
+- **NEW (Target 6) — workflow-mapping prose drift (F-HR-DBG-01/02):** where a Phase 5 skill maps itself to a WORKFLOW.md section, the *skeleton* (stage labels, termination conditions) can match cleanly while the *attached prose* (routing targets, reviewer attributions) drifts from the source. Distinct from disagreement's §5-restatement: here the labels are faithful but the operational detail diverged. Watch `testing` (maps to WORKFLOW Stage 5) and any skill claiming a WORKFLOW.md mapping.
 
 ## §5 Cross-References
 
