@@ -1,8 +1,26 @@
-# Workstream 5 — Remediation Plan (v1)
+# Workstream 5 — Remediation Plan (v2 — execution-ready)
 
-> **Status:** v1 DRAFT, written 2026-05-28 at WS4 closeout. **Not yet cleared for implementation** — WS5 begins after a Checkpoint-1 approval per the phase-plan workflow (write plan → checkpoint → implement). This document consolidates the WS4 audit backlog (`docs/workstream-5-plan-backlog.md` §3.1–§3.19 + §4 cross-target patterns) into sequenced, leverage-ordered work-packages. The backlog remains the authoritative per-finding record; this plan is the execution structure over it.
+> **Status:** v2 EXECUTION-READY, cleared 2026-05-28. Checkpoint-1 passed: the stakeholder approved the plan, the source dispositions, and the complete 34-fetch list. This document consolidates the WS4 audit backlog (`docs/workstream-5-plan-backlog.md` §3.1–§3.19 + §4 cross-target patterns) into sequenced, leverage-ordered work-packages. The backlog remains the authoritative per-finding record; this plan is the execution structure over it.
 >
 > **Source of findings:** the 19-target retroactive audit (WS4, Build Steps 2–6). Critical/High findings live in `ERROR-LOG.md` (visible-now backlog); Medium/Low in the backlog doc. Per-dispatch transcripts (all findings regardless of routing) at `.tgf/state/agent-activity/<role>/` (gitignored, Decision I).
+
+---
+
+## §0 Checkpoint-1 outcomes (the decisions that shape execution)
+
+**Governance decisions (stakeholder-approved 2026-05-28):**
+- **Enforcement floor → specs + content now, hooks deferred to Phase 12.** WS5 reframes CLAUDE.md §5 hard-refusals as the invariant each protects, bounds+logs the §5 confirmation gate, and writes the gate specs into ARCHITECTURE §18/§20 + WORKFLOW; the executable hook scripts are Phase 12 (built against the proven M8 template).
+- **Citation-enforcement perimeter → broaden eventually.** The current `skills/**`-only write/commit citation check is documented as an interim residual now; a Phase-12 spec extends it to `docs/**`, `agents/**`, `CLAUDE.md`.
+- **Source dispositions:** 4 cited-but-unregistered authorities are fetchable → register + verify (WCAG 2.2, OWASP WSTG v4.2, Anthropic Building-Effective-Agents, Nielsen 10 Heuristics). 6 have no comparable fetchable substitute (rigorously checked) → register as **reference-only** entries (Tier 2/3, `last_verified: null`, by-reference note per DEC-004 Cl.5): ISTQB, Apple HIG, Material 3, PMBOK, IIBA BABOK, Toyoda Five Whys.
+
+**Execution constraint — the live write-hook (discovered at execution-prep):** `hook_research_pretool_write.py` re-parses the *entire* effective content of any `skills/**/*.md` edit and **blocks unless every registered, known-prefix citation (OWASP/NIST/FIPS/RFC/CWE/MITRE) has a `verified` research-log entry this session.** By-reference / no-prefix sources (ISO, PMBOK, WCAG, Nielsen, Apple-HIG, etc.) are not extracted → don't block. Consequence: editing the 14 built skills requires re-verifying their cited registered sources this session — the first time the framework's citation base is verified under the live M1-M19 hooks.
+
+**Complete fetch footprint (stakeholder-approved 2026-05-28) — 34 fetches, the entire network footprint of WS5:**
+- *4 new (register + fetch):* WCAG 2.2, OWASP WSTG v4.2, Anthropic Building-Effective-Agents, Nielsen 10 Heuristics.
+- *30 re-verify (already registered):* OWASP Top10:2025 · LLM-Top10:2025 · ASVS V1/V2/V4/V11/V12/V16 · Cheat Sheets CS/PS/EH/IV/LDAP/OSI/SQLI/XSS (16); NIST SP 800-218/57/175B (3); FIPS 180-4/197/202 (3); RFC 8446/8996/7807/4180/4514/4515 (6); MITRE ATLAS, CWE (2).
+- Any hook-flagged fetch is surfaced, not cited. The only other planned pause is the CLAUDE.md §5 contract reframe (shown before commit).
+
+**Execution order (forced by the write-hook):** non-skill foundational work first (hook-free) → the 34 fetches → all skill edits → §5 show → closeout.
 
 ---
 
