@@ -164,27 +164,115 @@ Red-team also surfaced **F-RT-01** (zero ATT&CK technique-IDs across all 7 rules
 | F-HR-13 | Low | SKILL.md §2 line 91 vs anti-patterns.md AP-2 line 266 | RFC 7807 vs 9457 conscious deferral IS documented — but in AP-2 considerations, not at §2 surface. | One sentence to §2 footer surfacing the deferral. | Per-skill decision-trail polish |
 | F-HR-14 | Informational | SKILL.md §1 lines 76-77 (positive note, no action) | POSITIVE NOTE: Foundation-vs-extension positioning of Rule 5.1 vs SECURITY-CORE Rule 5.2 is canonical example. Specific-vs-general, not extension-and-extended. | No action this commit. At quarterly framework-health: add inverse cross-reference from SECURITY-CORE Rule 5.2 to Rule 5.1. | Framework-health quarterly polish |
 
-## §4 Cross-Target Patterns (Updated 2026-05-27 after Target 2 audit)
+### §3.3 Target 3 — `skills/security-output-encoding/` (Audit completed 2026-05-28, commit pending)
 
-With two of 19 audit targets complete, the following patterns are now **CONFIRMED cross-target** (observed on both security-cryptography and security-error-handling). These should be remediated as a class in WS5, not per-skill:
+**Audit context:** WS4 Build Step 3 Target 2 (per-skill commit 2/12). Same two-track methodology. No Decision K validation gate. Track 2 dispatched all four agents per Decision E.
 
-1. **§2 bidirectional traceability invariant has no automated enforcement.** T1-001 + T1-EH-002 + F-HR-01 + F-HR-08. Hook-side fitness function tracked in ERR-2026-05-27-005 + repeated. Most leverage: build the hook.
-2. **§2/frontmatter verification-date asymmetry.** T1-002 + T1-EH-001. Trivial cosmetic fix; do across all Phase 6 skills in one pass.
-3. **Forward-reference discipline.** F-CR-05 + F-CR-EH-03 + F-HR-06 + F-HR-11. Phase 6 closing checklist should sweep all skills for cross-skill references and verify on each downstream skill commit.
-4. **Refresh-cadence convention.** F-CR-03 + F-CR-EH-04 + F-HR-04 + F-HR-12. Framework-level decision: per-source cadence OR uniform-cadence with explicit lower-bound annotation. Apply across all Phase 6+ skills.
-5. **Skill-to-DEC trace gap.** F-HR-03 + F-HR-09. DEC-2026-05-26-011's own text asks future skills to reference it; neither audited skill does. Capture as skill-template requirement.
-6. **ATT&CK technique-ID coverage.** F-RT-01 + F-RT-EH-01. Zero technique-IDs across audited Phase 6 skills. Adversary Mapping section convention should be established and applied.
-7. **OWASP Cheat Sheet section-anchor citation depth.** F-SA-01 + F-SA-EH-01. Cheat sheets cited at page level rather than `§<section-name>` depth per DEC-011 Clause 2. Refetch under M15 + update citations.
+**Activity logs (Track 2 dispatch transcripts):**
+- code-reviewer: `.tgf/state/agent-activity/code-reviewer/8ec16510-9f55-4964-99c3-930db283ea3e.json`
+- security-auditor: `.tgf/state/agent-activity/security-auditor/8a569794-0e69-432a-b689-e55f88139679.json`
+- red-team: `.tgf/state/agent-activity/red-team/cc3f3b26-1ba5-495a-9b57-ee6539d8a811.json`
+- holistic-reviewer: `.tgf/state/agent-activity/holistic-reviewer/cc623ec4-a3d2-4bf5-a2cf-f2674300af5b.json`
 
-**New cross-artifact dimension introduced by Target 2:**
+**Routed to ERROR-LOG.md:** none (0 Critical/High findings — the skill is structurally sound).
 
-8. **Cross-artifact phase-position drift.** F-HR-10 is the first finding spanning SECURITY-CORE and a Phase 6 skill. The Phase 6 plan moves skills around; SECURITY-CORE's references to those skills don't get updated in lockstep. Phase 6 closing process should sweep cross-artifact references for stale phase attribution.
+**Routed here (Medium/Low — 26 findings; 5 positive/informational notes preserved in activity logs):**
 
-**Framework-level question raised by Target 2 (not in any cross-target pattern yet but worth flagging):**
+#### Track 1 — Mechanical compliance findings
 
-- **Hard-refusal calibration for fail-open security checks.** F-SA-EH-04 surfaced that AP-1 (swallow-and-allow in security path) and AP-4 (default-permit on auth dependency failure) are structurally identical to CLAUDE.md §5 hard-refusal entries but the skill self-describes as "close to hard-refusal." The framework should not have a "close to hard-refusal" category. WS4/WS5 decision needed: amend CLAUDE.md §5 to add fail-open security checks explicitly, OR route AP-1/AP-4 in production paths as Critical/hard-refusal in the skill.
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| T1-OE-001 | Low | `SKILL.md` frontmatter ↔ §2 table | Same parenthetical asymmetry — first 6 entries marked `(verified DATE)`; RFCs and CWEs unmarked. **Cross-target n=3 confirmation.** | Cross-target backlog work-package. | §2/frontmatter convention cleanup (CROSS-TARGET) |
+| T1-OE-002 | Medium | `SKILL.md` §2 vs rules.md | `OWASP-TOP10` (A05:2025) listed in §2 but never cited at rule level. Single-source case (cleaner than cryptography's 5 or error-handling's 2). | Add to specific rule citations OR remove from §2. | Bidirectional traceability (CROSS-TARGET) |
 
-WS5 plan v1 should structure work-packages around the cross-target patterns (efficient: fix once, apply across all Phase 6 skills) rather than per-skill (inefficient: fix N times).
+#### Code-reviewer findings (Track 2)
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| F-CR-OE-01 | Medium | anti-patterns.md AP-4 (lines 378-385) | Jinja2 `e(quote=True)` would TypeError — Python stdlib `html.escape(s, quote=True)` signature transplanted onto Jinja2 filter. Cross-language API leak. | Replace with `{{ user.username | e }}`. | Per-skill bug fix (broken example code); reproduces F-CR-EH-01 |
+| F-CR-OE-02 | Medium | rules.md Rule 5.7 + anti-patterns.md AP-9 (3 sites) | **RFC 4180 misattribution.** Rule + AP cite RFC 4180 §2.6/§2.7 as authority for CSV formula-injection escape. RFC 4180 §2.6 covers line-break/quote escaping; §2.7 covers internal double-quote doubling. Neither covers formula characters. The leading-quote escape is OWASP/Microsoft community convention, not RFC. | Strip RFC 4180 attribution; replace with 'per OWASP CSV injection guidance (no normative RFC exists).' | **Authoritative-source-chain integrity** — per-skill citation cleanup |
+| F-CR-OE-03 | Medium | rules.md Rule 5.7 vs anti-patterns.md AP-9 | CSV char list inconsistent: Rule prose has `=, +, -, @, \t, \0`; canonical code has `=, +, -, @, \t, \r`. **Same root cause as F-RT-OE-05 and T2-OE-004** — three findings pointing to the same fact. | Reconcile to `=, +, -, @, \t, \r` (matches current OWASP/Microsoft). | Per-skill citation cleanup; reproduces F-CR-EH-02 |
+| F-CR-OE-04 | Low | anti-patterns.md AP-4 (lines 301-305) | TS attribute-context demo's claimed result doesn't match what the shown `escapeHtml` actually produces. Off-by-one on the quote-doubling in the result. Attack still works; demo is debuggability-broken. | Correct demo result. | Per-skill demo fix |
+| F-CR-OE-05 | Low | anti-patterns.md AP-6 Java (lines 550-555) | Comment claims `Runtime.exec(String)` is shell-metacharacter-injectable. Actually no shell — real attack is argument injection. Reader testing with `; rm -rf /` sees harmless arg, concludes AP doesn't apply (opposite lesson). | Replace comment with accurate failure mode. | Per-skill comment fix |
+| F-CR-OE-06 | Low | SKILL.md frontmatter | Uniform 12-month refresh for 16 sources of varying cadence. **Cross-target n=3.** | Per-source cadence in `sources:` block. | Refresh-cadence (CROSS-TARGET); reproduces F-CR-03 + F-CR-EH-04 |
+| F-CR-OE-07 | Low | anti-patterns.md AP-7 .NET (lines 727-737) | `AntiXssEncoder.LdapFilterEncode` cited as canonical .NET fix — but this API is .NET Framework only, NOT modern .NET 5+/Core. Developer on .NET 6+ hits missing-namespace compile error. | Add platform note; reference modern .NET alternatives. | Per-skill platform clarity |
+
+#### Security-auditor findings (Track 2)
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| T2-OE-001 | Medium | rules.md Rule 5.7 (line 99) + anti-patterns.md AP-9 (line 910) | **CWE-1336 and CWE-1236 cited at rule level but NOT registered in §2.** §2 has CWE-79/89/78/90/611/643/117 but missing the SSTI + formula-injection IDs. | Add CWE-1336 + CWE-1236 to §2 Sources. | Citation-chain integrity (CROSS-TARGET); reproduces F-SA-01 |
+| T2-OE-002 | Medium | anti-patterns.md AP-3/AP-5/AP-8 (lines 231, 437, 807) | **Historical OWASP Top 10 references** — A03:2021 (AP-3), A10:2021 (AP-5), A05:2017 (AP-8). §2 only registers 2025. Historical refs unnecessary when 2025 cite anchors. | Drop historical Top 10 refs. | Citation-chain cleanup |
+| T2-OE-003 | Medium | anti-patterns.md AP-9 (line 910) + AP-10 (line 1015) | (1) `OWASP-CHEAT-INJECTION (related)` cited — no such cheat sheet in registry; may not exist as discrete cheat sheet. `(related)` annotation is M9 confirmation-gap tell. (2) `OWASP-ASVS V16` cited at AP-10 — outside this skill's V1 scope. **Same finding as F-HR-02-OE.** | (1) Remove the `(related)` ref (chain stands on its own). (2) Rephrase AP-10 to point to security-logging skill. | Citation-chain integrity + scope-boundary; reproduces F-SA-01 + F-SA-EH-02 |
+| T2-OE-004 | Low | SKILL.md §4 + rules.md Rule 5.7 + anti-patterns.md AP-9 | Same CSV char list inconsistency as F-CR-OE-03 + F-RT-OE-05. Three findings pointing to one fact — single fix resolves all three. | See F-CR-OE-03. | Per-skill consolidation |
+| T2-OE-005 | Low (resolved) | SKILL.md §8 line 260 | Hard-refusal calibration PROBED for AP-1/AP-3/AP-6/AP-8. RESOLVES FAVORABLY: injection patterns are severity-by-context per CLAUDE.md §5, NOT on the hard-refusal list (which is intentionally narrow — universal-critical regardless of context). 'Typically High or Critical' hedge is calibration-appropriate. Distinct from F-SA-EH-04 (fail-open security checks ARE structurally identical to hard-refusal). | OPTIONAL: brief note in §8 distinguishing severity-by-context from hard-refusal-by-pattern. | Framework-level clarity |
+| T2-OE-006 | Informational | rules.md Rules 5.2-5.6 | **POSITIVE OBSERVATION — breaks F-SA-01 / F-SA-EH-01 cross-target pattern.** OWASP Cheat Sheets cited at section level correctly throughout (`§Output Encoding`, `Defense Option 1`, `§Primary Defenses`). First Phase 6 skill where citation-depth discipline holds cleanly. | No action. Cite as canonical exemplar in Phase 11/12 hook spec. | **POSITIVE — cite as exemplar** |
+
+#### Red-team findings (Track 2)
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| F-RT-OE-01 | Medium | All rules + APs | Zero ATT&CK technique-IDs. SKILL.md §7 cites MITRE-ATLAS AML.T0051 (ATLAS not ATT&CK) — author CAN cite adversary frameworks but doesn't. **Cross-target n=3.** | Add Adversary Mapping section per-rule. | ATT&CK coverage (CROSS-TARGET); reproduces F-RT-01 + F-RT-EH-01 |
+| F-RT-OE-02 | Medium | rules.md Rule 5.3 + anti-patterns.md AP-3 | **DOMPurify configuration depth gap.** AP-3 canonical reads as 'configure ALLOWED_TAGS + ALLOWED_ATTR and you're done.' Unaddressed: (a) mXSS / mutation-XSS via SVG/MathML namespaced markup; (b) ALLOWED_URI_REGEXP defaults permit mailto:/tel: beyond Rule 5.4 allow-list; (c) ADD_TAGS/ADD_ATTR drift accumulation; (d) SVG/MathML profile risk. | Rule 5.3 paragraph on DOMPurify config discipline. Update AP-3 canonical with constraining ALLOWED_URI_REGEXP. | Per-skill rule completeness (high-value: DOMPurify is the framework's escape valve) |
+| F-RT-OE-03 | Medium | rules.md Rule 5.2 + anti-patterns.md AP-2 | **Identifier allow-list discipline buried.** AP-2 'Additional considerations' mentions allow-list for `ORDER BY`, table/column names. But this is rule-level discipline (developer reaches for parameterization, finds it doesn't work, falls back to concat). Should be Rule 5.2.b sub-rule with canonical example. | Promote identifier-allow-list from AP-2 Additional considerations to Rule 5.2.b. Add AP-2b for canonical ORDER BY allow-list. | Per-skill rule completeness (high-value: identifier-context is common SQLi vector) |
+| F-RT-OE-04 | Medium | rules.md Rule 5.3 Extended discussion | **Mixed-context emission.** Rule 5.3 enumerates 5 HTML contexts but doesn't address data CROSSING contexts: (a) JS string in HTML attribute; (b) URL in JS context; (c) HTML-in-JSON-in-script (`JSON.stringify` doesn't escape `</script>` by default). | Rule 5.3 'Nested and mixed contexts' paragraph naming the 3 cases. For HTML-in-JSON-script, require `</` → `<\/` escape. | Per-skill rule completeness |
+| F-RT-OE-05 | Medium | rules.md Rule 5.7 + anti-patterns.md AP-9 | Same root finding as F-CR-OE-03 + T2-OE-004 (CSV char list inconsistency). Plus: rule doesn't name high-impact formulas (`=HYPERLINK`, `=WEBSERVICE`, `=DDE`, `=cmd|`); locale-specific separators unenumerated. | Sync list; add 'Documented dangerous formula prefixes' sub-paragraph. | Per-skill consolidation |
+| F-RT-OE-06 | Medium | SKILL.md §7 closing + §9 | **LLM-as-output-source channel not addressed.** §7 references OWASP-LLM LLM05 / ATLAS AML.T0051 at name level only. §9 forwards LLM depth to security-ai-output-handling (Phase 8, unbuilt). Phase 6/8 gap: AI-app developer in interim has no bridge guidance for LLM-generated SQL/shell/HTML reaching the same interpreters this skill governs. | §7 paragraph: 'Treat LLM output as untrusted input to encoding boundary at same trust level as user input.' | Per-skill rule completeness (high-value: AI tool-call channel grows) |
+| F-RT-OE-07 | Low | Cross-cutting (Rules 5.3, 5.6, 5.7) | Encoder failure modes unaddressed — DOMPurify can throw, JSON.stringify on circular/BigInt/Symbol throws, encodeURIComponent on lone surrogates throws, ldap3.escape_filter_chars on NUL varies. Caller's catch swallows throw, falls back to raw value, raw reaches interpreter, injection lands. **Reproduces F-RT-EH-06 (defense's own failure mode).** | Rule 5.1 paragraph: encoder failure is refusal to emit; fail-closed not fall-back-to-raw. | Per-skill defense-completeness; reproduces F-RT-EH-06 |
+| F-RT-OE-08 | Low | rules.md Rule 5.7 (templates) + SKILL.md §6 | **SSTI in non-web template contexts unaddressed.** Rule 5.7 implicitly web-scoped. Adversary-relevant adjacent channels: email engines (Liquid/Handlebars), GitHub Actions/GitLab CI `${{ }}` expressions, IaC templates, chat-platform message templates. CI/CD case is documented CVE class. | Expand Rule 5.7 template paragraph. Add candidate AP for CI/CD case. | Per-skill rule completeness |
+
+#### Holistic-reviewer findings (Track 2)
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| F-HR-01-OE | Medium | `.claude/hooks/lib/...` + skills/**/SKILL.md §2 | §2 ↔ rule-level invariant has no fitness function despite ERR-007 fix. **Cross-target n=3.** Recommend Phase 11/12 hook re-prioritization. | See ERR-2026-05-27-005. | Fitness-function gap (CROSS-TARGET) |
+| F-HR-02-OE | Medium | anti-patterns.md AP-9 (line 910) | `OWASP-CHEAT-INJECTION (related)` cited but not registered. `(related)` annotation is M9 confirmation-gap tell. **Same finding as T2-OE-003 part 1.** | (a) Verify under M15 + register, OR (b) remove ref. | Citation-chain integrity; per-skill |
+| F-HR-03-OE | Low | SKILL.md + rules.md + APs | DEC-2026-05-26-011 not cited anywhere. Skill enacts rules correctly but future author can't grep-discover the DEC. **Cross-target n=3.** | Single-line addition to §2 each Phase 6 skill. | Decision-trail (CROSS-TARGET); reproduces F-HR-03 + F-HR-09 |
+| F-HR-04-OE | Low | SKILL.md frontmatter | 16 sources, uniform date. **Cross-target n=3.** | See F-CR-OE-06. | Refresh-cadence (CROSS-TARGET) |
+| F-HR-05-OE | Low | SKILL.md §8 + §9; rules.md; APs | 7 forward-references with inconsistent phase attribution (some '(Phase 6)' / '(Phase 7)', some bare). **Cross-target n=3.** | Phase 6 closeout step parallel to Decision C. | Forward-reference discipline (CROSS-TARGET) |
+| F-HR-06-OE | Medium | SKILL.md §7 line 249; rules.md (no ATT&CK); APs (no ATT&CK) | Zero ATT&CK technique-IDs across rules/APs. **§7 cites MITRE-ATLAS AML.T0051 at the name level — confirms author CAN cite adversary-frameworks; asymmetry is the gap.** Candidate IDs: T1059, T1059.007, T1189, T1190, T1505.003, T1078, T1213, T1090, T1071. | Add 'Documented adversary use' sub-section per rule (M15-verified). | ATT&CK coverage (CROSS-TARGET); reproduces ERR-2026-05-25-004 pattern |
+| F-HR-07-OE | Informational | rules.md throughout | **POSITIVE NOTE — breaks F-SA-01 / F-SA-EH-01 cross-target pattern.** Cheat-sheet section-anchor depth holds cleanly. Same as T2-OE-006. | No action. Canonical exemplar. | **POSITIVE** |
+| F-HR-08-OE | Informational | SKILL.md §1; rules.md preamble; anti-patterns.md preamble | **POSITIVE NOTE.** Cleanest SECURITY-CORE Rule 5.6 extension positioning of 4 audited skills. Decision B operationalized correctly. NOTE: rule-numbering collision (skill 5.6 = LDAP, SECURITY-CORE 5.6 = output-encoding-principle) is Phase 6-wide convention; unambiguous via explicit 'SECURITY-CORE Rule X' citation. | No action. Cite as exemplar. | **POSITIVE** |
+| F-HR-09-OE | Informational | SKILL.md §1, §4, §9 + security-input-validation §1, Rule 5.4, §9 | **POSITIVE NOTE.** input-validation ↔ output-encoding pair-with bidirectional cross-reference is symmetric and clean (best in audited cluster). Validation rejects; encoding emits safely. | No action. Preserve. | **POSITIVE** |
+| F-HR-10-OE | Informational | skills/security-core/SKILL.md §5 + rules.md Rule 5.6 | **POSITIVE NOTE — gap is by-design.** SECURITY-CORE Rule 5.6 doesn't forward-reference security-output-encoding. Per Phase 6 Checkpoint 1 Decision C, deliberately deferred to Phase 6 closeout commit 12/12 (single bundled edit). Working as designed. | No action until commit 12/12. | **POSITIVE — sequencing intentional** |
+
+## §4 Cross-Target Patterns (Updated 2026-05-28 after Target 3 audit — n=3)
+
+With three of 19 audit targets complete, the following patterns are **CONFIRMED cross-target on 3 of 3 audited Phase 6 skills**. These should be remediated as a class in WS5, not per-skill:
+
+1. **§2 bidirectional traceability invariant has no automated enforcement.** T1-001 + T1-EH-002 + T1-OE-002 + F-HR-01 + F-HR-08 + F-HR-01-OE. n=3 confirmation. Hook-side fitness function tracked in ERR-2026-05-27-005. **Most leverage: build the hook.** Phase 11/12 re-prioritization recommended.
+
+2. **§2/frontmatter verification-date asymmetry.** T1-002 + T1-EH-001 + T1-OE-001. n=3 confirmation. Trivial cosmetic fix; do across all Phase 6 skills in one pass.
+
+3. **Forward-reference discipline + inconsistent phase attribution.** F-CR-05 + F-CR-EH-03 + F-CR-OE-?? + F-HR-06 + F-HR-11 + F-HR-05-OE. n=3 confirmation. Phase 6 closing checklist should sweep all skills for cross-skill references and standardize `(Phase N)` attribution.
+
+4. **Refresh-cadence convention.** F-CR-03 + F-CR-EH-04 + F-CR-OE-06 + F-HR-04 + F-HR-12 + F-HR-04-OE. n=3 confirmation. Framework-level decision: per-source cadence (registry-level `next_refresh`) OR uniform-cadence with explicit lower-bound annotation. Apply across all Phase 6+ skills.
+
+5. **Skill-to-DEC trace gap.** F-HR-03 + F-HR-09 + F-HR-03-OE. n=3 confirmation. DEC-2026-05-26-011's own text asks future skills to reference it; none of 3 audited skills do. Capture as skill-template requirement.
+
+6. **ATT&CK technique-ID coverage.** F-RT-01 + F-RT-EH-01 + F-RT-OE-01 + F-HR-06-OE + ERR-2026-05-25-004 (cryptography). n=3 confirmation. Output-encoding §7 cites MITRE-ATLAS AML.T0051 confirming the author CAN cite adversary frameworks — the asymmetry is the gap. Adversary Mapping section convention should be established and applied.
+
+7. **Citation of unregistered sources at rule level (CWE / OWASP-LLM / historical Top 10 / OWASP-CHEAT-INJECTION).** F-SA-01 + T2-OE-001 + T2-OE-002 + T2-OE-003 + F-HR-02-OE. **NEW cross-target pattern surfaced at Target 3** — sources cited at rule level that aren't registered in §2. Distinct from cross-target pattern #1 (§2-source-not-cited); this is the reverse direction. Phase 11/12 fitness function should check BOTH directions.
+
+### Cross-target pattern BROKEN at Target 3 (positive):
+
+8. **~~OWASP Cheat Sheet section-anchor citation depth.~~** F-SA-01 + F-SA-EH-01 NO LONGER reproduces — **F-HR-07-OE + T2-OE-006** confirm output-encoding cites at section level throughout (`§Output Encoding`, `Defense Option 1`, `§Primary Defenses`). F-SA-01 (cryptography) is a **per-skill defect**, not a Phase 6-wide pattern. **Output-encoding becomes the canonical in-repo exemplar** for DEC-2026-05-26-011 Clause 2 application.
+
+### Cross-artifact dimension (introduced by Target 2):
+
+9. **Cross-artifact phase-position drift between SECURITY-CORE and Phase 6 skills.** F-HR-10 (error-handling) + F-HR-10-OE (output-encoding — but here the drift is BY-DESIGN per Phase 6 Checkpoint 1 Decision C). The Decision C deferral to closeout commit 12/12 is the working convention; drift before that is expected sequencing. Sweep should verify completeness of the 12/12 fix when it ships.
+
+### Framework-level questions raised (NOT in cross-target pattern; flagged for WS5):
+
+- **Hard-refusal calibration for fail-open security checks.** F-SA-EH-04 surfaced AP-1 (swallow-and-allow in security path) and AP-4 (default-permit on auth dependency failure) are structurally identical to CLAUDE.md §5 hard-refusal entries. **DISTINCT from T2-OE-005** which probed AP-1/AP-3/AP-6/AP-8 of output-encoding (SQL concat, unsafe HTML sinks, shell-string spawn, XXE) and RESOLVED FAVORABLY — injection patterns are severity-by-context not hard-refusal-by-pattern. The framework's §5 calibration is: universal-critical-regardless-of-context goes on the hard-refusal list; severity-by-context stays on the gradient. F-SA-EH-04's question stands: should fail-open security checks (auth/authz returning permit on exception) be added to §5 because they fit the universal-critical pattern? Decision needed for WS5.
+
+- **Implicit conventions not captured in DECs.** F-HR-08-OE surfaced 4 implicit Phase 6 conventions: rule-numbering 5.1-5.7 namespace, 'Defense Option N' as section-anchor-equivalent, forward-reference phase attribution, uniform skill-level refresh date. None in DECISIONS.md. WS4 closeout or Phase 6 closeout should consider DEC entries vs phase-plan-level capture.
+
+### Authoritative-source-chain integrity findings (NEW category surfaced at Target 3):
+
+- **F-CR-OE-02 RFC 4180 misattribution for CSV formula injection** — Rule 5.7 + AP-9 attribute the leading-quote escape to RFC 4180 §2.6/§2.7. RFC 4180 doesn't cover formula characters. The escape is OWASP/Microsoft community convention. **Citation-chain integrity issue** — first finding where the skill cites an authoritative source for content the source doesn't actually contain. Distinct from cross-target pattern #1 (source-listed-not-cited) and #7 (cited-not-registered); this is **cited-incorrectly-attributed**.
+
+WS5 plan v1 should structure work-packages around the cross-target patterns (efficient: fix once across all Phase 6 skills) rather than per-skill (inefficient: fix N times). The 7 confirmed patterns + the 1 BROKEN pattern + the 1 cross-artifact dimension + the 2 framework-level questions = the WS5 work-package backbone.
 
 ## §5 Cross-References
 
