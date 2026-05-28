@@ -97,4 +97,25 @@ Ideas worth preserving but not in scope for current build. Captured here so they
 
 ---
 
-*Last updated: 2026-05-25.*
+## Active project-management: plan presentation + project direction/coordination
+
+**Origin:** 2026-05-28 discussion (during WS4 Build Step 4 audit of `skills/project-management/`). Two related ideas about elevating PROJECT-MANAGEMENT from a passive load-on-context advisory skill toward an active role:
+
+1. **Plan presentation for at-a-glance comprehension.** The skill ensures a plan is *sound* (constraint-fit, dependencies explicit, MVP scoped) but says nothing about whether it is *legible*. Proposal: a Kanban-flavored ROADMAP presentation — status columns / the existing `✅ 🟡 ⬜` markers, a "current focus" callout, text dependency arrows — so the user can track progress visually. Aids governance and momentum, especially for a solo founder.
+2. **Active project direction/coordination.** Imagine project-management as an actual project manager that *juggles and coordinates the moving parts* — notices slips, surfaces blocked dependencies, keeps the ROADMAP current, recommends next focus — rather than only advising when asked. The user raised whether this warrants a dedicated agent or other architecture.
+
+**Why parked:**
+- WS4 is audit-only; this is new-feature/enhancement work, out of WS4 (and WS5-remediation) scope. Captured now so it survives to the right build window.
+- The high-value, low-complexity core needs no new component: **orchestrator-exercised coordination at session boundaries** (session-start "where the project stands / what's blocked / what's next" briefing + session-close ROADMAP reconciliation), guided by project-management + CONTINUITY. Estimated ~80% of the "active PM" value at ~10% of the complexity. Close to what CONTINUITY's session discipline + the skill's §3 discovery commands already gesture at.
+- TGF agents are **stateless, task-scoped, read-only dispatches** (the four review agents). "Juggling and coordinating" wants *persistence + proactivity* — which is the orchestrator + persistent artifacts (ROADMAP, session logs), NOT a stateless subagent. A dedicated PM agent earns its place only when coordination gets heavy enough to need context-isolation or must run *off-session* (e.g., a scheduled check that pings on stale ROADMAP / approaching deadline).
+- "Make it an agent" must clear the skill's own constraint-fit bar — Rule 5.5 (decompose against real constraints), design Rule 5.3 (simplest that meets constraints), Rule 5.4 (accommodate change, don't anticipate). No evidence yet that the orchestrator-cadence version is insufficient.
+
+**Hard constraint on any visual board:** it must BE the source-of-truth ROADMAP (or be auto-derived from it), never a parallel board kept by hand — a stale board is exactly the AP-2 (aspirational ROADMAP) / AP-8 (ROADMAP-drift) failure project-management already warns against. A stale Kanban is worse than no Kanban. (Note: §8 says ROADMAP is "not a Gantt chart" — Kanban is status-by-column, not date-precise, so this does not conflict.)
+
+**Placement question (resolve at revisit):** (a) the **ROADMAP artifact format** (CLAUDE.md §8 / CONTINUITY) is the natural home for the visual/status spec [lean]; (b) project-management carries a one-line presentation *principle* pointing to it; (c) the "does an active PM warrant a dedicated subagent?" question goes to **Phase 11 (orchestration meta-skill)** — the same place debugging §9 parks its "dedicated debugger subagent?" question. Do NOT mandate external tools (GitHub Projects / Linear); recommend optionally, keep tool choice user-preference (§5 light-touch).
+
+**Revisit trigger:** Phase 16 self-validation (60–90 days on LabList / AdaptivIQ / BLETRAP) reveals either (a) plans are hard to track at a glance in real use, or (b) project-coordination strain the orchestrator-cadence version can't carry — at which point evaluate the dedicated PM agent / scheduled status-check architecture at Phase 11. Build the orchestrator-cadence + visual ROADMAP first regardless; promote to an agent only on evidence.
+
+---
+
+*Last updated: 2026-05-28.*
