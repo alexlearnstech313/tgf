@@ -804,6 +804,214 @@
         "CLAUDE.md",
         "docs/communication-skill-plan.md"
       ]
+    },
+    "WCAG": {
+      "tier": 1,
+      "type": "w3c",
+      "publisher": "W3C",
+      "jurisdiction": "international",
+      "primary_url": "https://www.w3.org/TR/WCAG22/",
+      "allow_url_patterns": [
+        "https://www.w3.org/TR/WCAG22/*",
+        "https://www.w3.org/TR/WCAG22",
+        "https://www.w3.org/WAI/WCAG22/*"
+      ],
+      "expected_schema": "vendor-doc",
+      "pinned": false,
+      "last_verified": null,
+      "id_prefix_match": [
+        "WCAG"
+      ],
+      "note": "W3C WCAG 2.2 Recommendation (2023-10-05, updated 2024-12-12). Tier-1 living standard; cited at success-criterion level by testing/design/ui-craft. Registered + first hook-verified fetch in WS5 (stakeholder-approved). 'WCAG' does not match the write-hook citation-token regex, so it never blocked skill edits; registered here for M15 fetch + traceability completeness.",
+      "cited_in": [
+        "skills/testing",
+        "skills/design",
+        "skills/ui-craft"
+      ]
+    },
+    "OWASP-WSTG": {
+      "tier": 1,
+      "type": "owasp-wstg",
+      "publisher": "OWASP",
+      "jurisdiction": "international",
+      "primary_url": "https://owasp.org/www-project-web-security-testing-guide/",
+      "allow_url_patterns": [
+        "https://owasp.org/www-project-web-security-testing-guide/*",
+        "https://owasp.org/www-project-web-security-testing-guide"
+      ],
+      "expected_schema": "vendor-doc",
+      "pinned": false,
+      "last_verified": null,
+      "id_prefix_match": [
+        "OWASP-WSTG"
+      ],
+      "note": "OWASP Web Security Testing Guide v4.2. Tier-1; cited by testing. Was unregistered (WS4 Build Step 4 finding #7); registered + first hook-verified fetch in WS5.",
+      "cited_in": [
+        "skills/testing"
+      ]
+    },
+    "ANTHROPIC-AGENTS": {
+      "tier": 3,
+      "type": "vendor-doc",
+      "publisher": "Anthropic",
+      "jurisdiction": "vendor",
+      "primary_url": "https://www.anthropic.com/engineering/building-effective-agents",
+      "allow_url_patterns": [
+        "https://www.anthropic.com/engineering/building-effective-agents*",
+        "https://www.anthropic.com/research/building-effective-agents*"
+      ],
+      "expected_schema": "vendor-doc",
+      "pinned": false,
+      "last_verified": null,
+      "id_prefix_match": [
+        "ANTHROPIC-AGENTS"
+      ],
+      "note": "Anthropic 'Building Effective Agents' (2024-12-19). Vendor/Tier-3 design-rationale; grounds design Rules 5.1/5.3/5.4/5.5 (Simplicity principle). Registered + first hook-verified fetch in WS5.",
+      "cited_in": [
+        "skills/design"
+      ]
+    },
+    "NIELSEN-10": {
+      "tier": 3,
+      "type": "vendor-doc",
+      "publisher": "Nielsen Norman Group",
+      "jurisdiction": "vendor",
+      "primary_url": "https://www.nngroup.com/articles/ten-usability-heuristics/",
+      "allow_url_patterns": [
+        "https://www.nngroup.com/articles/ten-usability-heuristics/*"
+      ],
+      "expected_schema": "vendor-doc",
+      "pinned": false,
+      "last_verified": null,
+      "id_prefix_match": [
+        "NIELSEN-10",
+        "NIELSEN"
+      ],
+      "note": "Nielsen 10 Usability Heuristics (1994, refreshed 2020; Nielsen Norman Group). Tier-3 stable methodology; cited by ui-craft/design. Upgraded from by-reference to fetch-verified in WS5.",
+      "cited_in": [
+        "skills/ui-craft",
+        "skills/design"
+      ]
+    },
+    "ISTQB": {
+      "tier": 2,
+      "type": "reference-only",
+      "publisher": "ISTQB",
+      "jurisdiction": "international",
+      "primary_url": "https://www.istqb.org/certifications/certified-tester-foundation-level",
+      "allow_url_patterns": [],
+      "reference_only": true,
+      "expected_schema": null,
+      "pinned": false,
+      "last_verified": null,
+      "id_prefix_match": [
+        "ISTQB"
+      ],
+      "note": "ISTQB Certified Tester Foundation Level syllabus v4.0 (2023-10). Cited by testing for general test-design techniques. NOT fetchable (403 to WebFetch); no comparable fetchable authoritative substitute (ISO/IEC/IEEE 29119 is paywalled; OWASP WSTG covers only the security-testing subset). Cited by reference per DEC-2026-05-17-004 Clause 5. reference_only=true: never fetched; traceability resolves to this entry.",
+      "cited_in": [
+        "skills/testing"
+      ]
+    },
+    "APPLE-HIG": {
+      "tier": 3,
+      "type": "reference-only",
+      "publisher": "Apple",
+      "jurisdiction": "vendor",
+      "primary_url": "https://developer.apple.com/design/human-interface-guidelines",
+      "allow_url_patterns": [],
+      "reference_only": true,
+      "expected_schema": null,
+      "pinned": false,
+      "last_verified": null,
+      "id_prefix_match": [
+        "APPLE-HIG"
+      ],
+      "note": "Apple Human Interface Guidelines (foundations). Cited at foundation level by ui-craft. NOT fetchable (SPA-rendered). No comparable fetchable substitute — definitionally Apple's platform authority; cross-platform principles are covered by the now-fetchable WCAG + Nielsen. Cited by reference per DEC-2026-05-17-004 Clause 5. reference_only=true.",
+      "cited_in": [
+        "skills/ui-craft"
+      ]
+    },
+    "MATERIAL-3": {
+      "tier": 3,
+      "type": "reference-only",
+      "publisher": "Google",
+      "jurisdiction": "vendor",
+      "primary_url": "https://m3.material.io",
+      "allow_url_patterns": [],
+      "reference_only": true,
+      "expected_schema": null,
+      "pinned": false,
+      "last_verified": null,
+      "id_prefix_match": [
+        "MATERIAL-3",
+        "MATERIAL"
+      ],
+      "note": "Material Design 3 (foundations: color system, type scale, motion, shape, elevation). Cited at foundation level by ui-craft. NOT fetchable (SPA-rendered). No comparable fetchable substitute — Google's platform design language; cross-platform principles covered by WCAG + Nielsen. Cited by reference per DEC-2026-05-17-004 Clause 5. reference_only=true.",
+      "cited_in": [
+        "skills/ui-craft"
+      ]
+    },
+    "PMBOK": {
+      "tier": 2,
+      "type": "reference-only",
+      "publisher": "PMI",
+      "jurisdiction": "international",
+      "primary_url": "https://www.pmi.org/pmbok-guide-standards",
+      "allow_url_patterns": [],
+      "reference_only": true,
+      "expected_schema": null,
+      "pinned": false,
+      "last_verified": null,
+      "id_prefix_match": [
+        "PMBOK"
+      ],
+      "note": "PMBOK Guide 7th Edition (2021; PMI). Cited by project-management as background for TGF-synthesis planning rules. NOT fetchable (paywalled). No fetchable comparable substitute (PMBOK/PRINCE2/ISO 21500 all paywalled or proprietary; Scrum Guide + Agile Manifesto cover only the agile slice and the latter is already cited). Cited by reference per DEC-2026-05-17-004 Clause 5. reference_only=true.",
+      "cited_in": [
+        "skills/project-management"
+      ]
+    },
+    "IIBA-BABOK": {
+      "tier": 2,
+      "type": "reference-only",
+      "publisher": "IIBA",
+      "jurisdiction": "international",
+      "primary_url": "https://www.iiba.org/career-resources/a-business-analysis-professionals-foundation-for-success/babok/",
+      "allow_url_patterns": [],
+      "reference_only": true,
+      "expected_schema": null,
+      "pinned": false,
+      "last_verified": null,
+      "id_prefix_match": [
+        "IIBA-BABOK",
+        "BABOK"
+      ],
+      "note": "IIBA BABOK Guide v3 (Business Analysis Body of Knowledge). Cited by discovery + project-management as background for TGF-synthesis requirements-elicitation rules. NOT fetchable (paywalled). No comparable fetchable substitute that fits consultative-interview methodology (ISO 29148 paywalled; NIST 800-160 V1's stakeholder-requirements process is adjacent, not a fit). Cited by reference per DEC-2026-05-17-004 Clause 5. reference_only=true.",
+      "cited_in": [
+        "skills/discovery",
+        "skills/project-management"
+      ]
+    },
+    "TOYODA-5W": {
+      "tier": 3,
+      "type": "reference-only",
+      "publisher": "Toyota (Sakichi Toyoda / Taiichi Ohno)",
+      "jurisdiction": "international",
+      "primary_url": "https://en.wikipedia.org/wiki/Five_whys",
+      "allow_url_patterns": [],
+      "reference_only": true,
+      "expected_schema": null,
+      "pinned": false,
+      "last_verified": null,
+      "id_prefix_match": [
+        "TOYODA-5W",
+        "TOYODA",
+        "FIVE-WHYS"
+      ],
+      "note": "The Five Whys root-cause technique (Sakichi Toyoda; Toyota Production System, Ohno 1988). Cited at methodology level by debugging/discovery. NOT a single fetchable canonical source (origin is a book; ASQ has fetchable RCA pages but is a secondary describer, less authoritative than the origin). Cited by reference at methodology level. reference_only=true. primary_url is a non-authoritative locator only.",
+      "cited_in": [
+        "skills/debugging",
+        "skills/discovery"
+      ]
     }
   }
 }
