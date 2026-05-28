@@ -677,6 +677,42 @@ Red-team also surfaced **F-RT-01** (zero ATT&CK technique-IDs across all 7 rules
 
 **Positive notes:** Rules 5.1-5.7 substantively correct + current-to-2026 (security-auditor); all 7 §5 hard-refusal items map to a rule + a paired SECURE CP (CP-7 404-not-403; CP-9 removes the toggle); all 6 §2 sources REGISTERED (best registry hygiene); all dated (no by-reference); anchors clean (deliberate convention); code examples accurate (Fernet, Argon2id params, MD5/SHAttered); 9/9 AP/CP; cross-skill 5.x extension explicit + disambiguated. **Secondary watch (not a finding):** the 5.x rule-numbering namespace is reused by every skill, disambiguated only by an unenforced skill-name-prefix convention — DECISIONS.md invariant candidate as the catalog grows to ~75 skills.
 
+### §3.14 Target 14 — `skills/code-quality/` (Audit completed 2026-05-28 — Build Step 5 CLOSED; 3rd/final Phase 4 always-on skill)
+
+**Audit context:** WS4 Build Step 5 Target 14 (per-skill commit 16/22, closes Build Step 5). Decision E dispatch: code-reviewer + holistic (recursive — code-reviewer preloads code-quality — acceptable). Rule 5.6 (Solo-Maintainability) is the catalog's most cross-referenced rule (design 5.3, testing, discovery, continuity ground their simplicity framing in it).
+
+**Activity logs:** code-reviewer `75e5104a-604c-4f38-9405-80563f32029b.json`; holistic-reviewer `cb7b1cc0-423e-415a-8e44-50bb7c3eb035.json`
+
+**Routed to ERROR-LOG.md:** none (0 Critical/High).
+
+**Routed here (Medium/Low — 1 Medium, 4 Low):**
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| T1-CQ-01 / F-HR-CQ-01 | **Medium** | SKILL.md §9 L222 | §9 "Preloaded by: code-reviewer (primary); holistic-reviewer (Rule 5.6)" OMITS the always-on tgf-orchestrator preload. **n=3 CLOSE of the always-on §9 under-reporting** (continuity + security-core + code-quality all have it). | Part of the consolidated 7-skill WS5 §9 fix (see Build Step 5 closeout below). | §9-preload-accuracy (F-HR-PM-01 always-on flavor, n=3 closed) |
+| T1-CQ-02 | Low | SKILL.md §7 L203 | §7 cites OWASP-LLM LLM09/LLM06 not in §2 (§2 has NIST-SSDF, ANTHROPIC-SKILLS, MITRE-ATLAS, ISO-5055). §2-table incompleteness (OWASP-LLM registered). | Add to §2 or reframe §7. | §7-OWASP-LLM-not-§2 |
+| F-CR-CQ-04 | Low | SKILL.md §2 L82; 0 hits rules.md + anti-patterns.md | ISO-5055 cited at NO rule level anywhere — §2-source inflation (parity with security-core). NIST-SSDF cited every rule, ANTHROPIC-SKILLS at Rule 5.4, MITRE-ATLAS at AP-1/§7; only ISO-5055 fully orphaned. | Cite ISO-5055 at Rule 5.5/5.6, or demote to "Further reading". | §2-bidirectional / scope-creep |
+| T1-CQ-03 | Low | SKILL.md L49/L82 | ISO-5055 "reference only"/"cited by reference" verification prose (paywalled, legit Clause 5). | §2 verification-status convention. | verification-status |
+| F-CR-CQ-05 | Low | anti-patterns.md CP-2 L93 vs L104 | CP-2 (the "correct" exemplar for Rule 5.2) imports `stripe` but calls `stripe_client.charges.create` — `stripe_client` undefined → NameError. The canonical correctness example has an undefined-name bug. | Add `stripe_client = stripe` binding, or rename to `stripe.charges.create`. | per-skill example bug |
+
+**Positive notes:** Rule 5.6 title+number STABLE across all dependents (no drift); TGF-SYNTHESIS honesty disciplined (states where NIST-SSDF stops + synthesis begins); 8/8 AP/CP; no fabricated citations; anchors clean; §8 Phase-1-primary wiring correct. **Cross-skill "Rule 5.6" namespace caveat (n=2 observation, security-core + code-quality holistics):** "Rule 5.6" means different things in 5 skills (code-quality=Solo-Maintainability, design=Accessibility, testing=Accessibility-Testing, continuity=Capture-WHY); callers correctly disambiguate with the skill-name prefix, but the prefix discipline is load-bearing + unenforced → **DECISIONS.md invariant candidate for WS5.**
+
+---
+
+### Build Step 5 closeout summary (2026-05-28)
+
+**Audit pass: 14 of 19 WS4 targets complete (74%).** Build Step 5 audited all 3 Phase 4 always-on skills (continuity, security-core, code-quality) — code-reviewer + holistic for all; +security-auditor for security-core. **0 Critical/High across the always-on cluster** (security-auditor confirmed security-core's Rules 5.1-5.7 substantively correct + current-to-2026). ~13 findings: ~5 Medium, ~8 Low.
+
+**Always-on cluster is materially cleaner than Phase 5** (as the always-on tighter-bar hypothesis predicted): anchors clean across all 3, AP/CP pairing complete, code/format examples accurate, cross-reference integrity excellent (continuity is the hub 25+ citations resolve into; code-quality Rule 5.6 is the most-cited rule; security-core is the security source-of-truth + §5 hard-refusal home).
+
+**Two consolidated WS5 work-packages crystallized by Build Step 5:**
+1. **§9 preload-accuracy — 7-SKILL FIX, ONE ROOT CAUSE** (skills written before/independent of the WS3 agent wiring). (a) ADD the always-on tgf-orchestrator preload to 3 always-on skills' §9: **continuity, security-core, code-quality** (they name only review subagents). (b) CORRECT the false "Preloaded by: None directly"/"does not preload the full skill" in 4 Phase 5 skills that holistic-reviewer.md actually preloads: **design, project-management, debugging, disagreement**. Bounded, mechanical, one cross-cutting commit. Subsumes F-HR-PM-01 + F-HR-CONT-01/SC-01/CQ-01.
+2. **Citation-correctness pass** — NIST SSDF practice errors (continuity PO.5→PO.3; security-core §2-inflation of NIST-SSDF/ATT&CK/ATLAS; code-quality ISO-5055 orphaned), the §7-OWASP-LLM-not-§2 standardization (now 6 Phase 5 + all 3 always-on), and the cross-skill wrong-rule citations from Build Step 4.
+
+**Cross-target corrections from Build Step 5:** the security-auditor's OWASP Top 10:2025 verification CLOSED the disagreement F-CR-DIS-03 + testing F-CR-TEST-03 "A04 likely wrong" false alarms (see §3.13). **New DECISIONS.md-invariant candidate:** the 5.x rule-numbering namespace is reused by every skill, disambiguated only by an unenforced skill-name prefix — flag for WS5/Phase-11.
+
+**Build Step 6 (foundational docs — Targets 15-19: CLAUDE.md, WORKFLOW.md, ARCHITECTURE.md, DECISIONS.md, RESEARCH-SECURITY.md) opens next.** ALL FOUR agents per Decision H amendment — the heaviest step (~20 dispatches on large prose docs; Risk 10 large-doc handling applies). NOTE: CLAUDE.md was modified THIS session (§9 → docs/SKILL-INDEX.md trim + the §2 comms amendment from the prior session); audit the current state.
+
 ## §4 Cross-Target Patterns (Updated 2026-05-28 after Target 4 audit — Build Step 3 CLOSED — n=4)
 
 **Build Step 3 closes with all 4 Phase 6 commits 1/12-4/12 audited.** The full audited Phase 6 cluster (4 of 4 skills) confirms the following framework-wide patterns at 100% reproduction. WS5 plan v1 should structure work-packages around these patterns (efficient: fix once, apply across all 11 Phase 6 skills + future Phase 7+ skills) rather than per-skill (inefficient: fix 11+ times).
