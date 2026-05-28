@@ -98,17 +98,93 @@ Red-team also surfaced **F-RT-01** (zero ATT&CK technique-IDs across all 7 rules
 | F-HR-06 | Low | `SKILL.md` §9 Subagent Context lines 296-302 + `rules.md` Rule 5.6 + `anti-patterns.md` AP-7 | Forward-prescription beyond clean KEK/DEK boundary: §9 prescribes that security-iam-sessions will use Ed25519/RSA-PSS, security-iam-authentication will use Rule 5.5. Soft-commitment downstream skills will have to either honor or explicitly deviate. | At Phase 6 closeout commit 12/12, revisit security-cryptography §9 forward-prescriptions; downgrade any that over-constrain actual downstream implementations. | Phase 6 closeout consideration |
 | F-HR-07 | Low | `rules.md` Rule 5.5 (line 69) + `anti-patterns.md` AP-4 (lines 401, 437-441) + AP-5 (lines 474, 484, 494, 513, 531, 558-560) | KDF parameter values (Argon2id m=19/t=2/p=1, bcrypt 10/12, scrypt N=2^17, PBKDF2 600k) appear at 4-6 separate locations with subtle phrasing differences. 4-6 maintenance touch-points when OWASP-CHEAT-PS bumps parameters. | Either extract canonical parameter table into single source-of-truth (`parameters.md` reference file per DEC-2026-05-19-008 pattern) referenced from Rule 5.5 + AP-4 + AP-5, or add `<!-- PARAM: argon2id-memory-cost --> 19456` marker pattern for mechanical search-and-replace. | Parameter-pinning pattern (cross-target) |
 
-## §4 Cross-Target Patterns (To Be Populated)
+### §3.2 Target 2 — `skills/security-error-handling/` (Audit completed 2026-05-27, commit pending)
 
-As WS4 completes additional audit targets, cross-target patterns surface here. Initial observations from Target 1 audit suggest the following patterns may recur across other Phase 6 skills:
+**Audit context:** WS4 Build Step 3 Target 1 (per-skill commit 3/12). Same two-track methodology as Target 1. No Decision K validation gate (no prior smoke-test findings on this skill to reproduce; methodology validated by Target 1 already). Track 2 dispatched all four agents per Decision E.
 
-- **Forward-reference discipline (F-CR-05, F-HR-06)** — every Phase 6 skill that forward-references not-yet-shipped skills should mark those references explicitly or maintain a back-validation checklist.
-- **Refresh-cadence discipline (F-CR-03, F-HR-04, F-HR-05)** — uniform 12-month refresh is too coarse for continuously-updated sources; multi-tier convention or per-source annotation needed.
-- **Decision-trail discipline (F-HR-03)** — skills authored before retroactive DECs should be backfilled with DEC references; templates updated to bind future skill-authors.
-- **Severity-vocabulary discipline (F-SA-09)** — calibration between in-skill severity tables and persona-default severity gradient may diverge in other Phase 6 skills.
-- **Citation-chain depth (T1-001, F-SA-01 through F-SA-07)** — per-sub-rule citation vs page-level citation is a high-leverage cleanup likely repeating across Phase 6 commits 1/12-3/12.
+**Activity logs (Track 2 dispatch transcripts):**
+- code-reviewer: `.tgf/state/agent-activity/code-reviewer/99e1a07d-4761-4422-99ce-37a08ebb9201.json`
+- security-auditor: `.tgf/state/agent-activity/security-auditor/d581ba0a-dedb-4c31-9350-a79ac36205d4.json`
+- red-team: `.tgf/state/agent-activity/red-team/40793498-2ccc-4332-a3d5-becf57928be4.json`
+- holistic-reviewer: `.tgf/state/agent-activity/holistic-reviewer/b6d5d93a-a969-44e3-8f3b-99344f7c424c.json`
 
-WS5 plan v1 will use the populated cross-target patterns to structure work-packages.
+**Routed to ERROR-LOG.md:** ERR-2026-05-27-008 (High — adversary-triggered exception threat model gap, from F-RT-EH-02); ERR-2026-05-27-009 (High — Rule 5.5 detection-evasion via low-rate probing, from F-RT-EH-05).
+
+**Routed here (Medium/Low — 24 findings):**
+
+#### Track 1 — Mechanical compliance findings
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| T1-EH-001 | Low | `SKILL.md` frontmatter ↔ §2 table | Frontmatter shows `(verified DATE)` only on first 5 entries; CWE entries 6-9 lack the parenthetical despite §2 table claiming `2026-05-22` for all 9. **Cross-target pattern confirmed** — same asymmetry as T1-002 from security-cryptography. | Harmonize convention across both surfaces. Cross-target backlog work-package. | §2/frontmatter convention cleanup (CROSS-TARGET) |
+| T1-EH-002 | Medium | `SKILL.md` §2 vs `rules.md` / `anti-patterns.md` | `OWASP-TOP10-A09` listed in §2 as "cross-reference" but never cited at rule level. `CWE-388` mentioned in §7 narrative as "pillar" but never cited in any Citation line. **Cross-target pattern** — same failure mode as T1-001 from security-cryptography. | Per-source decision: remove from §2 OR add to specific rule citations. | Bidirectional traceability cleanup (CROSS-TARGET) |
+
+#### Code-reviewer findings (Track 2)
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| F-CR-EH-01 | Medium | `anti-patterns.md:390, :842` | TS code blocks call `logger.warning(...)` — Python API name. TS ecosystem (winston, pino) uses `.warn(...)`. Won't compile/run. | Change two lines to `logger.warn`. Spot-check other long TS blocks. | Per-skill bug fix (high-priority — broken example code) |
+| F-CR-EH-02 | Medium | `anti-patterns.md` AP-1 lines 45 vs 108 | Webhook signature verifier silently changes return type from `boolean` to `Event` between anti-pattern and canonical. Contract change buried in inline comment. Migration would break every existing caller. | Either keep boolean OR explicitly flag contract change in §Why It Works. | Per-skill craftsmanship cleanup |
+| F-CR-EH-03 | Medium | SKILL.md + rules.md + anti-patterns.md (multiple) | 9 forward-references to unbuilt downstream skills (security-logging × 5, security-iam-authentication × 2, security-incident-response, ops-observability). **Cross-target pattern** — same as F-CR-05 from cryptography. | Maintain cross-skill boundary registry, OR `forward-reference: pending` markers. | Forward-reference discipline (CROSS-TARGET) |
+| F-CR-EH-04 | Medium | SKILL.md frontmatter:58-59 | Uniform 12-month refresh for 9 sources of very different cadences (Cheat Sheet continuous, RFC 7807 stable since 2016, CWE entries stable per-entry). **Cross-target pattern** — same as F-CR-03 from cryptography. | Per-source cadence in `sources:` block. | Refresh-cadence discipline (CROSS-TARGET) |
+| F-CR-EH-05 | Low | SKILL.md:163-164 + rules.md:53 | Rule 5.4 title lists three mechanisms ("Circuit Breakers, Timeouts, Secure Graceful Degradation") rather than naming the principle. Rule 5.1 / 5.3 / 5.7 are principle-first. | Rename to principle-first (e.g., "External Dependencies Fail Closed for Security; Degrade Gracefully Only for Non-Security Data"). | Per-skill craftsmanship cleanup |
+| F-CR-EH-06 | Low | anti-patterns.md:47 | AP-1 TS uses `stripe.webhooks.constructEvent(...) !== null` as truthy check, but Stripe SDK throws-on-invalid / returns-Event — never returns null. Teaches wrong SDK API contract. | Replace dead `!== null` check; use library's actual contract. | Per-skill bug fix |
+| F-CR-EH-07 | Low | SKILL.md:113 §3 Discovery | Python discovery regex includes `None` as fail-open match; returning `None` from a security check is typically fail-closed. TS analogue has same issue with `null`. False positives. | Drop `None`/`null` from regexes; note that absence-vs-error distinction requires Phase-2 review of caller treatment. | Per-skill discovery-command fix |
+
+#### Security-auditor findings (Track 2)
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| F-SA-EH-01 | Medium | rules.md Rules 5.2 + 5.6 + AP-2 source line | OWASP-CHEAT-EH cited at page level in 3 places. Cheat sheet has named sections supporting `§<section-name>` depth per DEC-011 Clause 2. **Cross-target pattern** — same as F-SA-01 (OWASP-CHEAT-PS) from cryptography. | Refetch OWASP-CHEAT-EH under M15; update citations to section anchors. | Citation-chain depth (CROSS-TARGET) |
+| F-SA-EH-02 | Medium | SKILL.md §2 footer vs Rule 5.6 Citation + Rule 5.5 prose + AP-5 | SKILL.md §2 footer says "V16.1–V16.4 sub-rules are scoped to security-logging." Contradicted: (a) Rule 5.6 cites V16.2.1 (in V16.2); (b) Rule 5.5 prose + AP-5 reference V16.3.4 (in V16.3) but V16.3.4 not in Rule 5.5 Citation. | Option A: amend §2 footer to allow V16.2/V16.3 for non-logging claims + add V16.3.4 to Rule 5.5 Citation. Option B: tighten Rule 5.6 to V16.5.1 + defer V16.3.4 to security-logging. | Per-skill citation cleanup |
+| F-SA-EH-03 | Medium | SKILL.md §2 line 91 + Rule 5.2 + anti-patterns.md AP-2 lines 184-260, 266 | RFC 7807 cited despite RFC 9457 obsoleting for HTTP API problem-details. anti-patterns.md says "updated to 9457 in 2023" but RFC 9457 was published 2024-07 (factual date error = M9 confirmation-gap tell). RFC-9457 not in source-registry. | Add RFC-9457 to source-registry; switch §2 to 9457 as current; correct date in anti-patterns.md. | Per-skill citation currency |
+| F-SA-EH-04 | Medium | SKILL.md §9 line 276 + anti-patterns.md AP-1, AP-4, Summary | **Framework-level question.** AP-1 (swallow-and-allow in security path) and AP-4 (default-permit on external-service failure) are structurally identical to CLAUDE.md §5 hard-refusal entries. Skill self-describes as "close to hard-refusal." The "close to" is the gap — framework should not have a "close to hard-refusal" category. | Option A: amend CLAUDE.md §5 to add "Security checks that fail open on exception or dependency failure." Option B: route AP-1-in-production-security-path and AP-4-on-auth as Critical/hard-refusal in skill. | **Framework-level decision required** (CLAUDE.md §5 amendment candidate) |
+| F-SA-EH-05 | Low | rules.md Rule 5.2 Statement line 27 | CWE-209 disclosure list misses side channels: error-code classification enabling enumeration (USER_NOT_FOUND vs INVALID_PASSWORD); timing differences; response-size/shape differences; HTTP status-code differences. | Extend Rule 5.2 to add response-equivalence (timing/size within noise floor for semantically-equivalent failures). | Per-skill rule completeness |
+| F-SA-EH-06 | Low | anti-patterns.md AP-5 lines 634-643, 693 | Node `uncaughtException` recommendation (`setTimeout(() => process.exit(1), 1000)` for log flush) is correct Node.js community guidance but cited as if OWASP-derived. Unanchored. | Add Node.js core docs as Tier 3 ecosystem reference, OR soften "recommended pattern" wording. | Per-skill citation hygiene |
+
+#### Red-team findings (Track 2)
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| F-RT-EH-01 | Medium | All 7 rules + 9 APs | Zero ATT&CK technique-IDs across the skill. AP-2 → candidate:T1592.004 + T1589; AP-1/AP-4 → candidate:T1556; AP-5 → candidate:T1592; AP-7 → candidate:T1110. **Cross-target pattern** — same as F-RT-01 from cryptography. | Add Adversary Mapping section per-rule technique-IDs. Verify under M15 WebFetch. | ATT&CK technique-ID coverage (CROSS-TARGET) |
+| F-RT-EH-03 | Medium | rules.md Rule 5.4 + AP-4 | Adversary deliberately INDUCES external-service failure (DDoS auth, DNS hijack secret store, network partition) to reach AP-4 fall-back. No detection requirements for sustained fall-back firing. | Add detection requirement: sustained fall-back firing needs alert. Cross-ref security-detection-monitoring (Phase 7). | Detection / observability discipline |
+| F-RT-EH-04 | Medium | rules.md Rule 5.2 + anti-patterns.md AP-2 | Timing/size/status-code side channels survive generic-message discipline. CWE-203 (Observable Discrepancy) not cited in skill. AP-4 canonical names failing component ("Authentication is temporarily unavailable") — contradicts Rule 5.2 (also F-RT-EH-07). | Add CWE-203 to §2. Extend Rule 5.2 with response-equivalence. Cross-ref security-cryptography constant-time comparison. | Per-skill rule completeness |
+| F-RT-EH-06 | Medium | rules.md Rule 5.7 + anti-patterns.md AP-6 | Saga compensating-action failure unaddressed. AP-6 canonical has no try/catch on compensating delete. Adversary-induced race conditions during compensating window not surfaced. | Extend Rule 5.7: mandate idempotent compensating actions + failure-path emits ops-alert + durable marker. Update AP-6 with explicit try/catch on compensating action. Add AP-10 for "compensating-action-with-no-failure-mode." | Per-skill rule completeness |
+| F-RT-EH-07 | Low | anti-patterns.md AP-4 canonical (lines 496-504) | AP-4 canonical returns "Authentication is temporarily unavailable" — names failing component, recon fuel. Contradicts Rule 5.2 generic-message. | Update to truly generic 503: "Service temporarily unavailable. Please retry or contact support with reference ID X." Component identification only in server-side log. | Per-skill canonical-pattern fix |
+
+#### Holistic-reviewer findings (Track 2)
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| F-HR-08 | Medium | `.claude/hooks/lib/hook_research_posttool_webfetch.py` + skills/**/SKILL.md §2 | §2 Sources bidirectional invariant has no fitness function after ERR-007 fix (the fix addressed URL→source_id race, redirect, structural guards — NOT the §2-to-rule-level traceability). **Cross-target pattern confirmed** — same as F-HR-01 from cryptography. | Path A (lightweight): WAIVER-LOG. Path B (medium): citation_parser.py companion. Path C (full): extend git_precommit_check.py. | Fitness-function gap (CROSS-TARGET — framework-wide) |
+| F-HR-09 | Low | SKILL.md §2 footer (this skill + security-cryptography) + skill template | DEC-2026-05-26-011 explicitly asks future skills to reference it. Neither security-error-handling nor security-cryptography references it. **Cross-target pattern confirmed** — same as F-HR-03 from cryptography. | One-line addition to both skills' §2 footers. Capture as skill-template requirement. | Decision-trail discipline (CROSS-TARGET) |
+| F-HR-10 | Medium | skills/security-core/SKILL.md line 180 | **NEW cross-artifact-drift finding type.** SECURITY-CORE Top 10:2025 → Rule mapping table lists security-error-handling as "(Phase 7)" but skill / plan / commit position it as Phase 6 commit 3/12. Stale forward-reference. | Update line 180 from "(Phase 7)" to "(Phase 6)". Sweep skills/security-core/ for other phase forward-references. | Cross-artifact phase-position sweep (new dimension) |
+| F-HR-11 | Low | SKILL.md §1 + §2 footer + §8 + §9 (multiple) | 5 forward-prescriptions to unbuilt downstream skills (security-logging × 2, security-iam-authentication, security-incident-response, ops-observability). **Cross-target pattern confirmed** — same as F-HR-06 from cryptography. | Phase 6 closing checklist: grep skills/security-*/ for `Phase 6 commit N/12` references; verify against actual shipped names + commit numbers. | Forward-prescription discipline (CROSS-TARGET) |
+| F-HR-12 | Low | SKILL.md frontmatter | Uniform 12-month refresh for heterogeneous sources. **Cross-target pattern confirmed** — same as F-HR-04 from cryptography. | Per-source cadence OR uniform-cadence with §2 footer note. | Refresh-cadence discipline (CROSS-TARGET) |
+| F-HR-13 | Low | SKILL.md §2 line 91 vs anti-patterns.md AP-2 line 266 | RFC 7807 vs 9457 conscious deferral IS documented — but in AP-2 considerations, not at §2 surface. | One sentence to §2 footer surfacing the deferral. | Per-skill decision-trail polish |
+| F-HR-14 | Informational | SKILL.md §1 lines 76-77 (positive note, no action) | POSITIVE NOTE: Foundation-vs-extension positioning of Rule 5.1 vs SECURITY-CORE Rule 5.2 is canonical example. Specific-vs-general, not extension-and-extended. | No action this commit. At quarterly framework-health: add inverse cross-reference from SECURITY-CORE Rule 5.2 to Rule 5.1. | Framework-health quarterly polish |
+
+## §4 Cross-Target Patterns (Updated 2026-05-27 after Target 2 audit)
+
+With two of 19 audit targets complete, the following patterns are now **CONFIRMED cross-target** (observed on both security-cryptography and security-error-handling). These should be remediated as a class in WS5, not per-skill:
+
+1. **§2 bidirectional traceability invariant has no automated enforcement.** T1-001 + T1-EH-002 + F-HR-01 + F-HR-08. Hook-side fitness function tracked in ERR-2026-05-27-005 + repeated. Most leverage: build the hook.
+2. **§2/frontmatter verification-date asymmetry.** T1-002 + T1-EH-001. Trivial cosmetic fix; do across all Phase 6 skills in one pass.
+3. **Forward-reference discipline.** F-CR-05 + F-CR-EH-03 + F-HR-06 + F-HR-11. Phase 6 closing checklist should sweep all skills for cross-skill references and verify on each downstream skill commit.
+4. **Refresh-cadence convention.** F-CR-03 + F-CR-EH-04 + F-HR-04 + F-HR-12. Framework-level decision: per-source cadence OR uniform-cadence with explicit lower-bound annotation. Apply across all Phase 6+ skills.
+5. **Skill-to-DEC trace gap.** F-HR-03 + F-HR-09. DEC-2026-05-26-011's own text asks future skills to reference it; neither audited skill does. Capture as skill-template requirement.
+6. **ATT&CK technique-ID coverage.** F-RT-01 + F-RT-EH-01. Zero technique-IDs across audited Phase 6 skills. Adversary Mapping section convention should be established and applied.
+7. **OWASP Cheat Sheet section-anchor citation depth.** F-SA-01 + F-SA-EH-01. Cheat sheets cited at page level rather than `§<section-name>` depth per DEC-011 Clause 2. Refetch under M15 + update citations.
+
+**New cross-artifact dimension introduced by Target 2:**
+
+8. **Cross-artifact phase-position drift.** F-HR-10 is the first finding spanning SECURITY-CORE and a Phase 6 skill. The Phase 6 plan moves skills around; SECURITY-CORE's references to those skills don't get updated in lockstep. Phase 6 closing process should sweep cross-artifact references for stale phase attribution.
+
+**Framework-level question raised by Target 2 (not in any cross-target pattern yet but worth flagging):**
+
+- **Hard-refusal calibration for fail-open security checks.** F-SA-EH-04 surfaced that AP-1 (swallow-and-allow in security path) and AP-4 (default-permit on auth dependency failure) are structurally identical to CLAUDE.md §5 hard-refusal entries but the skill self-describes as "close to hard-refusal." The framework should not have a "close to hard-refusal" category. WS4/WS5 decision needed: amend CLAUDE.md §5 to add fail-open security checks explicitly, OR route AP-1/AP-4 in production paths as Critical/hard-refusal in the skill.
+
+WS5 plan v1 should structure work-packages around the cross-target patterns (efficient: fix once, apply across all Phase 6 skills) rather than per-skill (inefficient: fix N times).
 
 ## §5 Cross-References
 

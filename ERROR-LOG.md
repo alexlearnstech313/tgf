@@ -8,6 +8,62 @@ Per `CLAUDE.md` §11: all findings get fixed, formally waived in WAIVER-LOG, or 
 
 ---
 
+## ERR-2026-05-27-009: `security-error-handling` Rule 5.5 emits security events but lacks adversary-aware semantics — slow-rate adversary probing evades detection
+
+**Severity:** high
+
+**Status:** open
+
+**Owner:** WS5 (queued — remediation work after WS4 closes)
+
+**Target resolution:** WS5 — extend `skills/security-error-handling/rules.md` Rule 5.5 with adversary-aware semantics for the security-event emission. Per-path severity (auth/authz/validation/signature-verification/crypto code paths get `error` or higher; static-asset and non-security paths can remain `warn`). Add rate / clustering language so repeated unexpected exceptions from the same source IP, session, or correlation-ID-thread within a window are higher-signal than isolated occurrences. Cross-reference forward to security-detection-monitoring (Phase 7) for the alerting layer that consumes the event. Update AP-5 canonical pattern at `skills/security-error-handling/anti-patterns.md` to emit per-path severity (e.g., `severity: req.path.startsWith('/auth') ? 'error' : 'warn'`) and include source / session-thread identifiers in the event payload for rate-based correlation. Apply pattern to forthcoming Phase 6 commits 5/12-12/12.
+
+**Originating context:** WS4 Build Step 3 Target 2 — Red Team dispatch (`40793498-2ccc-4332-a3d5-becf57928be4`) against `skills/security-error-handling/` at `9940470`. Finding F-RT-EH-05 surfaced as one of two High-severity findings from that dispatch.
+
+Rule 5.5 specifies that the last-resort handler "emits a security event entry for unexpected exceptions per ASVS V16.3.4." The canonical pattern in AP-5 (TypeScript Express) shows `securityEventLog.emit({ event: 'unexpected_exception', correlationId: cid, severity: 'warn' });`. The skill does NOT define what "unexpected" means in adversary-aware terms.
+
+An adversary probing the application — sending crafted requests designed to trigger exceptions in auth, validation, or signature-verification code paths (see ERR-2026-05-27-008 for the adversary-triggered exception threat model) — generates a low-signal stream of `unexpected_exception` events at severity `warn`. At low rates (1-2 per minute is plenty for mapping failure modes over a long session), this stream looks like normal background error noise; the defender's SIEM never alerts because the rate is well below the warn-storm threshold. By the time alerts fire, the adversary has already mapped the failure modes.
+
+Specific gaps surfaced by the dispatch:
+- **No frequency / rate semantics.** A single `unexpected_exception` is warn-level; a rate above baseline from a single source IP or correlation-ID-related session is a different threat — but the skill emits both at the same severity.
+- **No clustering semantics.** Exceptions in the auth path are higher-signal than exceptions in static-asset serving; the canonical pattern emits the same severity for both.
+- **No relationship to brute-force-adjacent enumeration** via exception-triggering (candidate:T1110 family). The skill doesn't surface that exception-triggering probes are brute-force-adjacent — adversary samples failure modes rather than guesses credentials, but the defender's detection problem is the same shape.
+- **No detection-rule specification.** Rule 5.5 emits the event but doesn't specify the detection rule that consumes the event. The audit trail exists; the detection layer that should turn the trail into action is unspecified.
+
+**Plain-language impact:** Rule 5.5 produces the security event in good faith. The event is consumed at severity `warn` uniformly in the canonical example — under-prioritizes auth-path exceptions and over-prioritizes static-content exceptions. An adversary probing slowly (well below the warn-storm rate) generates events that nobody investigates because they look like noise. Mean dwell time before detection: weeks-to-months. The skill is technically correct (the event IS emitted per V16.3.4) and operationally insufficient (the event is not actionable signal).
+
+**Related:** ERR-2026-05-27-008 (adversary-triggered exception threat model — paired finding from same dispatch; together they compose the "adversary deliberately triggers exceptions slowly to map fail-mode behavior without alerting" scenario class). Cross-references forward to security-detection-monitoring (Phase 7) when that skill ships.
+
+---
+
+## ERR-2026-05-27-008: `security-error-handling` Rule 5.1 + AP-1 threat model treats exception-during-security-check as spontaneous; adversary deliberately triggers exceptions via crafted input
+
+**Severity:** high
+
+**Status:** open
+
+**Owner:** WS5 (queued — remediation work after WS4 closes)
+
+**Target resolution:** WS5 — extend `skills/security-error-handling/rules.md` Rule 5.1 "Extended discussion" with a paragraph titled "Adversary-triggered exceptions" explicitly addressing the inverted threat model. Exceptions in security-check code paths are not always incidental — an adversary who has read the validation library, JWT parser, signature verifier, or password-hash compare function will craft inputs specifically designed to trigger exceptions in those libraries when a fail-open handler exists. Discovery extension: in addition to the §3 grep for catch-then-return-true, audit validation/signature/auth libraries' known exception classes against their happy-path documentation; libraries that throw on subtle malformed input (truncated bcrypt, malformed Argon2 hash, polyglot UTF-8 in schema validation, JWT alg-switch dispatch exception) are the high-value targets for this attacker mindset. Add explicit cross-reference to security-input-validation (the input that triggers the exception is upstream of the security check). Optionally add a new AP-10 — "Adversary-triggered exception → swallow-and-allow" — as a specialization of AP-1 specifically for the targeted-input case. Apply pattern to forthcoming Phase 6 commits 5/12-12/12.
+
+**Originating context:** WS4 Build Step 3 Target 2 — Red Team dispatch (`40793498-2ccc-4332-a3d5-becf57928be4`) against `skills/security-error-handling/` at `9940470`. Finding F-RT-EH-02 surfaced as one of two High-severity findings from that dispatch.
+
+The skill treats exception-during-security-check as a spontaneous event ("database error," "transient failure") and prescribes fail-closed as the response. The canonical pattern in AP-1 makes the right choice. The threat model gap: the skill does NOT surface that adversaries who have read the validation library, the signature library, the JWT parser, the password-hash compare function, or the file-type detector specifically craft inputs designed to throw an exception in those libraries to reach the fail-open path.
+
+Specific scenario classes the skill does not name:
+- **Crafted JWT triggering exception in alg-switch dispatch.** Some libraries throw rather than return invalid on alg confusion — adversary holds authenticated token if fail-open handler exists. (Candidate CWE-347 territory.)
+- **Malformed bcrypt / Argon2 input designed to throw in compare function.** Length mismatch, encoding mismatch, hash-format mismatch — adversary triggers the exception path; fail-open returns "match."
+- **JSON polyglot or UTF-8 overlong input designed to throw in schema validator.** The try/except returns "valid" → malformed input is treated as schema-conformant.
+- **Crafted file uploads designed to throw in type-detector library.** Truncated zip, polyglot PDF/JPEG → upload-check returns "safe."
+
+The AP-1 anti-pattern shows the wrong handler returns true; the skill does not connect "this isn't accidental — adversaries who know you have AP-1 in your codebase will engineer inputs that hit it." A codebase that has applied Rule 5.1 at the rule level but missed one swallow-and-allow handler (very common in large codebases — one site out of hundreds) is exposed not to incidental exception traffic but to targeted exception-triggering.
+
+**Plain-language impact:** Adversaries who know what library you use (and library identification is cheap — package.json, requirements.txt, JWKS responses, error messages all leak it) will engineer inputs to hit your fail-open handlers rather than rely on incidental traffic to trigger them. A codebase that applied Rule 5.1 in 99% of security-check sites and missed one swallow-and-allow handler is exposed not to a probability-weighted accident but to a targeted probe. The skill currently treats this as the same problem as random transient failures; the threat model is different.
+
+**Related:** ERR-2026-05-27-009 (Rule 5.5 detection-evasion — paired finding from same dispatch; together compose the "adversary deliberately triggers exceptions slowly to map fail-mode behavior without alerting" scenario class). Cross-references forward to security-input-validation (Phase 6 commit 1/12 — the validation skill that owns input-shaping responsibility upstream of these checks).
+
+---
+
 ## ERR-2026-05-27-007: Research-security hook chain has at least two real bugs surfaced during in-session use — URL→source_id mismatch on redirect response + silent skip of a successful fetch
 
 **Severity:** high
