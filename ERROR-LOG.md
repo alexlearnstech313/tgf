@@ -8,6 +8,24 @@ Per `CLAUDE.md` §11: all findings get fixed, formally waived in WAIVER-LOG, or 
 
 ---
 
+## ERR-2026-05-28-014: ARCHITECTURE.md §18/§20 do not specify the enforcement gates that ERR-010/011/012/013 were deferred to — those four gaps are real end-to-end today, not merely guidance-layer
+
+**Severity:** high
+
+**Status:** open
+
+**Owner:** WS5 + Phase 11/12 (the gates are hook/orchestration enforcement work)
+
+**Target resolution:** WS5/Phase-12 — extend the proven M8 enforcement shape (Stop hook + git pre-commit + `.tgf/state/` evidence file) to the gates the four prior High findings need, and add them to the `docs/ARCHITECTURE.md` §18/§20 spec so the architecture's enforcement floor matches its own deferral promises: (a) a hard-refusal-**invariant** PreToolUse/pre-commit gate (ERR-2026-05-28-010); (b) a differentiated override→WAIVER-LOG bar (ERR-2026-05-28-011); (c) a review-evidence pre-commit gate keyed to `.tgf/state/review-records/{session_id}.json` matching the tier's required subagent set, fail-CLOSED for Medium+/Building+ (ERR-2026-05-28-012); (d) a tier-floor validation hook computing a minimum tier from objective diff signals (ERR-2026-05-28-013). Additionally: §20's tier-scaled dispatch must add an orchestrator-side dispatch-floor (validate the required subagent set against the computed tier-floor before dispatch; aggregation records required-vs-dispatched-vs-returned so a missing required pass is detectable), and §19's token-efficiency framing must be reconciled so it cannot be read as license to under-dispatch.
+
+**Originating context:** WS4 Build Step 6 Target 17 — Red Team dispatch (`d73e5089-e869-4688-abd4-86cf2d3a101e`) against `docs/ARCHITECTURE.md`, consolidating findings F-RT-ARCH-01 + F-RT-ARCH-02. The four prior High findings (ERR-010/011/012/013) each carried a scope caveat that runtime enforcement "lives outside the doc, in hooks (§18) / orchestration (§20)" and might compensate. This dispatch audited §18/§20 directly to test that assumption. VERDICT: §18 enumerates exactly three universal hooks (`block-secrets-commit`, `block-dangerous-git`, `block-destructive-db`) — none of which is a hard-refusal-invariant matcher, a review-evidence gate, or a tier-floor validator — and explicitly defers ALL hook scripts to Phase 12 (§18 L205). §18's "Hooks and authority" (L184-188) reproduces ERR-011's undifferentiated-override root cause ("the user can override with explicit acknowledgment ... overrides are logged" — no WAIVER-LOG binding, no hard-refusal-vs-strong-advocacy distinction). §20's tier-scaled dispatch (L294-301) reproduces ERR-013's self-assignment root cause at the orchestration layer, and §19's cost framing ("Cost tracks scope"; "Trivial changes don't pay for orchestration overhead") adds an incentive gradient toward under-dispatch.
+
+**Plain-language impact:** the four worst findings the audit surfaced were each softened by "the hooks/orchestration layer probably catches this." This is the audit of that layer — and it confirms the layer does NOT currently catch them: the specific gates are neither specified in §18/§20 nor built (Phase 12). So **ERR-010/011/012/013 are real end-to-end today**, mitigated only by persona discipline (a defense-in-depth layer, not the primary control). **This entry removes the "runtime may mitigate" hedge from those four entries.** The genuinely good news the dispatch confirmed: the shipped M8 citation gate proves the framework already knows how to build a real commit-blocking gate, so all five remediations are well-scoped — extend a working pattern, don't invent one.
+
+**Cross-reference:** supersedes the optimistic scope caveats on ERR-2026-05-28-010, -011, -012, -013. The §18/§20 spec additions are the WS5/Phase-12 home for those four fixes.
+
+---
+
 ## ERR-2026-05-28-013: WORKFLOW.md change_tier is self-assigned at Stage 2 with no validation against the actual diff — under-classification silently skips the deep review
 
 **Severity:** high
