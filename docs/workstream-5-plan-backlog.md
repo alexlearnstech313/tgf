@@ -308,6 +308,54 @@ Red-team also surfaced **F-RT-01** (zero ATT&CK technique-IDs across all 7 rules
 | F-HR-10-IV | Informational | skills/security-core/SKILL.md | POSITIVE. SECURITY-CORE forward-ref staleness by-design per Decision C. **n=4.** | No action until commit 12/12. | POSITIVE |
 | F-HR-11-IV | Informational | rules.md Rule 5.4 + 5.7 | POSITIVE NOTE on TGF synthesis. Rule 5.4 substantive; Rule 5.7 borderline. Pairing-with-external-authority avoids anti-pattern. | WS5 low priority: codify TGF synthesis citation convention. | DEC-candidate Phase 11 |
 
+### §3.5 Target 5 — `skills/disagreement/` (Audit completed 2026-05-28 — Build Step 4 opens; first Phase 5 activity skill)
+
+**Audit context:** WS4 Build Step 4 Target 5 (per-skill commit 7/22). Same two-track methodology. **Decision E selective dispatch: code-reviewer + holistic-reviewer ONLY** (security-auditor + red-team NOT dispatched — Phase 5 activity skill, not security content). First Phase 5 cluster target; different domain/source-profile from the Phase 6 cluster.
+
+**Activity logs (Track 2 dispatch transcripts):**
+- code-reviewer: `.tgf/state/agent-activity/code-reviewer/a2c88bd1-d7e7-47ce-8f35-43f984af3210.json`
+- holistic-reviewer: `.tgf/state/agent-activity/holistic-reviewer/9c563404-bf27-468d-ab3f-64119743c7e0.json`
+
+**Routed to ERROR-LOG.md:** none (0 Critical/High findings).
+
+**Routed here (Medium/Low — 12 findings: 2 Medium, 9 Low, 1 informational):**
+
+#### Track 1 — Mechanical compliance findings
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| T1-D-01 | Medium | rules.md Rule 5.1 (L15) | Cites `CLAUDE.md §1` which is NOT in the §2 Sources table (§2 lists §5 + §11 only). Bidirectional traceability gap. | Add §1 to §2, OR repoint the citation to §5 (the §1 reference is to "findings include plain-language impact" which §5 also covers). | Bidirectional traceability (CROSS-CLUSTER — reproduces Phase 6 pattern #1 on a Phase 5 skill) |
+| T1-D-02 | Low | SKILL.md §2 (L72) | §2 source ID `OWASP-LLM` is a short alias; source-registry canonical key is `OWASP-LLM-TOP10-2025`. Resolves via alias but ambiguous. | Use canonical registry ID `OWASP-LLM-TOP10-2025` in §2. | Registry-ID hygiene |
+| T1-D-03 | Low | SKILL.md §2 'Date Verified' col (L69-71) | Non-date prose ("TGF-internal authoritative source", "Cross-reference to Phase 4 skill") in a date column for the 3 internal/cross-ref sources. | Separate a provenance note from the verification-date, or use 'n/a (internal)'. | §2 verification-date convention — for INTERNAL sources (distinct from Phase 6 pattern #2, which was external CWE/RFC) |
+| T1-D-04 | Low/Info | rules.md L23; anti-patterns.md L139, L600, L656, L601 | Illustrative example citations inside dialogues not in §2 (OWASP Top 10:2025 A01/A04, OWASP ASVS V3.2.1/V14.1.1, GDPR Art 5(1)(e), SECURITY-CORE / CODE-QUALITY rule refs). Acceptable as teaching content; but OWASP Top 10:2025 letter accuracy is unverified (see F-CR-DIS-03). | No §2 listing required (illustrative). Verify OWASP letters. | Teaching-citation accuracy |
+
+#### Code-reviewer findings (Track 2)
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| F-CR-DIS-01 | Low | SKILL.md L131, L140; anti-patterns.md L33, L106, L200, L612 | 2 of 7 rule-anchor slugs broken: Rule 5.1's `+` and Rule 5.4's parenthetical break the GitHub auto-slug; 8 reference sites land at nothing. Other 5 coincidentally resolve. Sibling skills (security-core, continuity) use exact full-title slugs. | Repoint the 2 anchors to auto-generated slugs at all 8 sites, OR simplify the 2 rule headers. | Per-skill navigation fix |
+| F-CR-DIS-02 | Low | anti-patterns.md AP-8 L600, CP-8 L655 | AP-8/CP-8 cite `SECURITY-CORE Rule 5.4` for customer-email PII/data-minimization, but Rule 5.4 = "Secrets Never in Code" (credentials, not PII). Inaccurate cross-skill citation inside a "how to cite well" exemplar. | Drop the SECURITY-CORE number; forward-reference the planned security-privacy-data-handling skill, or cite GDPR/CCPA data-minimization only. | Per-skill citation accuracy |
+| F-CR-DIS-03 | Low | rules.md L23; anti-patterns.md L139 | OWASP Top 10:2025 category LETTERS asserted (A01 plausible; "A04 Cryptographic Failures" likely wrong — Cryptographic Failures was A02:2021). Corpus-wide: SECURITY-CORE rules.md uses the same idiosyncratic 2025 numbering. | Verify final 2025 letters via M15 WebFetch (WS5); else revert to stable 2021 letters / category-name-only. Apply same fix to SECURITY-CORE. | Source-chain accuracy (CROSS-ARTIFACT with SECURITY-CORE); overlaps T1-D-04 |
+| F-CR-DIS-04 | Low | SKILL.md frontmatter L32-39 | Uniform 12-month `refresh-recommended` over 5 heterogeneous sources (2 external/volatile + 3 TGF-internal/commit-cadence). Rule 5.5's "7 items" silently stales if §5 amended. | Split refresh guidance by source class, or note internal sources track TGF amendment. | Refresh-cadence (CROSS-CLUSTER — reproduces Phase 6 pattern #4 on a Phase 5 skill) |
+
+#### Holistic-reviewer findings (Track 2)
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| F-HR-DIS-01 | **Medium** | SKILL.md L101, L120, L143; rules.md L122, L36-44 | Skill DUPLICATES CLAUDE.md §5's hard-refusal list (3 inline enumerations) + 4-tier gradient, vs Phase 5 Decision C's reference-not-restate intent. §5 is periodically amended (amended this session, 4704f30); inline copies will silently drift; no fitness function or in-file sync marker binds them. | Collapse to one canonical restatement (rules.md Rule 5.5) + add in-file "mirror of §5 — keep in sync" markers; WS5: fitness check diffing restatement vs §5 source. | **§5-restatement-drift — HIGHEST-PRIORITY Target 5 item.** NEW Phase 5 pattern; non-security analog of cross-target pattern #1 |
+| F-HR-DIS-02 | Low | SKILL.md L101, L143; rules.md L122 | Per-item scope-wording drift in restatements: §5 item 6 "or sensitive personal data" dropped; item 7 "on endpoints handling user data" qualifier dropped. The "7 items" COUNT is accurate; per-item scope diverges. | Align wording to §5 verbatim, or reduce to one canonical copy (rides with F-HR-DIS-01). | Restatement fidelity |
+| F-HR-DIS-03 | Low | SKILL.md §8 L216; rules.md L134 | SKILL.md §8 routes hard-refusal acknowledgments unconditionally to DECISIONS.md per CONTINUITY Rule 5.2 (ADR scope); rules.md L134 hedges correctly (WAIVER-LOG OR DECISIONS.md). Internal inconsistency; §8 over-extends Rule 5.2's ADR scope. | Make §8 consistent with L134's two-way routing — default WAIVER-LOG (risk acceptance); DECISIONS.md only when architecturally significant. | Per-skill internal consistency |
+| F-HR-DIS-04 | Low | Rule 5.1 + AP-2 + AP-8 vs `docs/communication-skill-plan.md` | Forward-compat turf overlap: the queued communication activity skill will also operationalize §5 and own "plain-language impact" delivery, which disagreement Rule 5.1 + AP-2 + AP-8 currently fully own. Boundary undrawn. | WS5 / communication build: DECISIONS.md ADR drawing the disagreement↔communication boundary; forward-reference in disagreement §9. | Forward-compat (Phase 5+ cohort) |
+
+#### Positive notes (preserved in activity logs)
+
+- **Example-code accuracy is genuinely good** (code-reviewer): CP-2 `bcrypt.hash(token, 12)` correctly illustrates slow-vs-fast-hash; AP-6 auth-middleware passthrough faithfully renders the failure it warns against; AP-8/CP-8 orders schema + NUMERIC/BIGINT-cents discussion is correct.
+- **Both WAIVER-LOG templates well-formed and richer than CONTINUITY Rule 5.3's minimum** — deliberate non-conflicting elaboration; "whichever fires first" multi-trigger revisit is the right shape for AP-7.
+- **AP↔CP 1:1 pairing complete (8/8)** per DEC-2026-05-17-003 Clause 1 — the invariant this skill models, it honors.
+- **Structural conformance to sibling Phase 5 skills is exact** (holistic) — §1-§9 anchors, dual-block frontmatter, 238-line body ≤300.
+- **Self-referential correctness on highest-stakes claims** (holistic): Rule 5.4's "accept after one round (below hard-refusal)" matches §5; the hard-refusal carve-out correctly mirrors §5. The skill describes orchestrator behavior matching what §5 prescribes.
+- **Honest TGF-SYNTHESIS labeling** per DEC-2026-05-17-004 — synthesis acknowledged, not fabricated as external citation.
+
 ## §4 Cross-Target Patterns (Updated 2026-05-28 after Target 4 audit — Build Step 3 CLOSED — n=4)
 
 **Build Step 3 closes with all 4 Phase 6 commits 1/12-4/12 audited.** The full audited Phase 6 cluster (4 of 4 skills) confirms the following framework-wide patterns at 100% reproduction. WS5 plan v1 should structure work-packages around these patterns (efficient: fix once, apply across all 11 Phase 6 skills + future Phase 7+ skills) rather than per-skill (inefficient: fix 11+ times).
@@ -361,6 +409,27 @@ With four of 19 audit targets complete, the following patterns are **CONFIRMED c
 **Build Step 4 (Phase 5 activity skills audit, 7 targets) opens next.** Different cluster (discovery, project-management, design, ui-craft, testing, debugging, disagreement) — different domain, different age, different template adherence. Build Step 4 dispatch should NOT assume Phase 6 cross-target patterns will replicate to Phase 5 cluster; expect a different pattern profile.
 
 WS5 plan v1 should structure work-packages around: (a) the 6 confirmed n=4 cross-target patterns; (b) the 1 pattern BROKEN at n=2 (cheat-sheet section-anchor — cite output-encoding + input-validation as exemplars); (c) the new at-n=2 cross-target pattern (#7 unregistered-cited); (d) the 2 framework-level questions (hard-refusal calibration; TGF synthesis convention); (e) the per-skill bug fixes (e.g., F-CR-IV-01 pydantic v1/v2 mix; F-CR-OE-01 Jinja2 e(quote=True); F-CR-OE-02 RFC 4180 misattribution); (f) the per-skill rule completeness extensions (DOMPurify config, identifier allow-list, mixed-context emission, LLM channel, schema-library coercion, Unicode homoglyph, parser-stage hardening, state-machine bypass).
+
+### Phase 5 cluster cross-target tracking (Build Step 4 — opened 2026-05-28; n=1 at Target 5 `disagreement`)
+
+**Framing:** Build Step 4 audits Phase 5 activity skills — a different cluster from the Phase 6 security skills (different domain, source profile, template age). Per the Build Step 4 dispatch framing, Phase 6's 6 n=4 patterns are NOT assumed to carry over. The first Phase 5 data point (Target 5) confirms the framing: **only 2 of 6 Phase 6 patterns reproduce on `disagreement`; 4 do not.**
+
+Phase 6 pattern reproduction at Phase 5 n=1:
+
+- **#1 §2 bidirectional invariant (no fitness function): REPRODUCES.** T1-D-01 (Rule 5.1 cites CLAUDE.md §1, absent from §2) + F-HR-DIS-01 (§5 hard-refusal list restated inline, not bound to source). Now **cross-cluster**, not Phase-6-only. Strengthens the "build the hook" case (ERR-2026-05-27-005): the fitness function should also check internal-source restatement/citation, not only external-source citation.
+- **#4 refresh-cadence convention: REPRODUCES.** F-CR-DIS-04 (uniform 12-month over heterogeneous external + internal sources). Cross-cluster.
+- **#2 §2/frontmatter verification-date asymmetry: DOES NOT REPRODUCE.** `disagreement` frontmatter and §2 carry identical dates; internal-source prose is consistent in both places. (T1-D-03 is a related-but-distinct observation about internal sources in a date column — not the Phase 6 external-CWE/RFC asymmetry.)
+- **#3 forward-reference phase-attribution: N/A.** `disagreement` refs are consistent and resolve.
+- **#5 skill→DEC-2026-05-26-011 trace gap: N/A.** `disagreement` shipped 2026-05-20, predating the DEC (2026-05-26). Nothing to trace.
+- **#6 ATT&CK technique-ID coverage: N/A.** `disagreement` cites MITRE ATLAS at framework level by design (stated honestly in §2 L75); no rule-level technique-ID claims to be missing. Appropriate for an activity skill.
+
+**NEW Phase 5 pattern candidates (n=1 — watch for reproduction across the remaining 6 Phase 5 targets):**
+
+- **§5-restatement-drift (F-HR-DIS-01 + F-HR-DIS-02).** Skills that operationalize a CLAUDE.md section (here: disagreement ↔ §5) risk duplicating the section's content inline rather than referencing it; when the CLAUDE.md section is amended, the copies silently drift. **Watch:** other Phase 5 skills that operationalize a CLAUDE.md section. If this reproduces, it is a Phase-5-cluster pattern distinct from Phase 6's external-source citation patterns — and a strong argument for the fitness function (pattern #1) to cover internal-source restatement.
+- **anchor-slug correctness (F-CR-DIS-01).** Rule-anchor slugs not matching the GitHub auto-slug when rule headers contain punctuation (`+`, parentheticals). **Watch:** other Phase 5 skills with punctuation in rule headers.
+- **disagreement↔communication turf overlap (F-HR-DIS-04).** Forward-compat with the queued Phase 5+ communication skill. Cohort-level, not per-skill.
+
+**Decision E dispatch-matrix note:** selective dispatch (code-reviewer + holistic-reviewer only; NO security-auditor/red-team) worked cleanly on `disagreement` — no low-signal noise, both agents produced substantive lens-appropriate findings (code-reviewer: craftsmanship/citation accuracy; holistic: §5-fidelity/integration). Confirms Decision E's rationale; 2-agent dispatch was materially faster than the Phase 6 4-agent cluster as predicted in WS4 plan §11.
 
 ## §5 Cross-References
 
