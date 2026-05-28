@@ -8,6 +8,42 @@ Per `CLAUDE.md` §11: all findings get fixed, formally waived in WAIVER-LOG, or 
 
 ---
 
+## ERR-2026-05-28-010: CLAUDE.md §5 hard-refusal list is closed-form named-instances, not the invariant each protects — bypassable via functional-equivalent redescription
+
+**Severity:** high
+
+**Status:** open
+
+**Owner:** WS5 (queued — remediation after WS4 closes)
+
+**Target resolution:** WS5 — restate each `CLAUDE.md` §5 hard-refusal bullet as the **invariant property** it protects, with the named instance as a non-exhaustive example, and add an explicit instruction that the recognition test is *functional equivalence to the invariant*, not phrase-matching the example. E.g. "Any mechanism that suppresses transport-layer trust verification (`verify=False`, `NODE_TLS_REJECT_UNAUTHORIZED=0`, custom trust-all managers, disabled cert/host checks) — regardless of stated justification ('for the proxy', 'just for testing', 'temporarily')." Coordinate with security-core (the operationalization) so its AP recognition matches.
+
+**Originating context:** WS4 Build Step 6 Target 15 — Red Team dispatch (`ae534db2-259c-495e-a484-9477f4e6f7de`) against `CLAUDE.md` under the Decision H amendment (all four agents on each foundational doc; the red-team-on-the-framework's-self-description lens). The §5 hard-refusal list enumerates closed-form named instances ("Disabled SSL/TLS verification", "Custom cryptography", "Hardcoded credentials"); recognition is surface-pattern matching. The attack surface is open-form: the same harmful outcome can be requested under a description that does not surface-match — `verify=False` reframed as "disable cert pinning for the corporate proxy", a homegrown XOR/base64 scheme as "lightweight encoding" rather than "custom crypto", `NODE_TLS_REJECT_UNAUTHORIZED=0` in an env file rather than "disabled TLS in code", a credential in a committed config template rather than "in code". The contract gives no instruction to map functional equivalents back to the listed invariant, so a redescribed request flows through the lighter strong-/standard-advocacy path.
+
+**Plain-language impact:** the framework's hardest control — the things it will refuse "regardless of project context" — can be slipped past by rewording the request, because the contract recognizes named patterns rather than the underlying harm. Fail-mode is fail-OPEN: the harmful artifact is produced under a softer advocacy tier and is not even surfaced as a hard-refusal item, so no acknowledgment is sought. Compounds with ERR-2026-05-28-011.
+
+**Scope caveat:** the red-team audit reasons about `CLAUDE.md` contract *guidance* only. Runtime enforcement (hooks per §18, the research-security M-controls, orchestrator dispatch per §20) lives outside the doc and may catch some functional-equivalent cases; this finding is about closing the *guidance* gap so recognition doesn't depend on the runtime alone.
+
+---
+
+## ERR-2026-05-28-011: CLAUDE.md §5 "informed confirmation" escape hatch is unbounded, unlogged, and identical for hard-refusal and strong-advocacy — launders a hard-refusal item via one acknowledgment
+
+**Severity:** high
+
+**Status:** open
+
+**Owner:** WS5 (queued — remediation after WS4 closes)
+
+**Target resolution:** WS5 — bind hard-refusal overrides to a stricter, auditable bar distinct from strong-advocacy deferral in `CLAUDE.md` §5: (1) require a hard-refusal override be recorded in `WAIVER-LOG` with rationale, revisit date, and the specific harm acknowledged (cross-reference §11's resolution rule, which §5 currently does not invoke); (2) state explicitly that "Don't relitigate decisions the user has made" does **not** apply to hard-refusal items — each new change reintroducing a hard-refusal pattern is re-surfaced, because the harm is per-artifact, not per-decision; (3) require the acknowledgment to restate the concrete harm rather than mere assent, so the record shows informed consent.
+
+**Originating context:** WS4 Build Step 6 Target 15 — Red Team dispatch (`ae534db2-259c-495e-a484-9477f4e6f7de`). §5 line 282 ("The framework executes the user's decision after acknowledgment") is unbounded and uses identical language for the hard-refusal tier and the strong-advocacy tier, even though the same paragraph asserts hard-refusal harm won't be produced "regardless of project context". Nothing specifies what counts as valid acknowledgment (a one-word "yes" satisfies the text), nothing requires the override to be logged to WAIVER-LOG, and nothing sets a stricter bar for hard-refusal than for strong-advocacy. Compounding: §5's "Don't relitigate decisions the user has made" (line 294) can be invoked — by the user, or by an adversary controlling the prompt stream — to suppress re-raising the same concern on subsequent related changes, converting a one-time laundered acknowledgment into a standing waiver that never re-surfaces.
+
+**Plain-language impact:** the contract's escape hatch lets a single "yes" launder a hard-refusal item (hardcoded credential, disabled auth, etc.) into the codebase with no durable record, and the no-relitigation clause then prevents the next review pass from catching it. This is the most directly exploitable contract gap: ERR-2026-05-28-010 gets a harmful item recognized softly or not at all; this unbounded acknowledgment then makes it permanent and invisible. Fail-mode is fail-open and silent.
+
+**Scope caveat:** as with ERR-2026-05-28-010, this is a `CLAUDE.md` guidance-layer finding; runtime WAIVER-LOG/hook enforcement may partially compensate, but the contract guidance itself should bound the override path.
+
+---
+
 ## ERR-2026-05-27-009: `security-error-handling` Rule 5.5 emits security events but lacks adversary-aware semantics — slow-rate adversary probing evades detection
 
 **Severity:** high
