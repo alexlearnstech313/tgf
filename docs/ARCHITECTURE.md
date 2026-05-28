@@ -125,13 +125,17 @@ Standards behind paywalls (notably ISO/IEC 27001:2022 and 27002:2022) are cited 
 
 ### Comparative framework research separated from citation
 
-Research on public Claude Code frameworks (Superpowers, great_cto, and others) informs design patterns. It does not serve as rule-source for skills. Comparative references appear in design rationale documents — `DECISIONS.md`, `DESIGN-RATIONALE.md`, session logs — never in skill §2 Authoritative Sources tables.
+Research on public Claude Code frameworks (Superpowers, great_cto, and others) informs design patterns. It does not serve as rule-source for skills. Comparative references appear in design rationale documents — `DECISIONS.md`, session logs (and a dedicated `DESIGN-RATIONALE.md` if one is created — none exists yet) — never in skill §2 Authoritative Sources tables.
 
 *Plain-language impact:* TGF doesn't pretend another project's README is a primary source. Patterns borrowed get credited as patterns; rules cited stay grounded in OWASP, NIST, ISO, MITRE, and RFCs.
 
 ### When verification fails
 
 A skill whose cited rule cannot be verified — source moved, deprecated, rule renumbered, citation was originally incorrect — goes back for refresh, not silently kept. The skill gets flagged stale. `/tgf:verify-citation` runs verification on demand; periodic refresh catches drift on cadence (quarterly for fast-moving domains like supply-chain and AI security; annually for stable frameworks). Citation rot is a defect, not an acceptable accumulation.
+
+### The memory-confirmation gap (M9)
+
+The six clauses above are necessary but not sufficient on their own. They omit one failure mode: AI training-data memory and a single fetched source are **not independent observations** — they may share a common upstream, so "I remember X and the source confirms X" is one source of evidence, not two. This is mitigation **M9**, the load-bearing lesson of the commit-4/12 incident. M9 is canonically specified in `RESEARCH-SECURITY.md` §4.1 (statement), §8.7 (residual risk), and the §5.5 M8 memory-alignment flag (which is never counted toward M5 corroboration); it is enforced at Layer 3 (persona) + Layer 5 (human), not as a hook. Cross-referenced here so a reader of §17 alone does not mistake "two sources agree" for verification when one of those "sources" is the model's own prior knowledge.
 
 ---
 
@@ -154,6 +158,8 @@ Hook scripts live in `.claude/hooks/<EventName>/NN-name.sh` — PascalCase event
 - **Exit 0** allows the action; optional JSON on stdout sets control fields (`continue`, `decision: block`, `additionalContext`, etc.)
 - **Exit 2** blocks the action; stderr surfaces as the block reason to Claude and to the user
 - **Any other exit code** is a non-blocking error; stderr is logged but the action proceeds
+
+**Blocking is event-dependent, not universal.** `PreToolUse` and `Stop` can block (the action hasn't happened yet, or the turn can be refused); `PostToolUse` **cannot** block — the tool has already run, so it can only *record and warn*. TGF's research-security chain is built around this: content-analysis (M3/M4/M11/M13/M14/M18/M19) fires in `PostToolUse`-WebFetch and warns, while the actual block lands at the next `PreToolUse`-Write boundary when the AI tries to *use* a flagged fetch. See `RESEARCH-SECURITY.md` §5.1 (the two-stage blocking model) for the authoritative per-event blocking table.
 
 **Input is untrusted.** `tool_input` and other fetched fields may carry attacker-controlled data via indirect prompt injection (`OWASP LLM01:2025`). Hooks must validate inputs and prefer *exec-form* invocation (arguments passed as a list, no shell interpretation) over *shell-form* (string passed to `bash -c`) to prevent command injection through filenames or arguments containing shell metacharacters.
 
@@ -289,6 +295,8 @@ Phase 0 `DEC-2026-05-17-003` Clause 3 defines seven subagent roles, each with sp
 - **Holistic Reviewer** — Phase 4 of four-pass review. TGF-specific integration verification: spec compliance, codebase fit, regression risk, forward compatibility, roadmap alignment, solo-maintainability, decision documentation.
 - **Verifier** — empirically exercises AI-generated code per §16. Dispatched conditionally when the change includes AI-generated portions. Returns test execution results, edge cases exercised, plausible-but-wrong patterns checked.
 
+**Build state.** The four review subagents (Code Reviewer, Security Auditor, Red Team, Holistic Reviewer) plus the `tgf-orchestrator` are operational as of Workstream 3 (2026-05-26) — their agent files live in `agents/`. The **Researcher, Implementer, and Verifier roles are specified here but not yet built** (no agent files yet); they land with the Phase-11 orchestration meta-skill. The present-tense descriptions above are the *target* role contracts, not a claim that all seven are wired today.
+
 ### Cost-aware dispatch
 
 Dispatch scales by change tier (§3, §19):
@@ -317,6 +325,8 @@ Subagent dispatch is a documented risk surface — `OWASP LLM06:2025` (Excessive
 - **Limit functions to minimum necessary** — Code Reviewer doesn't get database access; Verifier doesn't get git write
 - **Avoid open-ended extensions** — granular capabilities, not "do whatever"
 - **Restrict permissions to minimum scope** — least-privilege per role
+
+*Maturity caveat (ERR-2026-05-25-002, open):* the per-role `tools:` restriction is currently **persona- and documentation-backed, not platform-validated**. Whether Claude Code's plugin layer actually enforces the per-agent `tools:` allow-list (versus the personas simply declining out-of-scope tools) is owed empirical verification under a TGF-as-installed-plugin test (Phase 14). Until then, treat least-privilege here as the *designed* control observed via persona discipline, not a proven platform guarantee.
 - **Execute within user's security context** — subagents inherit the user's authorization; they never elevate
 - **Human-in-the-loop for high-impact actions** — irreversible changes always surface to the user; subagents never bypass
 - **Authorization in downstream systems** — subagent findings don't auto-apply; the orchestrator surfaces, the user decides
@@ -369,7 +379,7 @@ What orchestration adds that single-agent work cannot:
 
 ### Reference
 
-Phase 0 `DEC-2026-05-17-003` Clause 3 defines the seven roles and their JSON output schemas. Phase 11 (Meta-Skills) implements the orchestration meta-skill; Phase 12 (Hook Library) provides `SubagentStart` and `SubagentStop` lifecycle hooks. This section documents the architecture; subsequent phases ship the operations.
+Phase 0 `DEC-2026-05-17-003` Clause 3 defines the seven roles and their JSON output schemas. The per-role output schemas and skill-preload bindings are specified in `docs/WORKFLOW.md` §4 — together, this §20 (role boundaries + cost-aware dispatch), `CLAUDE.md` §6 (the always-on skill set), and WORKFLOW.md §4 (per-role schema + preload) form the **3-part preload authority** for the review agents. Phase 11 (Meta-Skills) implements the orchestration meta-skill; Phase 12 (Hook Library) provides `SubagentStart` and `SubagentStop` lifecycle hooks. This section documents the architecture; subsequent phases ship the operations.
 
 ---
 
@@ -377,7 +387,7 @@ Phase 0 `DEC-2026-05-17-003` Clause 3 defines the seven roles and their JSON out
 
 The framework gets better through use. Skills accumulate observations of how they actually fire, what they catch, where they miss. Stack-specific patterns refine as real projects exercise them. AI-specific failure modes emerge as Claude (and other models) hit them in production. The framework needs a mechanism to capture this signal and convert it into improvements — without auto-applying changes that haven't been verified.
 
-Phase 0 `DEC-2026-05-17-003` Clause 4 specifies the evolution data structure (`.tgf/evolution/observations/`, `.tgf/evolution/proposals/{pending,accepted,rejected}/`, `.tgf/evolution/confidence-thresholds.json`). The discipline is bounded by what evolution can and cannot do.
+Phase 0 `DEC-2026-05-17-003` Clause 4 specifies the evolution data structure. Note: `DEC-2026-05-19-007` Clause 9 later **superseded the observations store** — accumulated observations now live in per-agent memory at `.claude/agent-memory/{agent-name}/MEMORY.md`, not `.tgf/evolution/observations/`. The proposal workflow (`.tgf/evolution/proposals/{pending,accepted,rejected}/`) and `.tgf/evolution/confidence-thresholds.json` remain as DEC-003 Clause 4 specified. The discipline is bounded by what evolution can and cannot do.
 
 ### What can evolve
 
@@ -413,7 +423,7 @@ The framework doesn't auto-propose at low confidence. Noise gets filtered before
 
 ### Human review required
 
-`/tgf:review-evolution` surfaces pending proposals from `.tgf/evolution/proposals/pending/`. Each proposal includes:
+`/tgf:review-evolution` (a Phase-11 command — not yet in the `CLAUDE.md` §10 registry, which lists only shipped commands) surfaces pending proposals from `.tgf/evolution/proposals/pending/`. Each proposal includes:
 
 - The proposed change (concrete diff to a skill file)
 - The evidence (which observations led here, with session attribution)
