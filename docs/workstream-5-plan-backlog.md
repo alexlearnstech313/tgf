@@ -591,6 +591,50 @@ Red-team also surfaced **F-RT-01** (zero ATT&CK technique-IDs across all 7 rules
 - **cross-skill references all resolve** by number AND title (DISCOVERY 5.1/5.2/5.5, CONTINUITY 5.3/5.4); BASELINE-AUDIT (Phase 11) forward-ref clean.
 - **Citation honesty exemplary** — consistent "TGF-SYNTHESIS — grounded in <named source>"; Agile/PMBOK/Lean Startup accurate; PO.1/PO.2 verbatim-correct.
 
+### §3.11 Target 11 — `skills/discovery/` (Audit completed 2026-05-28 — Build Step 4 CLOSED; 7th/final Phase 5 activity skill)
+
+**Audit context:** WS4 Build Step 4 Target 11 (per-skill commit 13/22, closes Build Step 4). Decision E selective dispatch: code-reviewer + holistic-reviewer only. Branching-tree interview methodology — the Stage-1 ambiguity gate; first-engaged skill in the workflow. Phase 5 commit 1/7 (first Phase 5 skill built). Pairs with PROJECT-MANAGEMENT.
+
+**Activity logs (Track 2 dispatch transcripts):**
+- code-reviewer: `.tgf/state/agent-activity/code-reviewer/fb0c1f18-d753-4162-a7a8-b535f1dcf390.json`
+- holistic-reviewer: `.tgf/state/agent-activity/holistic-reviewer/911048c5-0eae-4559-9ea1-22935744ac9f.json`
+
+**Routed to ERROR-LOG.md:** none (0 Critical/High findings).
+
+**Routed here (Medium/Low — 7 entries: 4 Medium, 3 Low):**
+
+#### Track 1 — Mechanical compliance findings
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| T1-DISC-01 | Medium | SKILL.md §7 L175 vs §2 | §7 cites OWASP LLM Top 10:2025 LLM09:2025 but OWASP-LLM not in §2. OWASP-LLM-TOP10-2025 IS registered → §2-table incompleteness. | Add OWASP-LLM to §2 or reframe §7. | §2-table completeness (§7-OWASP-LLM sub-pattern now n=6 of 7 Phase 5) |
+| T1-DISC-02 | Medium | SKILL.md §2 vs source-registry.json | TOYODA-5W (Five Whys) + IIBA-BABOK (paywalled) cited + in §2 but absent from registry (only NIST-SP-800-218 registered). TOYODA-5W also cited by debugging → 2-skill shared unregistered methodology source. | Register per the framework-level disposition (TOYODA-5W as stable-methodology entry; IIBA-BABOK as unfetchable-by-reference). | Unregistered-cited (pattern #7) |
+| T1-DISC-03 | Low | SKILL.md L65/L66 | TOYODA-5W "reference (stable)" + IIBA-BABOK "reference only"/"cited by reference" prose. IIBA legit-paywalled (Clause 5). | Decide the non-deprecated convention for stable/unfetchable sources. | §2 verification-status convention |
+
+#### Code-reviewer findings (Track 2)
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| F-CR-DISC-01 | Low | SKILL.md L141/L144/L150/L156 | 4 of 8 AP anchors truncated vs GFM auto-slug (AP-3/4/6/8). AP-1/2/5/7 + all 5 rule anchors resolve. | Update the 4 §6 anchors to full slugs. | anchor-slug (AP-anchor-break; rule anchors clean) |
+| F-CR-DISC-02 | Medium | anti-patterns.md L26 (AP-1) | AP-1 cites "SECURITY-CORE Rule 5.3" for JWT-in-localStorage XSS, but Rule 5.3 is "Use Established Cryptography." Correct home is Rule 5.6 (Output Encoding — XSS). Wrong-rule citation. | Change to SECURITY-CORE Rule 5.6 or generalize. Verify against security-core/rules.md. | **cross-skill-reference-imprecision (wrong-rule)** |
+| F-CR-DISC-03 | Medium | anti-patterns.md L246 (CP-4) | CP-4 cites "CODE-QUALITY Rule 5.6 (codebase fit)" — but 5.6 is "Solo-Maintainability", and "codebase fit" is a Phase 4 Holistic-reviewer check, not CODE-QUALITY. Wrong rule + wrong concept. | Drop the rule ID or re-point to the Holistic-reviewer "Codebase fit" check (CLAUDE.md §3 Phase 4). | **cross-skill-reference-imprecision (wrong-rule + wrong-short-name)** |
+
+#### Holistic-reviewer findings (Track 2)
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| F-HR-DISC-01 | Low | anti-patterns.md L403 (CP-7) | CP-7 cites "SECURITY-CORE Rule 5.2" for a debug-endpoint info-disclosure concern, but Rule 5.2 is "Authorize Every Action, Default Deny." Info-disclosure is closer to Rule 5.7. THIRD wrong-rule citation in discovery's dialogues. | Cite SECURITY-CORE Rule 5.7 or frame as general info-disclosure. Fold into the WS5 citation-accuracy lint. | cross-skill-reference-imprecision (3rd instance in discovery) |
+
+#### Positive notes (preserved in activity logs) — discovery is the §9 CONTROL CASE for F-HR-PM-01
+
+- **§9 "Preloaded by" is ACCURATE — the control case for F-HR-PM-01.** discovery §9 says "Preloaded by: None directly. The four Phase 4 review subagents do not preload DISCOVERY" — verified against ALL 5 agent frontmatters (discovery in none). This PROVES the §9 lines CAN be accurate, so the 4 skills that falsely say "None directly" while preloaded (design/project-management/debugging/disagreement) are genuine drift, not a stubbing convention. discovery's §9 is the canonical correct model for the WS5 fix.
+- **Full agent×skill preload matrix captured** (for the WS5 §9 sweep): code-reviewer = [code-quality, testing, continuity]; security-auditor + red-team each = [security-core, security-input-validation, security-output-encoding, security-error-handling, security-cryptography]; holistic-reviewer = [continuity, code-quality, design, project-management, debugging, disagreement]; tgf-orchestrator = [code-quality, security-core, continuity].
+- **CONTINUITY Rule 5.6 cross-ref ACCURATE** (CP-8 — "capture WHY"): proves the wrong-rule citations are spot-defects (3 wrong / 1+ right), so a targeted lint, not a rewrite, is the WS5 fix.
+- **Bidirectional PROJECT-MANAGEMENT pairing** (reciprocal — contrast design↔ui-craft); the discovery→PM→Stage-2 handoff is mechanically traceable.
+- **Stage-1-gate architecture coherent**: §8 scopes discovery to Stage 1 activation / Stage 2 exit / bounded re-engagement; re-entrant on mid-implementation contradiction (AP-8/CP-8).
+- **F-CR-PM-03's PO.3 claim about discovery REFUTED**: discovery cites PO.1 only, correctly (no "Implement Toolchain" abbreviation here).
+- **fabricated-specific CLEAN; self-referential phase-mislabel CLEAN; AP/CP pairing substantive (8/8, not thin)**; citation-honesty exemplary.
+
 ## §4 Cross-Target Patterns (Updated 2026-05-28 after Target 4 audit — Build Step 3 CLOSED — n=4)
 
 **Build Step 3 closes with all 4 Phase 6 commits 1/12-4/12 audited.** The full audited Phase 6 cluster (4 of 4 skills) confirms the following framework-wide patterns at 100% reproduction. WS5 plan v1 should structure work-packages around these patterns (efficient: fix once, apply across all 11 Phase 6 skills + future Phase 7+ skills) rather than per-skill (inefficient: fix 11+ times).
@@ -645,7 +689,7 @@ With four of 19 audit targets complete, the following patterns are **CONFIRMED c
 
 WS5 plan v1 should structure work-packages around: (a) the 6 confirmed n=4 cross-target patterns; (b) the 1 pattern BROKEN at n=2 (cheat-sheet section-anchor — cite output-encoding + input-validation as exemplars); (c) the new at-n=2 cross-target pattern (#7 unregistered-cited); (d) the 2 framework-level questions (hard-refusal calibration; TGF synthesis convention); (e) the per-skill bug fixes (e.g., F-CR-IV-01 pydantic v1/v2 mix; F-CR-OE-01 Jinja2 e(quote=True); F-CR-OE-02 RFC 4180 misattribution); (f) the per-skill rule completeness extensions (DOMPurify config, identifier allow-list, mixed-context emission, LLM channel, schema-library coercion, Unicode homoglyph, parser-stage hardening, state-machine bypass).
 
-### Phase 5 cluster cross-target tracking (Build Step 4 — opened 2026-05-28; n=6 at Targets 5-10 `disagreement`, `debugging`, `testing`, `ui-craft`, `design`, `project-management`)
+### Phase 5 cluster cross-target tracking (Build Step 4 — opened 2026-05-28; **CLOSED at n=7**, Targets 5-11 `disagreement`, `debugging`, `testing`, `ui-craft`, `design`, `project-management`, `discovery`)
 
 **Framing:** Build Step 4 audits Phase 5 activity skills — a different cluster from the Phase 6 security skills (different domain, source profile, template age). Per the Build Step 4 dispatch framing, Phase 6's 6 n=4 patterns are NOT assumed to carry over. The first Phase 5 data point (Target 5) confirmed the framing: **only 2 of 6 Phase 6 patterns reproduce on `disagreement`; 4 do not.** Target 6 (`debugging`) holds the same shape; Target 7 (`testing`) surfaces a framework-level registry gap; Target 8 (`ui-craft`) escalates the registry gap to 3-skill scope + a false-subagent-wiring finding; Target 9 (`design`) is the **cleanest target audited** — many clean negatives — and definitively resolves the subagent-wiring map (see Target 9 update).
 
@@ -701,7 +745,7 @@ Phase 5 candidate-pattern status:
 - **#7 unregistered-cited: REPRODUCES** (T1-PM-02 — AGILE-MFTO fetchable + PMBOK paywalled). PMBOK adds another *unfetchable-by-reference* case alongside Apple HIG / Material 3 — reinforcing the WS5 disposition decision (F-HR-UI-03).
 - **anchor-slug: n=6, EXPANDED with a NEW em-dash variant** (F-CR-PM-01 — rules 5.2/5.3 truncate at the space-flanked em-dash + subtitle; F-CR-PM-02 — 3 AP anchors word-drop). 5/14 fragment links broken. Across all targets the anchor breakage now spans commas, parentheticals, `+`, slashes, em-dashes, and dropped words — overwhelming evidence the WS5 fix is a **mechanical GFM-slug lint across all skills**, not manual case-by-case.
 - **CLEAN NEGATIVES on project-management** (bound the candidate patterns further): fabricated-specific does NOT reproduce (n stays 2: debugging, testing); self-referential phase-mislabel does NOT reproduce (n stays 2: testing, ui-craft); cross-skill-reference-imprecision does NOT reproduce (all refs resolve); DISCOVERY pairing is BIDIRECTIONAL (contrast the one-directional design↔ui-craft gap). project-management is content-clean — its only real finding is the cross-cutting §9 drift it shares with 3 siblings.
-- **NEW micro-candidate — citation-name-abbreviation drift (F-CR-PM-03, n=1):** NIST SSDF PO.3 cited as "Implement Toolchain" vs official "Implement Supporting Toolchains" (repo-wide: also in discovery + phase-5-plan). Watch other NIST/standard practice-name citations for abbreviation drift.
+- **NEW micro-candidate — citation-name-abbreviation drift (F-CR-PM-03, n=1):** NIST SSDF PO.3 cited as "Implement Toolchain" vs official "Implement Supporting Toolchains". **CORRECTION (Target 11):** F-CR-PM-03 claimed this also appears in `discovery/SKILL.md` — verified FALSE; discovery cites PO.1 only, correctly. The PO.3 abbreviation is in `project-management` + `phase-5-plan` only. Still watch other NIST/standard practice-name citations.
 
 **Target 8 (`ui-craft`) update — n=4:**
 
@@ -734,6 +778,32 @@ Phase 5 candidate-pattern status:
 - **self-referential phase mislabel: STAYS n=2** (clean negative on design — §9 correctly says "holistic-reviewer (Phase 4)", which is right). Confirms the mislabel is specifically the *"code-reviewer (Phase 4)"* copy error; skills referencing the genuinely-Phase-4 holistic-reviewer get it right.
 - **cross-skill-reference-imprecision: design is CLEAN** (CODE-QUALITY Rule 5.6 cross-ref accurate). The pattern stays a testing/ui-craft (Rule-5.6 WCAG-mismatch) phenomenon.
 - **§9 subagent-wiring claims — DEFINITIVE MAP (resolves the Target 7/8 question):** verified directly against agent frontmatter — `code-reviewer.md skills:` = [code-quality, testing, continuity]; `holistic-reviewer.md skills:` = [continuity, code-quality, design, project-management, debugging, disagreement]. So: **testing's §9 claim TRUE** (in code-reviewer); **design's §9 claim TRUE** but *understated* (design §9 says holistic-reviewer "does not preload" — it actually DOES, via frontmatter); **ui-craft's §9 claim FALSE** (ui-craft in neither agent). F-HR-UI-01's conclusion HOLDS (ui-craft claims wiring it lacks) and is now grounded on ui-craft's own frontmatter absence rather than a design contrast. **CORRECTION:** the design code-reviewer transcript (028d3004) erroneously generalized "DESIGN is not in any review agent frontmatter" — true for code-reviewer.md, FALSE for holistic-reviewer.md (which lists tgf:design at frontmatter line 7). Net pattern: **§9 wiring claims are unverified and vary per skill (true/understated/false) — WS5 fitness check should diff each skill's §9 against the agents' `skills:` frontmatter.** Note also: debugging, disagreement, project-management are all in holistic-reviewer's list, so their §9 claims about holistic-reviewer are substantiated.
+
+**Target 11 (`discovery`) update — n=7 — Build Step 4 CLOSED:**
+
+- **§9 "Preloaded by" CONTROL CASE confirmed (resolves the F-HR-PM-01 framing).** discovery §9 "Preloaded by: None directly. The four Phase 4 review subagents do not preload DISCOVERY" is **ACCURATE** — verified against all 5 agent frontmatters; discovery is in none. Existence proof that §9 "Preloaded by" lines CAN be correct → the four skills falsely saying "None directly" while preloaded by holistic-reviewer (design, project-management, debugging, disagreement) are **genuine drift, not a stubbing convention**. discovery's §9 is the canonical correct model. **Full preload matrix for the WS5 §9 sweep:** code-reviewer=[code-quality, testing, continuity]; security-auditor + red-team each=[security-core, security-input-validation, security-output-encoding, security-error-handling, security-cryptography]; holistic-reviewer=[continuity, code-quality, design, project-management, debugging, disagreement]; tgf-orchestrator=[code-quality, security-core, continuity].
+- **cross-skill-reference-imprecision: now a CONFIRMED recurring Phase 5 pattern (3+ skills).** discovery alone has THREE wrong-rule dialogue citations (F-CR-DISC-02 SECURITY-CORE 5.3-for-XSS; F-CR-DISC-03 CODE-QUALITY 5.6-for-codebase-fit; F-HR-DISC-01 SECURITY-CORE 5.2-for-info-disclosure) vs one correct (CP-8 CONTINUITY 5.6). With disagreement (F-CR-DIS-02) + testing (F-CR-TEST-04), confirmed across 3+ skills. All point at checkable rule numbers/titles → **WS5 deterministic cross-skill citation-accuracy lint** (parse `SKILL Rule N.N (title)` refs, resolve against the sibling rules.md).
+- **§7-OWASP-LLM-not-§2: n=6 of 7** (all except disagreement). **Skill-template standardization target.**
+- **anchor-slug: reproduces (F-CR-DISC-01, 4/8 AP anchors; rule anchors clean).**
+- **CLEAN NEGATIVES on discovery:** fabricated-specific (n stays 2); phase-mislabel (n stays 2); §9 accurate (control case); bidirectional PM pairing; substantive 8/8 AP/CP pairs.
+
+---
+
+### Build Step 4 closeout summary (2026-05-28)
+
+**Audit pass: 11 of 19 WS4 targets complete (58%).** Build Step 4 audited all 7 Phase 5 activity skills (Targets 5-11: disagreement, debugging, testing, ui-craft, design, project-management, discovery) under the lighter Decision E dispatch (code-reviewer + holistic-reviewer only). **0 Critical, 0 High across the entire Phase 5 cluster** — 0 ERROR-LOG entries (consistent with activity skills being prose/guidance, not executable security surface); ~21 Medium + ~52 Low + extensive positive/clean-negative notes routed to §3.5–§3.11.
+
+**Headline — Phase 6's 6 n=4 patterns did NOT carry to Phase 5, exactly as the Build Step 4 framing predicted.** Only #1 (§2 bidirectional) and #7 (unregistered-cited) reproduce; #2/#3/#4/#5/#6 are largely N/A (activity skills cite fewer/different sources, no ATT&CK rule-level surface). Phase 5 has its OWN distinct pattern profile:
+
+1. **§9 "Preloaded by" temporal drift** (F-HR-PM-01) — 4 skills (design, project-management, debugging, disagreement) falsely say "None directly" while preloaded by holistic-reviewer; WS3 agent-wiring (2026-05-25) post-dated the Phase 5 skills (2026-05-20). discovery is the control case. **Targeted 4-skill §9 fix + full preload-matrix sweep.** The clearest bootstrap/temporal-drift WS4 was built to catch.
+2. **Cross-skill citation-accuracy** — wrong-rule citations in example dialogues (disagreement/testing/discovery; 5+ instances). **Deterministic lint.**
+3. **§7-OWASP-LLM-not-§2 §2-table incompleteness** — 6 of 7 skills. **Skill-template standardization.**
+4. **anchor-slug GFM mismatch** — every target, every punctuation variant (commas/parens/`+`/slashes/em-dashes/word-drops). **Mechanical lint.**
+5. **Framework-level source-registry gap** — WCAG (3 skills), TOYODA-5W (2 skills), PMBOK/IIBA-BABOK/Apple-HIG/Material-3/ANTHROPIC-AGENTS unregistered; + a governance decision on the *unfetchable-by-reference* disposition (reference-only registry tier vs documented never-register category). **One framework-level registry pass.**
+
+**CLEAN NEGATIVES bounding the candidates:** fabricated-specific stays n=2 (debugging, testing only); self-referential phase-mislabel stays n=2 (testing, ui-craft — the "code-reviewer (Phase 4)" copy error; design/PM/discovery correct). **design and discovery are the cleanest targets audited.**
+
+**Build Step 5 (Phase 4 always-on skills — Targets 12-14: continuity, security-core, code-quality) opens next.** Different cluster: always-on foundational skills; mixed Decision E dispatch (code-reviewer + holistic for all; security-auditor adds for security-core). NOTE: continuity + code-quality are preloaded by holistic-reviewer/code-reviewer/tgf-orchestrator, so the §9 preload-matrix question (F-HR-PM-01) applies DIRECTLY to Build Step 5 targets — check their §9 "Preloaded by" lines against the matrix above.
 
 ## §5 Cross-References
 
