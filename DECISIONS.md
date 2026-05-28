@@ -6,6 +6,32 @@ Each decision captures: what was decided, when, why, what alternatives were cons
 
 ---
 
+## DEC-2026-05-28-012: Rule-numbering namespace + ADR-ID sequence conventions
+
+**Decided:** (1) The `5.x` rule-numbering namespace is **shared across all skills**, disambiguated by the skill name in every citation (e.g., `CONTINUITY Rule 5.1` vs `CODE-QUALITY Rule 5.6`). A rule citation without its skill name is ambiguous and not permitted. (2) ADR IDs (`DEC-YYYY-MM-DD-NNN`) use `NNN` as a **global monotonic counter** across the project's lifetime, not a within-day sequence.
+
+**Date:** 2026-05-28
+
+**Context:** The WS4 retroactive audit surfaced two convention/rule mismatches. (a) Build Step 5 flagged that every skill reuses the `5.1–5.7` rule namespace, disambiguated only by an unenforced skill-name prefix — a latent collision risk with no documented invariant. (b) Target 18 (F-CR-DEC-03) found that the practiced ADR-ID `NNN` is global-monotonic (001–012 spanning multiple dates), which contradicts `continuity` Rule 5.2's documented "NNN is sequence within the day, usually 001." This ADR captures both as explicit conventions so future authors and the cross-skill citation lint have a discoverable address.
+
+**Decision:**
+
+1. **Shared 5.x namespace, skill-name-qualified citations.** Rules stay numbered `5.1`, `5.2`, … within each skill; cross-references MUST name the skill. The WS5 cross-skill citation-accuracy lint (WP5) enforces skill-name presence on rule citations.
+2. **Global-monotonic NNN.** `continuity` Rule 5.2 is aligned to "NNN is a global monotonic counter across the project, assigned in commit order" — matching observed practice. (This ADR, `-012`, follows `-011` across the 05-26 → 05-28 date boundary, demonstrating the convention.)
+
+**Alternatives considered:**
+
+- **Per-skill rule namespaces (e.g., `CONT-1`, `CQ-1`).** Rejected — large churn across the catalog and every citation, for disambiguation the skill-name prefix already provides.
+- **Renumber ADR IDs per-day.** Rejected — would break ~12 widely-cited `DEC-` references across CLAUDE.md, skills, and agents for no benefit; aligning the rule to practice is the lower-cost, lower-risk fix (F-CR-DEC-03 preferred remediation).
+
+**Consequences:**
+
+- `continuity` Rule 5.2 is updated to the global-monotonic wording (the skill edit lands in WS5 under the write-hook).
+- The skill template and the cross-skill citation lint enforce skill-name-qualified rule citations.
+- Future ADR IDs continue the global sequence.
+
+---
+
 ## DEC-2026-05-26-011: §2 Sources discipline — citation-traceability rules for skill files
 
 **Decided:** Operationalize three citation-traceability rules for `skills/<name>/` files. (1) Every source listed in a skill's `§2 Sources` table or frontmatter `sources:` list MUST be cited at rule level in `rules.md` or `anti-patterns.md`. A source listed in §2 but never cited at rule level is removed from both surfaces — "verified by reference" is not a valid verification status. (2) Sub-section references within a registered source use `§<section-name>` suffix (e.g., `OWASP-CHEAT-CS §Key Management`); sub-sections do NOT require separate `source-registry.json` entries — the parent source's allow-url-pattern covers the page. (3) For skills defining control-locking parameters (cryptographic parameters, security thresholds, anything downstream rules depend on as a numerical floor), all cited authoritative sources MUST be fetched at Stage 1 under M15-gated WebFetch rather than recalled from training-data memory — the framework's premise is authoritative-source verification, not memory.
@@ -28,9 +54,9 @@ Each decision captures: what was decided, when, why, what alternatives were cons
 
 - **Defer the rules to WS4 as remediation findings only.** Rejected — the rules apply going forward to Phase 6 commits 5/12–12/12 and all future skill commits, not just retroactively to commit 4/12. Capturing as ADR now prevents the same gap from recurring in commits not yet written.
 - **Encode the rules entirely in the Holistic Reviewer persona without an ADR.** Rejected — agent-level enforcement is the operational defense, but the *rule* needs a discoverable address for skill authors who write rules.md before the Holistic Reviewer reviews them. ADR + agent persona is defense in depth.
-- **Wait for an executable hook-side check before adopting the rules.** Rejected — the hook is a Phase 11/12 candidate (see ERR-2026-05-26-005). The rules apply now via agent-level review; the hook hardens the enforcement layer later.
+- **Wait for an executable hook-side check before adopting the rules.** Rejected — the hook is a Phase 11/12 candidate (see ERR-2026-05-27-005). The rules apply now via agent-level review; the hook hardens the enforcement layer later.
 
-**Downstream consequences:**
+**Consequences:**
 
 - Phase 6 commits 5/12 through 12/12 author skill files under these rules.
 - The Holistic Reviewer persona's §7 check (`agents/holistic-reviewer.md`) is the enforcement surface at review time.
@@ -81,6 +107,7 @@ The hook author (Anthropic, per plugin manifest) built a documented kill switch 
 - Phase 4 commit 3/6 (SECURITY-CORE skill) proceeds without hook friction.
 - All future security skills (Phase 6: 11 skills; Phase 7: 22 skills) write without the hook intercepting.
 - The four-pass review (per `docs/WORKFLOW.md` §4) is the sole security-tooling layer for TGF Write/Edit operations. This is consistent with the framework's architectural intent: TGF's own discipline replaces external substring-scan layers for this project.
+- *Maturity caveat (ERR-2026-05-25-002, open — added WS5):* this decision treats the four-pass review as the substitute security layer, but the review agents' own platform-level `tools:` restriction is **not yet empirically validated** (documentation + persona-backed only, pending a TGF-as-installed-plugin test in Phase 14). Disabling the substring hook remains defensible — it is theatrical for a security-documentation repo — but the *maturity* of the substitute control is not fully proven until ERR-2026-05-25-002 closes. The same overstatement was flagged in `docs/ARCHITECTURE.md` §20 (F-SA-ARCH-01); re-close both when ERR-002 resolves.
 - Hook scripts in `hooks/scripts/` (Phase 12 Hook Library) become writable. These will use `subprocess`/`exec` legitimately for their work; Stage 5 Security Audit catches unsafe patterns.
 - If a future Claude Code release introduces a more granular per-hook disable mechanism in project settings, this decision can migrate to that mechanism without changing the substantive outcome.
 - Adopters who install TGF as a plugin in their own projects are unaffected. TGF's plugin manifest does not declare `security-guidance` as a dependency; adopters' settings.json controls their hook configuration independently.
@@ -363,6 +390,8 @@ Without an explicit mechanism, hook scripts would either: (i) embed mode/tier as
 
 **Date:** 2026-05-17
 
+> **Amendment note (continuity CP-8 — added WS5):** the **physical hook layout** decided here (`.claude/hooks/`) was itself later superseded for plugin distribution by `DEC-2026-05-19-009` (plugin-native `hooks/hooks.json` at the plugin root). The PascalCase event-taxonomy decision below stands; the directory-layout portion is amended. The `.claude/hooks/` layout remains the operative Workstream-1 as-built / standalone-adopter form (see `docs/RESEARCH-SECURITY.md` §5.1 layout note).
+
 **Context:** Phase 2 research (Step 1 for §18) fetched Claude Code's hooks documentation and surfaced that the event names listed in `DEC-2026-05-17-003` Clause 2 — `pre-tool-use`, `post-tool-use`, `pre-commit`, `post-commit`, `session-start`, `session-end`, `pre-skill-modification` — were invented before consulting the canonical source. The real taxonomy uses PascalCase names with a richer set (26+ events). Additionally:
 
 - `pre-commit` and `post-commit` are **not** Claude Code events. Commit-time enforcement is implemented either via `PreToolUse` matching `Bash(git commit*)` (Claude Code-side) or via git's native `.git/hooks/` (git-side). These are different enforcement layers.
@@ -454,6 +483,7 @@ Research on public Claude Code frameworks (Superpowers, great_cto, GSD, alirezar
 - TGF's value proposition explicitly includes "no supply-chain or prompt-injection exposure on adopter machines from running the framework."
 - `WebFetch` / `WebSearch` become required Claude Code tools for skill creation and refresh; documented in `INSTALL.md` (Phase 15).
 - The `CLAUDE.md` template's §17 Citation Verification (Phase 2 deliverable) makes the discipline visible at the framework's contract layer.
+- **Operational implementation (added WS5):** Clauses 1–4 were later operationalized as the M1–M19 research-security infrastructure — see `docs/RESEARCH-SECURITY.md` (the threat model + the hook chain that enforces untrusted-fetched-content handling, §2-Sources traceability, and the M9 memory-confirmation gap). DEC-004 predates that build and does not itself name the M-controls; a reader of DEC-004 should follow this pointer to find the live machinery.
 
 ---
 
@@ -504,6 +534,8 @@ Research on public Claude Code frameworks (Superpowers, great_cto, GSD, alirezar
 
 **Date:** 2026-05-17
 
+> **Amendment note (continuity CP-8 — added WS5):** several clauses below have been refined by later superseding ADRs; the original locked text is preserved here as the historical record. **Clause 1** (skill template / frontmatter): amended by `DEC-2026-05-19-007` (TGF-extension frontmatter is metadata, not runtime). **Clause 2** (hook architecture): the kebab-case events and `.claude/hooks/<event>/NN-name.sh` layout were superseded by `DEC-2026-05-17-005` (PascalCase event taxonomy aligned to Claude Code), `DEC-2026-05-19-006` (session-state / stdin-JSON), and `DEC-2026-05-19-009` (plugin-native `hooks/hooks.json` layout). **Clause 4** (self-evolution): the `observations/` store was superseded by `DEC-2026-05-19-007` Clause 9 (per-agent `.claude/agent-memory/{agent-name}/MEMORY.md`); the `proposals/` workflow and `confidence-thresholds.json` stand. Consult the amending ADRs for the operative form.
+
 **Context:** Before any skill content production, interface decisions need to be stable. Otherwise downstream work either has to be redone or accumulates inconsistency.
 
 **Decision:** The following interfaces are locked.
@@ -537,6 +569,8 @@ Lives in `.tgf/evolution/` (gitignored). Three directories: `observations/` (raw
 ### 5. Token telemetry format
 
 Lives in `.tgf/telemetry/sessions/*.json` (gitignored). Per session captures: `session_id`, `started`, `ended`, `project_mode`, `workflow_invocations[]` (with `stage`, `tokens_consumed`, `skills_loaded`, `skills_evaluated[]`, `subagents_dispatched`), `phases[]` (for review stage), `total_tokens`, `findings_total`, `findings_blocking`, `user_overrides`. Aggregated weekly/quarterly. Surfaced via `/tgf:framework-health`.
+
+**Alternatives considered:** These are first-principles interface specifications, not a choice among competing options — each was designed from the framework's requirements (addressable section loading, hook-event mapping, cost-aware orchestration, bounded evolution, token accounting) rather than selected against documented alternatives at lock time. Where a specific design later proved wanting, it was superseded by a named amending ADR (see the amendment note above), which is the framework's discipline for evolving a locked decision rather than editing it in place.
 
 **Consequences:** Phases 1-16 reference these specifications. Deviation must be a conscious decision logged here. Skill files, hook scripts, meta-skills, and templates all build against these contracts.
 
