@@ -502,6 +502,50 @@ Red-team also surfaced **F-RT-01** (zero ATT&CK technique-IDs across all 7 rules
 - **"cited by reference" is principled** (both agents concur): legitimate DEC-2026-05-17-004 Clause 5 application for unfetchable SPA sources, not a fabrication-mask.
 - **8 AP/CP pairs strictly 1:1** with explicit closing "Pairing discipline" section (DEC-2026-05-17-003 Clause 1). Good governance hygiene.
 
+### §3.9 Target 9 — `skills/design/` (Audit completed 2026-05-28 — Build Step 4, fifth Phase 5 activity skill; cleanest target audited)
+
+**Audit context:** WS4 Build Step 4 Target 9 (per-skill commit 11/22). Decision E selective dispatch: code-reviewer + holistic-reviewer only. Design decision-discipline skill (Decision A: universal principles + cross-references); pairs with UI-CRAFT. NOTE: design has TWO commits — Phase 5 ship `2f8bc2e` + later `b48576d` "Soften cross-project references" (touched rules.md); audited current state.
+
+**Activity logs (Track 2 dispatch transcripts):**
+- code-reviewer: `.tgf/state/agent-activity/code-reviewer/028d3004-2472-4956-a9f6-76e71829967c.json`
+- holistic-reviewer: `.tgf/state/agent-activity/holistic-reviewer/ec531a5b-34ea-4522-b603-60ba9f068ad5.json`
+
+**Routed to ERROR-LOG.md:** none (0 Critical/High findings).
+
+**Routed here (Medium/Low — 6 entries: 2 Medium, 4 Low; design is the cleanest target — many clean-negative contrasts, see positive notes):**
+
+#### Track 1 — Mechanical compliance findings
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| T1-DES-01 | Medium | SKILL.md §7 L194 vs §2 | §7 cites OWASP LLM Top 10:2025 LLM06:2025 + LLM09:2025 but OWASP-LLM not in §2. Bidirectional gap. | Add OWASP-LLM to §2, or move the §7 mention to a non-citation framing. | §2 bidirectional (reproduces pattern #1; **§7-OWASP-LLM-not-§2 now n=4 in Phase 5**) |
+| T1-DES-02 | Medium | SKILL.md §2 vs source-registry.json | WCAG + ANTHROPIC-AGENTS ("Building Effective Agents") cited at rule level + in §2 but absent from registry (only MITRE-ATLAS registered, and its cited_in omits design). Both fetchable → straightforward to register. | See F-HR-DES-01 (framework-level). | Unregistered-cited (pattern #7); see F-HR-DES-01 |
+| T1-DES-03 | Low | skills/design/ (no ui-craft ref) | design references ui-craft ZERO times though ui-craft calls them "complementary" + references design 6+ times. One-directional pairing. | See F-HR-DES-02 (add a forward-ref in design). | Cross-skill pairing asymmetry (design side of F-HR-UI-02) |
+
+#### Code-reviewer findings (Track 2)
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| F-CR-DES-01 | Low | SKILL.md L166 (AP-5) + L172 (AP-7) vs anti-patterns.md L324/L458 | 2 of 8 §6 AP anchor links broken: AP-5 drops "adoption" (`#ap-5-ai-pattern-without-...` vs `...ai-pattern-adoption-without-...`); AP-7 truncated (`#ap-7-complexity-for-ai-resume` vs `...-rather-than-user-value`). Other 6 AP + all 6 rule anchors correct. | Fix the 2 SKILL.md link targets. | anchor-slug — first design reproduction, isolated to 2/8 AP anchors (rule anchors clean) |
+
+#### Holistic-reviewer findings (Track 2)
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| F-HR-DES-01 | **Medium** | SKILL.md §2 + frontmatter vs source-registry.json | Integration framing of T1-DES-02, elevated. All 3 design §2 sources fail clean registry resolution: ANTHROPIC-AGENTS no key (only CLAUDE-CODE-DOCS, a different source); WCAG no key; MITRE-ATLAS registered but cited_in omits design. WCAG now cited by 3 shipped skills (testing/design/ui-craft) all unregistered. ANTHROPIC-AGENTS is fetchable + quotes verified accurate. | **WS5 framework-level:** register WCAG as ONE shared cross-skill entry (cited_in testing+design+ui-craft); register ANTHROPIC-AGENTS normally; add design to MITRE-ATLAS cited_in. | **Highest-priority Target 9 item — consolidates the framework-level WCAG registration (F-HR-TEST-02 / F-HR-UI-03)** |
+| F-HR-DES-02 | Low | skills/design §1/§8 vs ui-craft L67 | Integration framing of T1-DES-03 from design's side, synthesized w/ F-HR-UI-02. Pairing is asymmetric; the consequential direction is design→ui-craft (a reader entering via design — decisions precede craft — gets no signal ui-craft exists for craft execution, then hands off to AI-default slop). Low: sequencing artifact (Decision A predated ui-craft's Decision F). | Add one forward-ref sentence to design §1/§8 pointing to UI-CRAFT. Pairs w/ F-HR-UI-02. | Cross-skill pairing bidirectionality |
+
+#### Positive notes (preserved in activity logs) — design is the cleanest target; the clean-negative contrasts are the headline
+
+- **Decision A scope fidelity EXEMPLARY** — stays at principle level on every cross-referenced domain (TESTING/SECURITY-CORE/future data-architecture/security-api), never encroaches. Cleanest scope-discipline of any Phase 5/6 target audited.
+- **Anthropic-quote fidelity cleanest of any Phase 5 target** — both "Building Effective Agents" direct quotes (rules.md L15, L65) match published wording verbatim; no paraphrase-as-quote (source-content-fidelity class entirely clean — contrast the testing OWASP-letter / Target-3 RFC-4180 issues).
+- **MITRE-ATLAS cited at rule level (Rule 5.5) — no dangling** (contrast ui-craft F-HR-UI-04).
+- **All 3 §2 sources have real verification dates — NO "cited by reference"** (because all fetchable; contrast ui-craft/testing).
+- **§9 phase label CORRECT** ("holistic-reviewer subagent (Phase 4)" — and holistic-reviewer IS Phase 4) — does NOT reproduce the testing/ui-craft "code-reviewer (Phase 4)" mislabel.
+- **All 6 RULE anchors handle commas correctly** (5.1/5.5/5.6 retain post-comma text) — best anchor discipline of the Phase 5 skills (only 2/8 AP anchors break).
+- **CODE-QUALITY Rule 5.6 cross-reference ACCURATE** (Rule 5.6 IS "Solo-Maintainability as Design Constraint") — contrast the testing/ui-craft Rule-5.6 mismatch.
+- **b48576d amendment CLEAN** — deleted one TGF-internal project-name aside from rules.md; no governance content touched; zero project-name residue across all 3 files.
+
 ## §4 Cross-Target Patterns (Updated 2026-05-28 after Target 4 audit — Build Step 3 CLOSED — n=4)
 
 **Build Step 3 closes with all 4 Phase 6 commits 1/12-4/12 audited.** The full audited Phase 6 cluster (4 of 4 skills) confirms the following framework-wide patterns at 100% reproduction. WS5 plan v1 should structure work-packages around these patterns (efficient: fix once, apply across all 11 Phase 6 skills + future Phase 7+ skills) rather than per-skill (inefficient: fix 11+ times).
@@ -556,9 +600,9 @@ With four of 19 audit targets complete, the following patterns are **CONFIRMED c
 
 WS5 plan v1 should structure work-packages around: (a) the 6 confirmed n=4 cross-target patterns; (b) the 1 pattern BROKEN at n=2 (cheat-sheet section-anchor — cite output-encoding + input-validation as exemplars); (c) the new at-n=2 cross-target pattern (#7 unregistered-cited); (d) the 2 framework-level questions (hard-refusal calibration; TGF synthesis convention); (e) the per-skill bug fixes (e.g., F-CR-IV-01 pydantic v1/v2 mix; F-CR-OE-01 Jinja2 e(quote=True); F-CR-OE-02 RFC 4180 misattribution); (f) the per-skill rule completeness extensions (DOMPurify config, identifier allow-list, mixed-context emission, LLM channel, schema-library coercion, Unicode homoglyph, parser-stage hardening, state-machine bypass).
 
-### Phase 5 cluster cross-target tracking (Build Step 4 — opened 2026-05-28; n=4 at Targets 5-8 `disagreement`, `debugging`, `testing`, `ui-craft`)
+### Phase 5 cluster cross-target tracking (Build Step 4 — opened 2026-05-28; n=5 at Targets 5-9 `disagreement`, `debugging`, `testing`, `ui-craft`, `design`)
 
-**Framing:** Build Step 4 audits Phase 5 activity skills — a different cluster from the Phase 6 security skills (different domain, source profile, template age). Per the Build Step 4 dispatch framing, Phase 6's 6 n=4 patterns are NOT assumed to carry over. The first Phase 5 data point (Target 5) confirmed the framing: **only 2 of 6 Phase 6 patterns reproduce on `disagreement`; 4 do not.** Target 6 (`debugging`) holds the same shape (see Target 6 update); Target 7 (`testing`) adds more sourcing surface and surfaces a framework-level registry gap; Target 8 (`ui-craft`) escalates the registry gap to 3-skill scope and adds a false-subagent-wiring finding (see Target 8 update).
+**Framing:** Build Step 4 audits Phase 5 activity skills — a different cluster from the Phase 6 security skills (different domain, source profile, template age). Per the Build Step 4 dispatch framing, Phase 6's 6 n=4 patterns are NOT assumed to carry over. The first Phase 5 data point (Target 5) confirmed the framing: **only 2 of 6 Phase 6 patterns reproduce on `disagreement`; 4 do not.** Target 6 (`debugging`) holds the same shape; Target 7 (`testing`) surfaces a framework-level registry gap; Target 8 (`ui-craft`) escalates the registry gap to 3-skill scope + a false-subagent-wiring finding; Target 9 (`design`) is the **cleanest target audited** — many clean negatives — and definitively resolves the subagent-wiring map (see Target 9 update).
 
 Phase 6 pattern reproduction at Phase 5 n=1:
 
@@ -620,6 +664,22 @@ Phase 5 candidate-pattern status:
 - **NEW — false/asymmetric subagent-wiring (F-HR-UI-01, F-HR-UI-02):** ui-craft's §9 claims review agents reference it, but no agent file does (inverse of DESIGN + testing, whose claims were TRUE). Combined with testing's TRUE claims, the real pattern is: **§9 subagent-wiring claims are unverified and vary per skill (some true, some false)** — a fitness check should verify them. Plus the design↔ui-craft cross-reference is one-directional.
 - **NEW — language-tag-vs-content mismatch (F-CR-UI-04, n=1):** a code fence tagged ```tsx contains raw CSS. Watch code-heavy skills.
 - **NEW — roster-entry-declared-never-exemplified (F-CR-UI-06, n=1):** a named reference (Kraken) listed but never used in an example. Minor.
+
+**Target 9 (`design`) update — n=5:**
+
+design is the **cleanest Phase 5 target audited** — it reproduces fewer patterns than any sibling and provides several valuable clean negatives.
+
+Phase 6 pattern reproduction:
+- **#1 §2 bidirectional: REPRODUCES** (T1-DES-01 — §7 OWASP-LLM not in §2). The **§7-cites-OWASP-LLM-not-in-§2 sub-pattern is now n=4 within Phase 5** (debugging, testing, ui-craft, design; only disagreement listed it). This is the single most reproduced Phase 5 finding — a clear skill-template fix: either every activity skill's §7 AI-concerns OWASP-LLM mention goes in §2, or none do and §7 uses a non-citation framing.
+- **#7 unregistered-cited-source: REPRODUCES** (T1-DES-02 / F-HR-DES-01 — WCAG + ANTHROPIC-AGENTS unregistered). **WCAG is now confirmed unregistered across 3 skills (testing+design+ui-craft)** — F-HR-DES-01 consolidates F-HR-TEST-02 + F-HR-UI-03 into one framework-level fix: register WCAG ONCE as a shared cross-skill entry. Unlike ui-craft's unfetchable SPA sources, design's ANTHROPIC-AGENTS is fetchable → register normally.
+- **#2/#3/#4/#5/#6: N/A or CLEAN** — design has real verification dates (no "by reference"), ATLAS rule-cited (no dangling), consistent forward-refs, clean refresh cadence, ATLAS framework-level. The cleanest source-hygiene of the cluster.
+
+Phase 5 candidate-pattern status:
+- **anchor-slug-correctness: n=5, but design's RULE anchors are CLEAN** (commas all handled); only 2/8 AP anchors break (F-CR-DES-01). Refines the pattern: anchor breakage is now seen on rules AND APs but is inconsistent within every skill — strongly argues the WS5 fix is a **mechanical lint against the GFM auto-slug**, not manual case-by-case.
+- **fabricated-specific: STAYS n=2** (clean negative on design — quotes verbatim-accurate, no invented specifics). Two clean negatives now (ui-craft, design) bound the pattern to skills that assert statistics/defaults as fact (debugging, testing).
+- **self-referential phase mislabel: STAYS n=2** (clean negative on design — §9 correctly says "holistic-reviewer (Phase 4)", which is right). Confirms the mislabel is specifically the *"code-reviewer (Phase 4)"* copy error; skills referencing the genuinely-Phase-4 holistic-reviewer get it right.
+- **cross-skill-reference-imprecision: design is CLEAN** (CODE-QUALITY Rule 5.6 cross-ref accurate). The pattern stays a testing/ui-craft (Rule-5.6 WCAG-mismatch) phenomenon.
+- **§9 subagent-wiring claims — DEFINITIVE MAP (resolves the Target 7/8 question):** verified directly against agent frontmatter — `code-reviewer.md skills:` = [code-quality, testing, continuity]; `holistic-reviewer.md skills:` = [continuity, code-quality, design, project-management, debugging, disagreement]. So: **testing's §9 claim TRUE** (in code-reviewer); **design's §9 claim TRUE** but *understated* (design §9 says holistic-reviewer "does not preload" — it actually DOES, via frontmatter); **ui-craft's §9 claim FALSE** (ui-craft in neither agent). F-HR-UI-01's conclusion HOLDS (ui-craft claims wiring it lacks) and is now grounded on ui-craft's own frontmatter absence rather than a design contrast. **CORRECTION:** the design code-reviewer transcript (028d3004) erroneously generalized "DESIGN is not in any review agent frontmatter" — true for code-reviewer.md, FALSE for holistic-reviewer.md (which lists tgf:design at frontmatter line 7). Net pattern: **§9 wiring claims are unverified and vary per skill (true/understated/false) — WS5 fitness check should diff each skill's §9 against the agents' `skills:` frontmatter.** Note also: debugging, disagreement, project-management are all in holistic-reviewer's list, so their §9 claims about holistic-reviewer are substantiated.
 
 ## §5 Cross-References
 
