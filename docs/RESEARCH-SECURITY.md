@@ -183,6 +183,8 @@ Events relevant to research security:
 
 **Hook implementation lives in `.claude/hooks/`** (per `DEC-2026-05-17-005` amendment, hook event names use PascalCase aligned with Claude Code; git-layer enforcement in `.claude/git-hooks/`). Hook scripts use `${CLAUDE_PROJECT_DIR}` placeholders for portable paths per Claude Code conventions.
 
+> **Layout note (DEC-2026-05-19-009):** the `.claude/hooks/` layout above is the Workstream-1 as-built / standalone-adopter form and is the live, operative one today. `DEC-2026-05-19-009` later set the canonical *plugin-distribution* layout to a plugin-native `hooks/hooks.json` at the plugin root (`docs/ARCHITECTURE.md` §18 was amended to match). That plugin layout currently exists only as an empty stub (`hooks/hooks.json`) — the actual `.claude/hooks/` → `hooks/` migration is tracked for the Phase-12 hook-library work. Until then, this document describes the operative `.claude/hooks/` layout.
+
 **As-built file inventory** (post-implementation 2026-05-22):
 
 | Layer | File | Purpose |
@@ -206,9 +208,10 @@ Events relevant to research security:
 | L1 support | `.claude/hooks/lib/research_log.py` | per-session fetch records — append/lookup/verify |
 | L1 hook impl | `.claude/hooks/lib/hook_research_*.py` | Python implementations dispatched by the `.sh` wrappers |
 | L1 hook impl | `.claude/hooks/lib/git_precommit_check.py` | Pre-commit logic invoked by the git-hooks wrapper |
-| L2 state | `.tgf/state/source-registry.json` | 29 sources (Tier 1 ASVS chapters / cheat sheets / Top10 / LLM Top10 / CWE; Tier 2 NIST SP / FIPS / RFC) |
-| L2 state | `.tgf/state/source-org-mapping.json` | 5 publishers (OWASP/NIST/IETF/ISO/MITRE) + independence rules |
-| L2 state | `.tgf/state/source-schemas/*.json` | 8 schemas (one per source type; ASVS-chapter strict, others permissive-with-required-string) |
+| L2 state | `.tgf/state/source-registry.json` | source allow-list + metadata (54 entries as of 2026-05-28 WS5 — see the file for current; counts drift as sources are registered). Includes a `reference_only` tier for by-reference authorities (paywalled / SPA-rendered / methodology) per `DEC-2026-05-17-004` Clause 5. |
+| L2 state | `.tgf/state/source-org-mapping.json` | publisher orgs + M12 independence rules (10 orgs as of 2026-05-28 — fetchable-source publishers only; reference-only sources' publishers are intentionally unmapped, as they never participate in M5/M12 corroboration) |
+| L2 state | `.tgf/state/source-schemas/*.json` | per-source-type schemas (15 as of 2026-05-28; ASVS-chapter strict, `vendor-doc` the permissive catch-all, others permissive-with-required-string) |
+| L2 state | `.tgf/state/citation-indexes/` | (reserved for M10) cached publishing-org document indexes for citation-existence verification — M10 is **not yet implemented** (see §6 + §7.1 notes); directory present but unused |
 | L2 state | `.tgf/state/source-hashes.json` | (lazy-populated) per-source pinned SHA-256s |
 | L2 state | `.tgf/state/source-baselines/*.md` | (lazy-populated) per-source content baselines |
 | L2 state | `.tgf/state/research-logs/{session}.json` | per-session fetch records + citations_used |
@@ -288,6 +291,8 @@ Proceed? [y/N]
 
 The human approves or rejects. This is the catch the user provided on commit 4/12 — formalized into a structural gate rather than depending on ad-hoc observation.
 
+The `Proceed? [y/N]` above is an *illustration of the verification summary* the human evaluates, not an interactive TTY prompt the hook runs (hooks cannot reliably read interactive stdin). The actual enforcement is **artifact-presence**: the human/orchestrator records approval out-of-band as `.tgf/state/m8-approvals/{timestamp}-{change-id}.json`, and the `Stop` hook (§7.6) + the pre-commit git hook block until that artifact exists for any control-locking change. This is structurally stronger than an in-band prompt (which an attacker-controlled context could attempt to auto-answer).
+
 ---
 
 ## §6 M1–M19 Mapped to Enforcement Layers
@@ -299,11 +304,11 @@ The human approves or rejects. This is the catch the user provided on commit 4/1
 | M3 | Schema validation | **Layer 1 (hook)** | Layer 2 (schemas) |
 | M4 | Pattern detection | **Layer 1 (hook)** | — |
 | M5 | Multi-source corroboration | Layer 4 (gate) | Layer 2 (state) |
-| M6 | Change-history awareness | **Layer 1 (hook)** | Layer 2 (history cache) |
+| M6 | Change-history awareness | Layer 1 (hook) — **not yet implemented** | Layer 2 (history cache) |
 | M7 | HTTPS/TLS | Infrastructure (WebFetch) | — |
 | M8 | Human verification | **Layer 5** | Layer 4 (gate) |
 | M9 | Memory-confirmation gap | **Layer 3 (persona)** | Layer 5 (human catches drift) |
-| M10 | Citation existence | **Layer 1 (hook)** | Layer 2 (indexes) |
+| M10 | Citation existence | Layer 1 (hook) — **not yet implemented** | Layer 2 (indexes) |
 | M11 | Content drift detection | **Layer 1 (hook)** | Layer 2 (baselines) |
 | M12 | Independence verification | Layer 4 (gate) | Layer 2 (source-org map) |
 | M13 | Hash pinning | **Layer 1 (hook)** | Layer 2 (hash store) |
@@ -314,7 +319,7 @@ The human approves or rejects. This is the catch the user provided on commit 4/1
 | M18 | Exception-clause detection | **Layer 1 (hook)** | — |
 | M19 | HTML hidden-content | **Layer 1 (hook)** | — |
 
-Eleven of nineteen are primarily Layer 1 (hooks). That is the design goal: the bulk of the discipline becomes mechanical and external.
+**Seven of nineteen are implemented as Layer 1 hooks today** — M3, M4, M11, M13, M14, M18, M19 — the bulk of the discipline made mechanical and external (the design goal). Two more are *specified* at Layer 1 but **not yet implemented**: M6 (change-history awareness) and M10 (citation-existence verification); both are tracked for the Phase-11/12 hook-library build and must not be relied on as live controls until then. M9 (the memory-confirmation gap) is deliberately Layer 3 + Layer 5, not a hook.
 
 ---
 
@@ -328,7 +333,7 @@ Active mitigations: M1, M2, M3, M4, M6, M9, M10, M11, M13, M14, M15, M16, M19.
 
 **Pre-fetch (CAN BLOCK):**
 1. `PreToolUse` hook on WebFetch checks URL against Tier-1/2/3 allow-list in `.tgf/state/source-registry.json` (M15). Unapproved URLs are blocked with reason.
-2. `PreToolUse` runs M6 change-history check for version-controlled sources (OWASP GitHub repos): fetches recent commit history; if suspicious changes detected, blocks with reason.
+2. *(M6 — specified but **not yet implemented**; planned for the Phase-11/12 hook build)* `PreToolUse` would run a change-history check for version-controlled sources (OWASP GitHub repos): fetch recent commit history; if suspicious changes detected, block with reason.
 3. `PreToolUse` loads expected schema + pinned hash into temp state for `PostToolUse` to consume.
 
 **Fetch executes** (M7 transport protections active via WebFetch infrastructure).
@@ -342,7 +347,7 @@ Active mitigations: M1, M2, M3, M4, M6, M9, M10, M11, M13, M14, M15, M16, M19.
 9. `PostToolUse` runs M11 content-drift check (diff against baseline in `.tgf/state/source-baselines/`)
 10. `PostToolUse` writes research-log entry to `.tgf/state/research-logs/{session_id}.json` with status: `verified`, `flagged`, or `blocked-pending-review`
 11. `PostToolUse` injects context warning if any check produced a finding — the AI receives strong language: "FETCH FLAGGED — findings: [list]. Do not cite this source until findings are resolved."
-12. M10 citation-existence check runs against `.tgf/state/citation-indexes/` when the AI extracts a document ID citation
+12. *(M10 — specified but **not yet implemented**; planned for the Phase-11/12 hook build)* an M10 citation-existence check would run against `.tgf/state/citation-indexes/` when the AI extracts a document ID citation
 13. M1, M2, M9, M16 are enforced by the research agent's system prompt during content extraction (Layer 3)
 
 A `PostToolUse` finding does NOT block the fetch itself (the fetch has already happened) and does NOT block subsequent AI actions in isolation. The block happens at Stage 4 when the AI attempts to *write* a skill file citing the flagged source — see §7.4.
@@ -386,7 +391,7 @@ The four-pass review (per `CLAUDE.md` §3 Stage 5) applies M1–M19 transitively
 - **Phase 3 (Red Team):** explicitly tries to find M1–M19 evasions in the change; tests the framework's own resistance
 - **Phase 4 (Holistic Review):** verifies §2 Sources ↔ rule citations ↔ research log traceability; flags any §2 entry not cited at rule/AP level (the check that should have caught commit 4/12)
 
-The four review agents are eventually preloaded with research-security context (`agents/security-auditor.md` includes `RESEARCH-SECURITY.md` in its preloaded materials).
+The four review agents *reference* research-security context in their persona prose — `agents/security-auditor.md`, for instance, instructs the agent to apply this document's §2-Sources-traceability and M-layer discipline. Note: RESEARCH-SECURITY.md is **not** loaded via the `skills:` frontmatter mechanism — that mechanism loads `skills/<name>/` directories, and this is a `docs/` file, so it is structurally ineligible. The agents carry a textual pointer, not a guaranteed preload. Making research-security context guaranteed-load for the review agents (e.g., via a dedicated research-security skill directory or explicit context injection) is tracked as a WS5/Phase-11 follow-up.
 
 ### §7.6 Stage 6 — Commit
 
@@ -421,7 +426,7 @@ A nation-state attacker who compromises multiple authoritative sources across mu
 
 ### §8.3 Layer 1 hook bugs
 
-A bug in `m4-pattern-scan.py` could let injections through; a bug in `m13-hash-check.py` could miss tampering. Mitigated by layered defense — M4 + M3 + M11 + M14 catch overlapping issues; a hole in one is partially covered by others. Hook scripts themselves are subject to the framework's code-review and security-audit discipline.
+A bug in `m4_pattern_detect.py` could let injections through; a bug in `m13_hash_check.py` could miss tampering. Mitigated by layered defense — M4 + M3 + M11 + M14 catch overlapping issues; a hole in one is partially covered by others. Hook scripts themselves are subject to the framework's code-review and security-audit discipline.
 
 ### §8.4 State corruption
 
@@ -517,7 +522,7 @@ The implications:
 `.tgf/state/source-hashes.json` is updated when:
 
 1. **Baseline updates** (above)
-2. **Hash mismatch resolution** — if `m13-hash-check.py` blocks because the hash doesn't match pinned, the human investigates. If the source legitimately updated (changelog present), the new hash is pinned. If the source updated without explanation, treat as potential tampering and investigate further.
+2. **Hash mismatch resolution** — if `m13_hash_check.py` blocks because the hash doesn't match pinned, the human investigates. If the source legitimately updated (changelog present), the new hash is pinned. If the source updated without explanation, treat as potential tampering and investigate further.
 
 ### §10.5 How the audit loop closes
 

@@ -43,6 +43,24 @@
       "jurisdiction": "vendor",
       "type": "commercial-vendor",
       "primary_domains": ["microsoft.com", "learn.microsoft.com", "docs.microsoft.com"]
+    },
+    "W3C": {
+      "full_name": "World Wide Web Consortium",
+      "jurisdiction": "international",
+      "type": "standards-body",
+      "primary_domains": ["w3.org", "www.w3.org"]
+    },
+    "Anthropic": {
+      "full_name": "Anthropic PBC",
+      "jurisdiction": "vendor",
+      "type": "commercial-vendor",
+      "primary_domains": ["anthropic.com", "www.anthropic.com", "docs.anthropic.com"]
+    },
+    "Nielsen Norman Group": {
+      "full_name": "Nielsen Norman Group",
+      "jurisdiction": "vendor",
+      "type": "industry-research-firm",
+      "primary_domains": ["nngroup.com", "www.nngroup.com"]
     }
   },
   "independence_rules": {
