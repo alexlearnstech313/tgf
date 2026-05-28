@@ -635,6 +635,27 @@ Red-team also surfaced **F-RT-01** (zero ATT&CK technique-IDs across all 7 rules
 - **F-CR-PM-03's PO.3 claim about discovery REFUTED**: discovery cites PO.1 only, correctly (no "Implement Toolchain" abbreviation here).
 - **fabricated-specific CLEAN; self-referential phase-mislabel CLEAN; AP/CP pairing substantive (8/8, not thin)**; citation-honesty exemplary.
 
+### §3.12 Target 12 — `skills/continuity/` (Audit completed 2026-05-28 — Build Step 5 opens; 1st Phase 4 always-on skill)
+
+**Audit context:** WS4 Build Step 5 Target 12 (per-skill commit 14/22). Decision E dispatch for Phase 4 always-on: code-reviewer + holistic-reviewer. continuity is 1 of 3 always-on skills (with code-quality, security-core) — preloaded into every session via tgf-orchestrator; the source-of-truth 25+ sibling rule-level citations resolve into.
+
+**Activity logs:** code-reviewer `.tgf/state/agent-activity/code-reviewer/b46790cc-71be-46b7-82f4-df9c01c7d343.json`; holistic-reviewer `.tgf/state/agent-activity/holistic-reviewer/4ed5fc95-87a0-45f4-b5fe-5d71e8057a64.json`
+
+**Routed to ERROR-LOG.md:** none (0 Critical/High).
+
+**Routed here (Medium/Low — 6 entries: 2 Medium, 4 Low):**
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| T1-CONT-01 / F-CR-CONT-01 | **Medium** | SKILL.md L40/65/73/78/132/138/141/147 + rules.md L7/15/78/100 (12×) | NIST SSDF cited as "PO.5 Implement Supporting Toolchains" — but "Implement Supporting Toolchains" is **PO.3**; PO.5 is "Implement and Maintain Secure Environments." Wrong practice NUMBER (content is config-mgmt/toolchain = PO.3's domain). Sibling project-management cites PO.3 correctly → continuity is the outlier. Always-on → propagates through 4 rule grounding strings + breaks /tgf:verify-citation. | Replace PO.5→PO.3 in all 12 occurrences; keep the name. | **Highest-leverage Target 12 item — wrong-practice citation in an always-on skill** |
+| T1-CONT-02 / F-HR-CONT-01 | **Medium** | SKILL.md §9 L217 | §9 "Preloaded by: holistic-reviewer (primary)" UNDER-REPORTS: continuity is preloaded by 3 agents — tgf-orchestrator (always-on, every session per CLAUDE.md §6), code-reviewer, holistic-reviewer. Omits the always-on tgf-orchestrator preload entirely. Build-Step-5/always-on flavor of F-HR-PM-01 (under-reporting, not false-"None"). | Rewrite §9 to lead with the always-on tgf-orchestrator preload + name all 3. **Widen the WS5 §9 preload-matrix sweep to the always-on cluster.** | §9-preload-accuracy (F-HR-PM-01 family) |
+| T1-CONT-03 | Low | SKILL.md §7 L199 | §7 cites OWASP-LLM LLM09:2025 + MITRE-ATLAS AML.T0051, neither in §2 (both registered → §2-table incompleteness). | Add to §2 or reframe §7. | §7-OWASP-LLM/ATLAS-not-§2 |
+| T1-CONT-04 | Low | SKILL.md §2 | ADR-NYGARD unregistered (cognitect.com, fetchable); ISO-27001 in §2 but not cited at rule level (only ISO-27002 is, Rule 5.2). | Register ADR-NYGARD; decide if ISO-27001 belongs in §2 (it duplicates 27002 5.37). | unregistered-cited / §2-listed-not-rule-cited |
+| T1-CONT-05 | Low | SKILL.md L74/75/76 | ISO-27002/27001 "reference only" + ADR "reference (stable since 2011)" verification prose. ISO paywalled (legit Clause 5). | Decide the non-deprecated convention for stable/paywalled sources. | §2 verification-status convention |
+| F-CR-CONT-02 | Low | rules.md L70-76 (Rule 5.3) vs anti-patterns.md L368-384 (CP-5) | **INVERSE cross-skill-reference-imprecision:** disagreement Rule 5.6 cites CONTINUITY Rule 5.3 as the authority for a 7-field WAIVER format, but Rule 5.3's NORMATIVE statement lists only 4; the full 7-field format lives only in continuity's CP-5 example. Source-of-truth rule trails its own example + its dependents. | Promote the CP-5 7-field set into Rule 5.3's normative statement. | source-of-truth normative completeness |
+
+**Positive notes:** anchors ALL CLEAN (14/14 verified by computed GFM slugification — clean negative vs the anchor-drift pattern); AP/CP 8/8; ADR-format self-consistency across 3 examples (the format siblings copy); cross-reference integrity excellent (25+ citations into continuity resolve, no drift); no fabricated specifics (all numbers in fictional example artifacts); honest TGF-SYNTHESIS labeling a model. **Always-on robustness:** structural craftsmanship materially tighter than the Phase 5 cluster — do not assume Phase 5 defect rates carry.
+
 ## §4 Cross-Target Patterns (Updated 2026-05-28 after Target 4 audit — Build Step 3 CLOSED — n=4)
 
 **Build Step 3 closes with all 4 Phase 6 commits 1/12-4/12 audited.** The full audited Phase 6 cluster (4 of 4 skills) confirms the following framework-wide patterns at 100% reproduction. WS5 plan v1 should structure work-packages around these patterns (efficient: fix once, apply across all 11 Phase 6 skills + future Phase 7+ skills) rather than per-skill (inefficient: fix 11+ times).
