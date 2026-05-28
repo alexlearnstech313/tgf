@@ -8,6 +8,22 @@ Per `CLAUDE.md` §11: all findings get fixed, formally waived in WAIVER-LOG, or 
 
 ---
 
+## ERR-2026-05-28-015: M11 drift + M13 hash checks compare non-deterministic WebFetch AI-summary output, not raw source content — drift/tamper detection is unreliable (false-positive on every re-fetch)
+
+**Severity:** medium
+
+**Status:** open
+
+**Owner:** Phase 12 (hook-library hardening) — research-security M11/M13 redesign
+
+**Target resolution:** Baseline + hash on a *stable* representation, not the WebFetch AI-summary output. Options: (a) hash the raw fetched markdown/HTML (pre-AI-summary) if the hook can access it; (b) baseline a normalized structural digest (section headings, rule IDs, parameter values extracted) rather than free-text summary; (c) demote M11/M13 to advisory-only and rely on M3/M4/M14/M18/M19 + M8 human review for tamper detection. Until fixed, the operative policy (set 2026-05-28 WS5): a re-fetch flagged ONLY on M11/M13 with all tamper-indicators clean (M4/M14/M18/M19 + 0 structural changes) is treated as a benign re-baseline — re-pin + proceed, recorded with a human-review note in the research-log.
+
+**Originating context:** WS5 first re-verify fetch (MITRE-ATLAS, 2026-05-28). The fetch was correctly substantive (AML.T0051 etc. present, all tamper-indicators clean) but blocked-pending-review on M13 (hash mismatch) + M11 (2 prose-only lines). Investigation found: (1) baselines store the WebFetch AI-summary envelope (e.g., the MITRE-ATLAS baseline captured 2026-05-23 stored the model's *"I can only confirm the page title… could you provide the complete webpage content?"* complaint — a degenerate first-fetch), so M11/M13 compare non-deterministic AI text across fetches and will false-positive on most re-fetches; (2) `source-hashes.json` had no pinned hash for MITRE-ATLAS, yet M13 returned `fail` rather than `skipped` — a likely hook bug (missing-pin should skip). This degrades two of the nineteen M-controls into noise: either ignored (defeating drift/tamper detection) or constant false-stops (defeating usability). The tamper-indicator controls (M4 patterns, M14 unicode, M18 exception-clause, M19 hidden-content) are unaffected and remain reliable.
+
+**Plain-language impact:** the framework's "has this authoritative source been tampered with since we last checked?" control currently can't tell a real change from the AI re-wording its own summary — so it cries wolf on every re-fetch. Left unfixed it trains reviewers to rubber-stamp M13/M11 flags, which is exactly how a real tampering event would slip through.
+
+---
+
 ## ERR-2026-05-28-014: ARCHITECTURE.md §18/§20 do not specify the enforcement gates that ERR-010/011/012/013 were deferred to — those four gaps are real end-to-end today, not merely guidance-layer
 
 **Severity:** high
