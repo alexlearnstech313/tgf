@@ -2,7 +2,7 @@
 
 > **Status:** v1 master plan — written 2026-05-22, locked at checkpoint same day. Orchestrates all framework-hardening work between Phase 6 commit 4/12 (security-cryptography, landed `73d025d`) and Phase 6 commit 5/12 (security-secrets-management, deferred).
 >
-> **Progress:** Workstream 1 ✅ COMPLETED + PUSHED 2026-05-22 (commit `dc2b294`, on `origin/main`). Workstream 2 ✅ COMPLETED 2026-05-25 (`609c4e6` closeout). Workstream 3 ✅ COMPLETED 2026-05-26 (six commits per Decision J; closeout this commit). Workstreams 4-5 still deferred to their own workflows. See §3 for per-workstream status.
+> **Progress:** Workstream 1 ✅ COMPLETED + PUSHED 2026-05-22 (commit `dc2b294`, on `origin/main`). Workstream 2 ✅ COMPLETED 2026-05-25 (`609c4e6` closeout). Workstream 3 ✅ COMPLETED 2026-05-26 (six commits per Decision J). Workstream 4 ✅ COMPLETED 2026-05-28 (22 commits; 19 targets; 0 Critical, 9 open High → `ERROR-LOG.md`; Medium/Low → `docs/workstream-5-plan-backlog.md`; WS5 plan v1 → `docs/workstream-5-plan.md`). Workstream 5 ⏳ NEXT (remediation; begins after a Checkpoint-1 approval). See §3 for per-workstream status.
 >
 > **Scope:** this is a *master plan* that sequences five workstreams. Only Workstream 1 (research-security infrastructure) has a detailed implementation plan in this repo (`docs/research-security-implementation-plan.md`). **Workstreams 2–5 are mentioned with goals + dependencies + rationale, but each MUST have its own full TGF workflow — plan → Checkpoint 1 approval → implement → four-pass review → commit — when it begins.** This plan does not substitute for per-workstream planning.
 
@@ -157,7 +157,7 @@ Sequenced in dependency order. Each subsection: Goal → Key Artifacts → Autho
 
 ### §3.4 Workstream 4 — Audit of Existing Work
 
-**Status:** Deferred until Workstreams 1 + 2 + 3 operational. Will have its own full TGF workflow when it begins.
+**Status:** ✅ COMPLETED 2026-05-28. 22 commits over the workstream. Plan at `docs/workstream-4-plan.md` (Decisions A-N + K-validation-gate); per-finding backlog at `docs/workstream-5-plan-backlog.md` (§3.1-§3.19 per-target + §4 cross-target patterns + Build Step 2-6 closeouts + WS4 closeout synthesis); WS5 plan v1 at `docs/workstream-5-plan.md`. **19 targets, 4 clusters** (Phase 6 security skills BS2-3; Phase 5 activity skills BS4; Phase 4 always-on skills BS5; 5 foundational docs BS6, all-four-agents per Decision H; BS7 closeout). Two-track methodology (Track 1 mechanical compliance + Track 2 four-agent dispatch via general-purpose proxy per Decision B). **0 Critical across the framework**; 9 open High → `ERROR-LOG.md` (ERR-003/006/008/009 security skills + ERR-010..014 foundational-doc enforcement-floor gaps) + ERR-007 (in-session hook bug, fixed `d92cf08`); hundreds of Medium/Low → backlog. Dominant theme: framework SPECIFIES the right disciplines but UNDER-ENFORCES them mechanically (floor deferred to Phase 11/12; shipped M8 gate is the fix template). **Bootstrap test PASSED.** CLAUDE.md trimmed this workstream (§9 catalog → `docs/SKILL-INDEX.md`) to clear the 40k-char performance threshold. See `docs/ROADMAP.md` MH-4 for the milestone summary.
 
 **Goal:** apply the new discipline (research-security infrastructure + WORKFLOW-V2 standards + four review agents) to all framework work landed before the discipline was operational. Identify gaps; produce remediation list.
 
@@ -188,7 +188,7 @@ Sequenced in dependency order. Each subsection: Goal → Key Artifacts → Autho
 
 ### §3.5 Workstream 5 — Remediation
 
-**Status:** Deferred until Workstream 4 (audit) produces findings. Will have its own full TGF workflow when it begins.
+**Status:** ⏳ NEXT. WS4 produced the findings; plan v1 is written (`docs/workstream-5-plan.md`) consolidating the backlog into leverage-ordered work-packages (Wave A mechanical fix-once sweeps → Wave B accuracy → Wave C High content remediation → Phase-12 enforcement-hook hand-off). WS5 implementation begins after a Checkpoint-1 approval per the phase-plan workflow. Will have its own full TGF workflow when it begins.
 
 **Goal:** address findings from the audit. Update existing artifacts to meet new discipline.
 

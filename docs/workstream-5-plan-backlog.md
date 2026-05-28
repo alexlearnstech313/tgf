@@ -864,6 +864,46 @@ Red-team also surfaced **F-RT-01** (zero ATT&CK technique-IDs across all 7 rules
 
 **Positive notes:** core M1-M19 design genuinely HIGH-INTEGRITY (no Critical/High from any of 4 agents). Two-stage blocking model correctly reflects actual Claude Code hook blocking semantics + matches the as-built impl + is the structurally-stronger choice. M9 is the doc's strongest control (complete across 9 locations). §9 honors DEC-004 citation discipline (publication-level, explicit non-"verified-by-reference" disclaimer at L463, Microsoft Spotlighting honestly tiered as vendor). §8 residual-risk honestly scoped for §8.1/§8.2/§8.5/§8.6/§8.7 (the only gaps: §8.3/§8.4 overstatement + the undocumented perimeter). ERR-2026-05-27-007 hardening visibly present + effective in live code (redirect/error-body skip + `_url_matches_source()` guards). All DEC IDs resolve; WORKFLOW.md bidirectionality clean (6 back-references); the 12-test smoke suite + pre-commit symlink exist as described.
 
+### Build Step 6 closeout summary (2026-05-28)
+
+**Audit pass: 19 of 19 WS4 targets complete (100%) — the per-target audit pass is CLOSED.** Build Step 6 audited all 5 foundational docs (Targets 15-19: CLAUDE.md, WORKFLOW.md, ARCHITECTURE.md, DECISIONS.md, RESEARCH-SECURITY.md) — ALL FOUR agents each per Decision H (~20 dispatches; Risk-10 focused-lens handling applied throughout). **This was the only cluster that produced High findings.**
+
+**5 High findings → ERROR-LOG (ERR-2026-05-28-010 through -014), all about the framework's OWN enforcement floor:**
+- ERR-010 — CLAUDE.md §5 hard-refusal list is closed-form named instances, not the invariant each protects (bypassable via functional-equivalent redescription).
+- ERR-011 — CLAUDE.md §5 "informed confirmation" escape hatch is unbounded + unlogged + identical for hard-refusal and strong-advocacy.
+- ERR-012 — WORKFLOW.md four-pass review has no commit-blocking positive evidence it ran (a reviewless commit is byte-identical to a reviewed one).
+- ERR-013 — WORKFLOW.md change_tier is self-assigned at Stage 2 with no validation against the diff (under-classification silently skips deep review).
+- ERR-014 — ARCHITECTURE.md §18/§20 don't specify the gates ERR-010/011/012/013 were deferred to; **consolidates the family + removes the "runtime may mitigate" hedge** — those four are real end-to-end today, mitigated only by persona discipline. The shipped M8 gate is the fix template.
+
+**The Build Step 6 thesis:** the foundational docs are HIGH-INTEGRITY as *design* (every core mechanism — the six-stage workflow, the §15-§22 architecture, the ADR amendment chain, the M1-M19 supply-chain defense — is sound and internally consistent) but UNDER-ENFORCED as *runtime control* (the disciplines they specify depend on AI/persona vigilance, with the mechanical floor deferred to Phase 11/12). Every High is an instance of that one gap. The two newest facets — Target 19's `skills/**`-only enforcement perimeter (F-RT-RS-01, no ERR because both finders rated it Medium) and the M6/M10 defense-in-theater (F-SA-RS-01) — extend the same theme into the supply-chain layer.
+
+**Two systemic cross-doc patterns confirmed by Build Step 6 (feed WS5 as single sweeps, not per-doc fixes):**
+1. **docs/-path-rot is SYSTEMIC** (revised from Target 18's tentative "not systemic"): 3 of 5 foundational docs (CLAUDE.md §7/§11, ARCHITECTURE.md L94, RESEARCH-SECURITY.md L3/L542) over-extend the `docs/` prefix to root-resident governance artifacts; WORKFLOW.md is the clean counter-example. One repo-wide path-correction sweep.
+2. **four-pass-maturity overstatement** appears in 2 foundational docs (ARCHITECTURE §20 F-SA-ARCH-01 + DECISIONS DEC-010 F-SA-DEC-01), both gated on open ERR-2026-05-25-002 (the `tools:` restriction isn't platform-validated). One caveat-and-revisit, re-close when ERR-002 resolves.
+
+**M9 canonical relationship resolved:** RESEARCH-SECURITY is the complete M9 home; ARCHITECTURE §17 omits it entirely; WORKFLOW §3/§7.3 carry it correctly. ARCHITECTURE §17's WS5 fix = cross-reference RESEARCH-SECURITY §4.1/§8.7 (closes F-SA-ARCH-02).
+
+---
+
+### WS4 CLOSEOUT SYNTHESIS — all 19 targets (2026-05-28)
+
+**The retroactive audit is COMPLETE.** 19 targets across 4 clusters, audited with the now-operational four review agents (Decision B general-purpose proxy dispatch; Decision E/H dispatch matrix; Decision D routing). Per-target transcripts gitignored at `.tgf/state/agent-activity/<role>/` (Decision I).
+
+| Cluster (Build Step) | Targets | Dispatch | Critical/High | Profile |
+|---|---|---|---|---|
+| Phase 6 security (BS2-3) | 4 (crypto, error-handling, output-encoding, input-validation) | all 4 agents | **0 C / 5 H** (ERR-003/006/008/009 + ERR-001/004/005 medium) | 6 framework-wide patterns at n=4 = 100% reproduction |
+| Phase 5 activity (BS4) | 7 (disagreement, debugging, testing, ui-craft, design, project-management, discovery) | code-reviewer + holistic | **0 C / 0 H** | ~21 Medium + ~52 Low; own distinct profile (5 patterns) |
+| Phase 4 always-on (BS5) | 3 (continuity, security-core, code-quality) | +security-auditor for security-core | **0 C / 0 H** | materially cleanest cluster; ~5 Medium + ~8 Low |
+| Foundational docs (BS6) | 5 (CLAUDE, WORKFLOW, ARCHITECTURE, DECISIONS, RESEARCH-SECURITY) | all 4 agents | **0 C / 5 H** (ERR-010..014) | high-integrity design, under-enforced runtime |
+
+**Headline conclusions:**
+- **0 Critical across the entire framework.** All High findings cluster at the two ends — the executable security skills (Phase 6) and the foundational contract/workflow/architecture docs — never in the activity or always-on prose skills.
+- **The dominant cross-cutting theme is "principle without mechanical enforcement."** §2-bidirectional-traceability (n=4, ERR-005 hook), the §5/§3 enforcement floor (ERR-010..014), the `skills/**`-only perimeter, M6/M10 defense-in-theater — all the same shape. The framework SPECIFIES the right disciplines; WS5 + Phase 11/12 must CLOSE them mechanically. The shipped M8 gate is the proven template (extend, don't reinvent).
+- **The bootstrap test PASSED.** WS4 was built to check whether the framework can now catch its own past failure patterns. It can: the §2-Sources discipline that the commit-4/12 incident exposed was reproduced as a finding on the very skills built before it existed (n=4), and the temporal-drift §9-preload gap (skills built 2026-05-20, agent wiring 2026-05-25) was caught precisely.
+- **Two systemic mechanical sweeps + one bounded preload fix dominate the cheap-win column:** the docs/-path-rot sweep, the GFM anchor-slug lint, and the 7-skill §9-preload fix are all "fix-once" work-packages.
+
+**WS4 is CLOSED. WS5 plan v1 written to `docs/workstream-5-plan.md`** (consolidates this backlog's §3.1-§3.19 + §4 patterns into sequenced work-packages). WS5 remediation begins after the pause + a Checkpoint-1 approval, per the phase-plan workflow.
+
 ## §4 Cross-Target Patterns (Updated 2026-05-28 after Target 4 audit — Build Step 3 CLOSED — n=4)
 
 **Build Step 3 closes with all 4 Phase 6 commits 1/12-4/12 audited.** The full audited Phase 6 cluster (4 of 4 skills) confirms the following framework-wide patterns at 100% reproduction. WS5 plan v1 should structure work-packages around these patterns (efficient: fix once, apply across all 11 Phase 6 skills + future Phase 7+ skills) rather than per-skill (inefficient: fix 11+ times).
