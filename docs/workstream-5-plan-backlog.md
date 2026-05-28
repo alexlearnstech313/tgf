@@ -452,6 +452,56 @@ Red-team also surfaced **F-RT-01** (zero ATT&CK technique-IDs across all 7 rules
 - **Forward-compat boundaries drawn cleanly**: Rule 5.5 cedes security-domain depth to Phase 6/7; WCAG surface cedes a11y-depth to the planned quality-accessibility skill. No turf ambiguity.
 - **Example code broadly accurate**: jest-axe, @axe-core/playwright AxeBuilder, MSW v2, fast-check/Hypothesis, bcrypt $2b$ prefix all correct (only toHaveBeenCalledBefore undeclared).
 
+### §3.8 Target 8 — `skills/ui-craft/` (Audit completed 2026-05-28 — Build Step 4, fourth Phase 5 activity skill)
+
+**Audit context:** WS4 Build Step 4 Target 8 (per-skill commit 10/22). Decision E selective dispatch: code-reviewer + holistic-reviewer only. Anti-AI-slop UI/UX craft skill (DEC-F mid-phase addition); pairs with DESIGN. Grounded in Apple HIG, Material Design 3, Nielsen's 10 Heuristics, WCAG 2.2, MITRE ATLAS.
+
+**Activity logs (Track 2 dispatch transcripts):**
+- code-reviewer: `.tgf/state/agent-activity/code-reviewer/f729cd7b-70bf-42d5-83fc-0bf2d042d293.json`
+- holistic-reviewer: `.tgf/state/agent-activity/holistic-reviewer/43634956-8d11-475a-9c6e-c929695150c6.json`
+
+**Routed to ERROR-LOG.md:** none (0 Critical/High findings).
+
+**Routed here (Medium/Low — 14 entries: 4 Medium, 10 Low; several Medium are different lenses on the same two issues — citation gaps and the registry gap):**
+
+#### Track 1 — Mechanical compliance findings
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| T1-UI-01 | Medium | SKILL.md §2/frontmatter + §7 L216 | MITRE-ATLAS in §2 + frontmatter but cited at NO rule level (rules.md/anti-patterns.md both clean) — ui-craft has no AI-specific rule, so ATLAS dangles. ALSO §7 cites OWASP-LLM LLM09:2025, not in §2. Bidirectional gaps both directions. | See F-HR-UI-04 (ground ATLAS in a rule, or drop) + add/drop OWASP-LLM. | §2 bidirectional (reproduces pattern #1 + #10; see F-CR-UI-05, F-HR-UI-04) |
+| T1-UI-02 | Medium | SKILL.md §2 vs source-registry.json | 4 of 5 §2 sources absent from registry: APPLE-HIG, MATERIAL-3, NIELSEN-10, WCAG (only MITRE-ATLAS registered). WCAG-unregistered is now a 3-skill gap (testing+design+ui-craft). | See F-HR-UI-03 for the framework-level fix. | Unregistered-cited (pattern #7); see F-HR-UI-03 |
+| T1-UI-03 | Low | SKILL.md L43-44/L79-81, rules.md L7 | APPLE-HIG/MATERIAL-3 "cited by reference"/"reference (SPA-rendered, unfetchable)"; NIELSEN-10 "reference (stable methodology)". DEC-2026-05-26-011-deprecated string BUT principled — explicitly invokes DEC-2026-05-17-004 Clause 5 (unfetchable→cite by reference). | Decide a non-deprecated convention for honestly-unfetchable sources (ties to F-HR-UI-03 disposition). | §2 verification-status convention (legitimate exception — CROSS-CLUSTER tension w/ testing) |
+
+#### Code-reviewer findings (Track 2)
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| F-CR-UI-01 | Low | SKILL.md L148 + anti-patterns.md L234 | Rule 5.3 anchor truncated at the comma (`...-structural` drops `-not-decorative`). 5.1/5.5 commas handled correctly — inconsistent in-file. Duplicated across 2 files. | Use full slug `rule-53-typography-hierarchy-is-structural-not-decorative`. | anchor-slug n=4 |
+| F-CR-UI-02 | Low | SKILL.md L172 + anti-patterns.md L43 | AP-1 anchor broken TWO ways vs `ap-1-default-tailwindbootstrap-shapes-everywhere`: slash-handling ('Tailwind/Bootstrap' → ref inserts hyphen where GitHub strips slash) + dropped word ('shapes'). NEW anchor variant. | Use the true slug, or rename AP-1 header to avoid the slash. | anchor-slug n=4 (new slash variant) |
+| F-CR-UI-03 | Low | SKILL.md §9 L236 vs §8 L228 | §9 says "code-reviewer subagent (Phase 4)"; §8 correctly says "Stage 5 Phase 1". Self-contradicting in-file; code-reviewer is Phase 1. Identical to testing F-HR-TEST-01. | Change §9 "(Phase 4)" → "(Phase 1)". | self-referential phase mislabel (n=2) |
+| F-CR-UI-04 | Low | anti-patterns.md CP-5 L434-441 | CP-5 fences a raw CSS `@media (prefers-reduced-motion){}` block as ```tsx + 'In the component' — not valid TSX. Same file (CP-6) correctly uses Tailwind variants. | Re-fence ```css, or use Tailwind `motion-reduce:` variant. | NEW candidate: language-tag-vs-content mismatch |
+| F-CR-UI-05 | Medium | SKILL.md §2 + frontmatter + §7 vs source-registry.json | Formalizes T1-UI-01 + T1-UI-02: (a) ATLAS dangles (no rule home; ui-craft 5.7 is pure TGF-SYNTHESIS); (b) OWASP-LLM §7-only; (c) 4/5 §2 sources unregistered + MITRE-ATLAS cited_in omits ui-craft. | (a) add AI-rule using ATLAS or downgrade to §7; (b) add/drop OWASP-LLM; (c) register the 4 sources + add ui-craft to ATLAS cited_in. | Registry/governance fix (see F-HR-UI-03) |
+| F-CR-UI-06 | Low | SKILL.md L71/L160/L169, rules.md L183, anti-patterns.md L5/L764 | Of 5 high-craft reference sites (Stripe/Vercel/Linear/Monogram/Kraken), Kraken is the only one listed (5×) but never used in any CP study; ambiguous (no disambiguating URL). Others hedged per Clause 6. Dangling roster entry. | Add a concrete Kraken study w/ URL, or remove from roster + adjust count language. | NEW minor candidate: roster-entry-declared-never-exemplified |
+| F-CR-UI-07 | Low | SKILL.md frontmatter L45 vs §2 L81 | NIELSEN-10 refresh metadata inconsistent: frontmatter "1994, refreshed" (no year) vs §2 "refreshed 2020". §2 accurate; frontmatter under-specified. | Make frontmatter "1994, refreshed 2020". | Intra-file metadata drift |
+
+#### Holistic-reviewer findings (Track 2)
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| F-HR-UI-01 | **Medium** | SKILL.md §9 L236 + §8 L229 vs agents/ | ui-craft claims code-reviewer + holistic-reviewer "reference UI-CRAFT principles" — NEITHER agent file substantiates it (zero ui-craft refs across agents/). Structural INVERSE of DESIGN (whose identical claim IS true — holistic-reviewer.md lists tgf:design). Self-referential defect: visible-surface diffs could silently skip UI-CRAFT in the four-pass. **Contrast: testing's identical §9 wiring claims were TRUE — so §9 wiring-claim accuracy varies per skill.** | (A) add forward-ref note in code-reviewer.md §8 + holistic-reviewer.md §10 ('tgf:ui-craft for visible-component diffs'); or (B) soften §9/§8 to orchestrator-level only. Record in DECISIONS.md. | **HIGHEST-PRIORITY Target 8 item — false subagent-wiring claim** |
+| F-HR-UI-02 | Low | ui-craft → DESIGN 6+ refs; design → ui-craft 0 | "Complementary" pairing is one-directional. Reader entering via DESIGN has no signal a craft-companion exists. Erodes pairing integrity as more craft siblings appear. | Add one back-reference in DESIGN (§1 or Rule 5.6). Touches sibling skill — separate scoped change. | Cross-skill pairing bidirectionality |
+| F-HR-UI-03 | **Medium** | SKILL.md §2 vs source-registry.json (cross-skill) | Integration framing of T1-UI-02; strengthens F-HR-TEST-02. WCAG cited by 3 skills, none registered (ui-craft = 3rd caller); +3 net-new unregistered authorities (APPLE-HIG/MATERIAL-3/NIELSEN-10); MITRE-ATLAS cited_in omits ui-craft. **Governance question for WS5: pick a disposition for unfetchable-by-reference sources** (register with reference-only tier [preferred] vs documented never-register category) — they sit in limbo generating recurring Mediums. | **WS5 framework-level:** register WCAG ONCE (cited_in testing+design+ui-craft) + decide unfetchable disposition + append ui-craft to ATLAS cited_in. Closes 3 skills together. | **Highest-leverage framework-level fix (escalates F-HR-TEST-02)** |
+| F-HR-UI-04 | Low | SKILL.md §2 L83 + frontmatter L47 | ATLAS-dangling synthesized: the anti-AI-slop thesis IS an AI-failure taxonomy → argues for grounding ATLAS at rule level (like DESIGN Rule 5.5) rather than dropping. ui-craft is the only anti-AI skill with no AI-taxonomy anchor. | (a) add rule-level ATLAS citation to §7/Rule 5.1; or (b) drop ATLAS from §2 + frontmatter. Decide consciously. | ATLAS-dangling thesis-coherence decision |
+
+#### Positive notes (preserved in activity logs)
+
+- **design↔ui-craft scope boundary is the CLEANEST cross-skill pairing audited in Build Step 4** (holistic): decision-discipline vs craft-discipline holds rule-by-rule; accessibility disjoint (DESIGN owns a11y-as-design / POUR / contrast / keyboard; ui-craft only craft-incidental SC 2.3.3/2.4.7/1.4.1); restraint↔simplicity cross-referenced, not duplicated.
+- **DEC-F provenance is exemplary** — the mid-phase addition recorded with full rationale, 4 alternatives, scope-growth accounting, tactical-vs-ADR judgment; shipped scope matches exactly. Model for conscious mid-phase amendments.
+- **NO fabricated-statistic pattern** (code-reviewer): the ~30-40% WCAG stat is testing's, not ui-craft's; ui-craft's numbers are hedged craft ranges or intentional-slop depictions. Clean negative that sharpens the fabricated-specific boundary.
+- **WCAG SC attribution exemplary**: SC 2.4.7 = AA, SC 2.3.3 = AAA, SC 1.4.1 named with no false level. Tailwind design-token examples coherent end-to-end (no hallucinated classes). Material 3 + Apple HIG terminology accurate.
+- **"cited by reference" is principled** (both agents concur): legitimate DEC-2026-05-17-004 Clause 5 application for unfetchable SPA sources, not a fabrication-mask.
+- **8 AP/CP pairs strictly 1:1** with explicit closing "Pairing discipline" section (DEC-2026-05-17-003 Clause 1). Good governance hygiene.
+
 ## §4 Cross-Target Patterns (Updated 2026-05-28 after Target 4 audit — Build Step 3 CLOSED — n=4)
 
 **Build Step 3 closes with all 4 Phase 6 commits 1/12-4/12 audited.** The full audited Phase 6 cluster (4 of 4 skills) confirms the following framework-wide patterns at 100% reproduction. WS5 plan v1 should structure work-packages around these patterns (efficient: fix once, apply across all 11 Phase 6 skills + future Phase 7+ skills) rather than per-skill (inefficient: fix 11+ times).
@@ -506,9 +556,9 @@ With four of 19 audit targets complete, the following patterns are **CONFIRMED c
 
 WS5 plan v1 should structure work-packages around: (a) the 6 confirmed n=4 cross-target patterns; (b) the 1 pattern BROKEN at n=2 (cheat-sheet section-anchor — cite output-encoding + input-validation as exemplars); (c) the new at-n=2 cross-target pattern (#7 unregistered-cited); (d) the 2 framework-level questions (hard-refusal calibration; TGF synthesis convention); (e) the per-skill bug fixes (e.g., F-CR-IV-01 pydantic v1/v2 mix; F-CR-OE-01 Jinja2 e(quote=True); F-CR-OE-02 RFC 4180 misattribution); (f) the per-skill rule completeness extensions (DOMPurify config, identifier allow-list, mixed-context emission, LLM channel, schema-library coercion, Unicode homoglyph, parser-stage hardening, state-machine bypass).
 
-### Phase 5 cluster cross-target tracking (Build Step 4 — opened 2026-05-28; n=3 at Targets 5-7 `disagreement`, `debugging`, `testing`)
+### Phase 5 cluster cross-target tracking (Build Step 4 — opened 2026-05-28; n=4 at Targets 5-8 `disagreement`, `debugging`, `testing`, `ui-craft`)
 
-**Framing:** Build Step 4 audits Phase 5 activity skills — a different cluster from the Phase 6 security skills (different domain, source profile, template age). Per the Build Step 4 dispatch framing, Phase 6's 6 n=4 patterns are NOT assumed to carry over. The first Phase 5 data point (Target 5) confirmed the framing: **only 2 of 6 Phase 6 patterns reproduce on `disagreement`; 4 do not.** Target 6 (`debugging`) holds the same shape (see Target 6 update); Target 7 (`testing`) adds more sourcing surface and surfaces a framework-level registry gap (see Target 7 update).
+**Framing:** Build Step 4 audits Phase 5 activity skills — a different cluster from the Phase 6 security skills (different domain, source profile, template age). Per the Build Step 4 dispatch framing, Phase 6's 6 n=4 patterns are NOT assumed to carry over. The first Phase 5 data point (Target 5) confirmed the framing: **only 2 of 6 Phase 6 patterns reproduce on `disagreement`; 4 do not.** Target 6 (`debugging`) holds the same shape (see Target 6 update); Target 7 (`testing`) adds more sourcing surface and surfaces a framework-level registry gap; Target 8 (`ui-craft`) escalates the registry gap to 3-skill scope and adds a false-subagent-wiring finding (see Target 8 update).
 
 Phase 6 pattern reproduction at Phase 5 n=1:
 
@@ -554,6 +604,22 @@ Phase 5 candidate-pattern status:
 - **workflow-mapping prose drift: DID NOT REPRODUCE on testing.** Despite testing mapping itself into WORKFLOW Stage 5 (the flagged risk site), the holistic verified §8's four-pass attributions are CORRECT (Phase 1 = Code Review, Phase 2 = Security Audit). So the debugging drift (F-HR-DBG-01 worked-around routing) appears **debugging-specific so far, not a Phase 5 cluster pattern.** Demoted from candidate-cluster-pattern to per-skill (debugging) finding pending further evidence.
 - **NEW candidate — cross-skill-reference-imprecision (n=1, F-CR-TEST-04 / F-HR-TEST-03):** a rule-level cross-reference points to a sibling rule whose title/subject doesn't match the cited dimension (testing Rule 5.6 cites "UI-CRAFT Rule 5.6" for accessibility, but UI-CRAFT 5.6 is "Designed States"). Watch for title-mismatched cross-references in remaining targets.
 - **NEW candidate — self-referential phase mislabel (n=1, F-HR-TEST-01):** §9 subagent-context labels an agent with the wrong four-pass phase number (code-reviewer called "Phase 4"; it's Phase 1). Watch other skills' §9 sections for phase-number accuracy.
+
+**Target 8 (`ui-craft`) update — n=4:**
+
+Phase 6 pattern reproduction holds the cluster shape; the registry pattern (#7) escalates:
+- **#1 §2 bidirectional: REPRODUCES** (T1-UI-01 — ATLAS in §2 not rule-cited + OWASP-LLM in §7 not §2; F-CR-UI-05; F-HR-UI-04). ui-craft is a distinctive case: it's the only Phase 5 skill where ATLAS *dangles* (no AI-specific rule to cite it), because its anti-AI-slop content lives in §7 prose, not a rule.
+- **#7 unregistered-cited-source: REPRODUCES and ESCALATES to framework-level (T1-UI-02 / F-HR-UI-03).** 4/5 ui-craft §2 sources unregistered. **WCAG is now confirmed cited by 3 skills (testing+design+ui-craft), none registered** — the strongest WS5 lever in Build Step 4. ui-craft adds 3 net-new unregistered design authorities (APPLE-HIG/MATERIAL-3/NIELSEN-10) and raises a real governance question: pick a disposition for *unfetchable-by-reference* sources (register with a reference-only tier vs a documented never-register category).
+- **#5 skill→DEC-011 trace gap: REPRODUCES** as T1-UI-03 (the "cited by reference" deprecated prose) — but **principled here** (legitimately unfetchable SPA sources; explicitly invokes DEC-2026-05-17-004 Clause 5). Not a defect so much as a convention-decision WS5 must make.
+- **#2/#3/#4/#6: N/A** (verification-date consistent; forward-refs consistent; refresh-cadence clean; ATLAS framework-level only).
+
+Phase 5 candidate-pattern status:
+- **anchor-slug-correctness: CONFIRMED at n=4 and EXTENDED.** ui-craft has 2 broken anchors of 15 links: Rule 5.3 (comma-truncated, like testing) AND AP-1 (NEW variant — GitHub strips the `/` in "Tailwind/Bootstrap" but the ref inserts a hyphen, PLUS a dropped word "shapes"). So the pattern now covers commas (inconsistent), parentheticals, `+`, slashes, and dropped words — broadly: **hand-authored anchors drift from the GFM auto-slug whenever the rule/AP header contains any non-alphanumeric punctuation.** WS5 should lint all skills' anchors against the auto-slug algorithm, not fix case-by-case.
+- **self-referential phase mislabel: CONFIRMED at n=2** (testing F-HR-TEST-01 + ui-craft F-CR-UI-03 — both say "code-reviewer subagent (Phase 4)"; both contradict their own §8 which says Phase 1). Looks like a copied §9 template error. Watch design/project-management/discovery §9.
+- **fabricated-specific-in-teaching-example: STAYS at n=2 (clean negative on ui-craft).** ui-craft uses hedged craft ranges, not asserted statistics — sharpens the boundary: design-convention ranges ("typically 4-6 sizes") are fine; invented stats asserted as fact (debugging Stripe-pool-5, testing accessibility-%) are the pattern.
+- **NEW — false/asymmetric subagent-wiring (F-HR-UI-01, F-HR-UI-02):** ui-craft's §9 claims review agents reference it, but no agent file does (inverse of DESIGN + testing, whose claims were TRUE). Combined with testing's TRUE claims, the real pattern is: **§9 subagent-wiring claims are unverified and vary per skill (some true, some false)** — a fitness check should verify them. Plus the design↔ui-craft cross-reference is one-directional.
+- **NEW — language-tag-vs-content mismatch (F-CR-UI-04, n=1):** a code fence tagged ```tsx contains raw CSS. Watch code-heavy skills.
+- **NEW — roster-entry-declared-never-exemplified (F-CR-UI-06, n=1):** a named reference (Kraken) listed but never used in an example. Minor.
 
 ## §5 Cross-References
 
