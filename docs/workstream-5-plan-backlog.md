@@ -403,6 +403,55 @@ Red-team also surfaced **F-RT-01** (zero ATT&CK technique-IDs across all 7 rules
 - **Self-referential safety**: a skill governing how the orchestrator debugs correctly subordinates AI debug output to verification + empirical execution, and even names AI as a possible "false fresh view."
 - **CP-3 revert/reapply necessary-AND-sufficient verification** is exemplary in-line debugging discipline.
 
+### §3.7 Target 7 — `skills/testing/` (Audit completed 2026-05-28 — Build Step 4, third Phase 5 activity skill)
+
+**Audit context:** WS4 Build Step 4 Target 7 (per-skill commit 9/22). Same two-track methodology. Decision E selective dispatch: code-reviewer + holistic-reviewer only (testing has security-adjacent content per WS4 plan §5, but stays a Phase 5 activity skill — 2-agent dispatch). Grounded in NIST SSDF, ISTQB-CTFL, OWASP WSTG, WCAG 2.2.
+
+**Activity logs (Track 2 dispatch transcripts):**
+- code-reviewer: `.tgf/state/agent-activity/code-reviewer/0f669344-273e-4167-b75b-092d8d6d09bb.json`
+- holistic-reviewer: `.tgf/state/agent-activity/holistic-reviewer/bcdd5c54-d0c6-4915-bbd9-a13809d8a017.json`
+
+**Routed to ERROR-LOG.md:** none (0 Critical/High findings).
+
+**Routed here (Medium/Low — 12 entries: 3 Medium, 9 Low; F-HR-TEST-02 reframes T1-TEST-02 as a cross-skill gap, F-HR-TEST-03 confirms F-CR-TEST-04):**
+
+#### Track 1 — Mechanical compliance findings
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| T1-TEST-01 | Medium | SKILL.md §7 (L209) + Rules 5.2/5.5 vs §2 | §7 cites "OWASP LLM Top 10:2025 LLM09:2025" but OWASP-LLM not in §2; SECURITY-CORE referenced at rule level (5.2 cites "SECURITY-CORE Rule 5.1"; 5.5 cross-ref) but not in §2. Bidirectional gap. | Add OWASP-LLM + a SECURITY-CORE cross-reference row to §2. | Bidirectional traceability (CROSS-CLUSTER — reproduces Phase 6 pattern #1; same as T1-DBG-01) |
+| T1-TEST-02 | **Medium** | SKILL.md §2 (L76-77) vs source-registry.json | OWASP-WSTG and WCAG cited at rule level (Rules 5.5, 5.6) AND listed in §2, but NEITHER is registered in source-registry.json (confirmed absent; NIST-SP-800-218 + OWASP-LLM-TOP10-2025 + MITRE-ATLAS are present). M15 registry resolution fails for the skill's two most-cited domain sources. | Register WCAG + OWASP-WSTG — see F-HR-TEST-02 for the framework-level (cross-skill) framing. | **Unregistered-cited-source (reproduces Phase 6 pattern #7 on Phase 5); see F-HR-TEST-02** |
+| T1-TEST-03 | Low | SKILL.md L39/L75/L80, rules.md L7 | ISTQB-CTFL uses "cited by reference" / "reference (istqb.org returned 403...)" verification-status prose — the DEC-2026-05-26-011-deprecated string. The 403 reason is legitimate (genuinely unfetchable), so this is the deprecated-string-for-a-valid-reason tension (same as ui-craft's Apple HIG / Material 3). | Decide a convention for honestly-unfetchable sources (e.g., 'n/a (gated; publicly published)') that isn't the deprecated string. | §2 verification-status convention (CROSS-CLUSTER tension — affects ui-craft too) |
+| T1-TEST-04 | Low | rules.md L62, L96, L121 | Illustrative external citations not in §2: Kent C. Dodds + Mike Cohn (trophy/pyramid attribution, Rule 5.3), Goodhart's Law (Rule 5.4), OWASP Top 10:2025 A07 (Rule 5.5). Defensible as TGF-synthesis attribution context. | No §2 listing required (illustrative/attribution); verify OWASP Top 10:2025 A07 letter. | Teaching/attribution-citation accuracy |
+
+#### Code-reviewer findings (Track 2)
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| F-CR-TEST-01 | Low | anti-patterns.md AP-2 L118-120 | `toHaveBeenCalledBefore` is a jest-extended matcher, not core Jest; presented as stock Jest with no dependency note. Illustrative-only (anti-pattern example). Other matchers (jest-axe, @axe-core/playwright, MSW v2) all correct. | Add `// requires jest-extended` or rewrite via core `mock.invocationCallOrder`. | Per-skill example accuracy |
+| F-CR-TEST-02 | Low | SKILL.md L143 (Rule 5.3 anchor) + §6 AP-5/7/8 anchors | Rule 5.3 anchor `rule-53-test-shape-follows-domain` drops the parenthetical (auto-slug `...-pyramid-or-trophy`) → non-resolving. ONLY 1/7 rule anchors broken, specifically the PARENTHETICAL; commas (5.1/5.4) handled correctly (divergence from disagreement/debugging). Plus 3/8 AP anchors broken via deliberate shorthand. | Use full auto-slug or explicit {#...} ids; apply uniformly. | Per-skill nav; **anchor-slug pattern n=3, REFINED (parenthetical not comma)** |
+| F-CR-TEST-03 | Low | SKILL.md L152/L188, rules.md L147, anti-patterns.md L735/L744/L800 | Accessibility coverage figures (~30-40% automated / ~60-70% manual / ~95-99% three-layer) stated as fact in 5+ places; precise beyond what any §2 source supports (WCAG states no such figure). Hedged with '~' but reads authoritative. | Attribute to a nameable source (e.g., Deque ~30-50%) + register, or soften to qualitative; drop the 95-99% figure. | **fabricated-specific-in-teaching-example, n=2 (debugging, testing)** |
+| F-CR-TEST-04 | Low | rules.md L149 + SKILL.md L152 | Rule 5.6 cites "DESIGN Rule 5.6 + UI-CRAFT Rule 5.6" for accessibility. DESIGN 5.6 IS accessibility ✓; UI-CRAFT 5.6 is "Designed States" (not an accessibility rule by title/subject, carries WCAG content incidentally). Title-mismatched pointer. | Narrow to DESIGN 5.6, or qualify the UI-CRAFT pointer. See F-HR-TEST-03 (recurs in §1/§2). | **NEW Phase 5 candidate: cross-skill-reference-imprecision** |
+
+#### Holistic-reviewer findings (Track 2)
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| F-HR-TEST-01 | Low | SKILL.md §9 L229 | §9 labels "code-reviewer subagent (Phase 4)" — code-reviewer is Phase 1 (Phase 4 = holistic-reviewer). Self-referential defect: the agent that preloads tgf:testing and reads this sentence is the mislabeled one. Substantive wiring claim correct (code-reviewer DOES reference Rule 5.1). | Change "(Phase 4)" → "(Phase 1)" at L229. | Per-skill self-referential fix |
+| F-HR-TEST-02 | **Medium** | SKILL.md §2 + source-registry.json (cross-skill) | Integration framing of T1-TEST-02. Neither WCAG nor OWASP-WSTG is in source-registry.json — and this is CROSS-SKILL: WCAG cited by testing+design+ui-craft, WSTG by testing+security-auditor.md §5. Per-skill fixes would register the same sources 3+ times/inconsistently. Also NIST-SP-800-218 IS registered but its cited_in lists only security-input-validation (testing absent from reverse index). | **WS5 framework-level task:** register WCAG + OWASP-WSTG ONCE (id_prefix_match for WSTG-CAT-NN / WCAG SC-N.N.N; cited_in all 3+ skills); append testing to NIST-SP-800-218 cited_in. Closes design + ui-craft simultaneously. | **HIGHEST-PRIORITY Target 7 item — framework-level source-registry gap** |
+| F-HR-TEST-03 | Low | SKILL.md L66 (§1), L77 (§2), rules.md L149 | Confirms F-CR-TEST-04 at integration level + locates 2 more spots (§1, §2). UI-CRAFT's actual a11y content is in its motion rule (SC 2.3.3) + focus-visible sub-point (SC 2.4.7), not a dedicated a11y rule. | Cite DESIGN Rule 5.6 (carries WCAG cleanly) + qualify the UI-CRAFT pointer; apply at all 3 spots. | Cross-skill-reference-imprecision (confirms F-CR-TEST-04) |
+| F-HR-TEST-04 | Low | SKILL.md §8 L221-223 | Completeness gap: §8 maps TESTING into Stage 5 Phase 1 + Phase 2 only; omits Phase 4 (Holistic) which has genuine testing surface (AP-5 test-shape-fit; Rule 5.3 'document pyramid-vs-trophy in DECISIONS.md'). Siblings map more phases. Phase 3 (Red Team) absence is fine. | Optional WS5 polish: add a §8 Phase 4 (Holistic) line for test-shape fit + decision-documentation. | Per-skill §8 completeness |
+
+#### Positive notes (preserved in activity logs)
+
+- **§8 four-pass mapping is CORRECT and verified** (holistic): WORKFLOW.md tier table (L665) + both agent files confirm Phase 1 = Code Review, Phase 2 = Security Audit. **The debugging-class WORKFLOW.md routing drift does NOT reproduce here.**
+- **§9 subagent-wiring claims are substantively TRUE**: code-reviewer.md preloads tgf:testing + flags tautological tests; security-auditor.md §5 carries OWASP WSTG. Only one phase NUMBER is wrong (F-HR-TEST-01).
+- **AP-1/CP-1 (formatPrice tautological vs behavioral)** is the clearest demonstration of the skill's core thesis in the catalog — same assertion shown as both tautological and behavioral depending on implementation. Preserve intact.
+- **Comma-in-title anchors (Rules 5.1, 5.4) handled CORRECTLY** — a genuine improvement over disagreement/debugging; use as the template for the parenthetical fix.
+- **Rule 5.3's "Phase 5 Checkpoint 1 Decision B" attribution is accurate** (phase-5-plan.md:344). Decision-trail intact.
+- **Forward-compat boundaries drawn cleanly**: Rule 5.5 cedes security-domain depth to Phase 6/7; WCAG surface cedes a11y-depth to the planned quality-accessibility skill. No turf ambiguity.
+- **Example code broadly accurate**: jest-axe, @axe-core/playwright AxeBuilder, MSW v2, fast-check/Hypothesis, bcrypt $2b$ prefix all correct (only toHaveBeenCalledBefore undeclared).
+
 ## §4 Cross-Target Patterns (Updated 2026-05-28 after Target 4 audit — Build Step 3 CLOSED — n=4)
 
 **Build Step 3 closes with all 4 Phase 6 commits 1/12-4/12 audited.** The full audited Phase 6 cluster (4 of 4 skills) confirms the following framework-wide patterns at 100% reproduction. WS5 plan v1 should structure work-packages around these patterns (efficient: fix once, apply across all 11 Phase 6 skills + future Phase 7+ skills) rather than per-skill (inefficient: fix 11+ times).
@@ -457,9 +506,9 @@ With four of 19 audit targets complete, the following patterns are **CONFIRMED c
 
 WS5 plan v1 should structure work-packages around: (a) the 6 confirmed n=4 cross-target patterns; (b) the 1 pattern BROKEN at n=2 (cheat-sheet section-anchor — cite output-encoding + input-validation as exemplars); (c) the new at-n=2 cross-target pattern (#7 unregistered-cited); (d) the 2 framework-level questions (hard-refusal calibration; TGF synthesis convention); (e) the per-skill bug fixes (e.g., F-CR-IV-01 pydantic v1/v2 mix; F-CR-OE-01 Jinja2 e(quote=True); F-CR-OE-02 RFC 4180 misattribution); (f) the per-skill rule completeness extensions (DOMPurify config, identifier allow-list, mixed-context emission, LLM channel, schema-library coercion, Unicode homoglyph, parser-stage hardening, state-machine bypass).
 
-### Phase 5 cluster cross-target tracking (Build Step 4 — opened 2026-05-28; n=2 at Targets 5-6 `disagreement`, `debugging`)
+### Phase 5 cluster cross-target tracking (Build Step 4 — opened 2026-05-28; n=3 at Targets 5-7 `disagreement`, `debugging`, `testing`)
 
-**Framing:** Build Step 4 audits Phase 5 activity skills — a different cluster from the Phase 6 security skills (different domain, source profile, template age). Per the Build Step 4 dispatch framing, Phase 6's 6 n=4 patterns are NOT assumed to carry over. The first Phase 5 data point (Target 5) confirmed the framing: **only 2 of 6 Phase 6 patterns reproduce on `disagreement`; 4 do not.** Target 6 (`debugging`) holds the same shape (see Target 6 update below).
+**Framing:** Build Step 4 audits Phase 5 activity skills — a different cluster from the Phase 6 security skills (different domain, source profile, template age). Per the Build Step 4 dispatch framing, Phase 6's 6 n=4 patterns are NOT assumed to carry over. The first Phase 5 data point (Target 5) confirmed the framing: **only 2 of 6 Phase 6 patterns reproduce on `disagreement`; 4 do not.** Target 6 (`debugging`) holds the same shape (see Target 6 update); Target 7 (`testing`) adds more sourcing surface and surfaces a framework-level registry gap (see Target 7 update).
 
 Phase 6 pattern reproduction at Phase 5 n=1:
 
@@ -491,6 +540,20 @@ Phase 5 candidate-pattern status:
 - **section-restatement-drift: DOES NOT GENERALIZE beyond living-doc-operationalizing skills.** disagreement's drift risk came from inlining the *living* CLAUDE.md §5. debugging restates Agans (a stable book) and WORKFLOW.md §7 (TGF-internal, changes only via deliberate edits) — near-zero drift risk. Refines the Target 5 candidate: the pattern is **"inlining a LIVING framework artifact"** (CLAUDE.md sections), not "restating any source." Watch skills that operationalize CLAUDE.md/WORKFLOW.md sections specifically.
 - **NEW candidate — fabricated-specific-in-teaching-example (n=1, F-CR-DBG-02):** an activity skill's worked-example dialogue states an invented technical specific ("Stripe default pool size of 5") as a *confirmed observation* — the very failure mode the skill teaches against. Watch other Phase 5 skills with concrete code/config dialogues (`testing`, `ui-craft`) for invented specifics presented as fact.
 - **NEW (Target 6) — workflow-mapping prose drift (F-HR-DBG-01/02):** where a Phase 5 skill maps itself to a WORKFLOW.md section, the *skeleton* (stage labels, termination conditions) can match cleanly while the *attached prose* (routing targets, reviewer attributions) drifts from the source. Distinct from disagreement's §5-restatement: here the labels are faithful but the operational detail diverged. Watch `testing` (maps to WORKFLOW Stage 5) and any skill claiming a WORKFLOW.md mapping.
+
+**Target 7 (`testing`) update — n=3:**
+
+Phase 6 pattern reproduction broadens at testing (more sourcing surface than disagreement/debugging):
+- **#1 §2 bidirectional: REPRODUCES** (T1-TEST-01 — §7 OWASP-LLM + rule-level SECURITY-CORE not in §2). n=3 cross-cluster.
+- **#7 unregistered-cited-source: REPRODUCES STRONGLY and escalates (T1-TEST-02 / F-HR-TEST-02).** OWASP-WSTG + WCAG are cited at rule level, listed in §2, but absent from source-registry.json. **First Phase 5 reproduction of pattern #7** (disagreement/debugging's externals OWASP-LLM/ATLAS were registered; testing's WSTG/WCAG are not). The holistic reframe is the important part: **this is a framework-level gap, not testing-local** — WCAG is cited by testing+design+ui-craft and WSTG by testing+security-auditor, so WS5 should register both ONCE. NIST-SP-800-218 is registered but its cited_in reverse index omits testing. **This is the strongest single WS5 lever surfaced in Build Step 4 so far** (fix one registry entry set → closes 3 skills).
+- **#2 verification-date asymmetry: REPRODUCES (mild)** (dates carried from earlier phases; ISTQB date-less). **#3 forward-ref phase-attribution: REPRODUCES (benign)** (Rule 5.5 "Future Phase 6+7 skills"). **#5 skill→DEC-011 trace gap: REPRODUCES** as T1-TEST-03 (ISTQB "cited by reference" deprecated prose; legitimate 403 reason). **#4 refresh-cadence: N/A/clean. #6 ATT&CK technique-ID: N/A** (ATLAS framework-level only).
+
+Phase 5 candidate-pattern status:
+- **anchor-slug-correctness: CONFIRMED at n=3, and REFINED.** testing has only 1/7 rule anchors broken (Rule 5.3) — specifically the PARENTHETICAL `(Pyramid OR Trophy)`. Crucially, testing's COMMA-containing titles (Rules 5.1, 5.4) handled commas CORRECTLY, unlike disagreement/debugging which dropped post-comma text. **Refined pattern: parentheticals and `+` reliably break the anchor; commas are inconsistently handled (sometimes correct, sometimes dropped).** Plus a distinct sub-variant: 3/8 of testing's AP anchors use deliberately-shortened slugs (intentional, not punctuation-drop) that also don't resolve. WS5 sweep + template lint should cover both.
+- **fabricated-specific-in-teaching-example: CONFIRMED at n=2** (debugging Stripe-pool-size, testing accessibility-coverage percentages). Now a tracked pattern, not just a candidate: activity-skill dialogues state precise-looking specifics (numbers, defaults) as confirmed fact beyond what cited sources support. Watch `ui-craft` (likely to carry craft percentages / spacing specifics).
+- **workflow-mapping prose drift: DID NOT REPRODUCE on testing.** Despite testing mapping itself into WORKFLOW Stage 5 (the flagged risk site), the holistic verified §8's four-pass attributions are CORRECT (Phase 1 = Code Review, Phase 2 = Security Audit). So the debugging drift (F-HR-DBG-01 worked-around routing) appears **debugging-specific so far, not a Phase 5 cluster pattern.** Demoted from candidate-cluster-pattern to per-skill (debugging) finding pending further evidence.
+- **NEW candidate — cross-skill-reference-imprecision (n=1, F-CR-TEST-04 / F-HR-TEST-03):** a rule-level cross-reference points to a sibling rule whose title/subject doesn't match the cited dimension (testing Rule 5.6 cites "UI-CRAFT Rule 5.6" for accessibility, but UI-CRAFT 5.6 is "Designed States"). Watch for title-mismatched cross-references in remaining targets.
+- **NEW candidate — self-referential phase mislabel (n=1, F-HR-TEST-01):** §9 subagent-context labels an agent with the wrong four-pass phase number (code-reviewer called "Phase 4"; it's Phase 1). Watch other skills' §9 sections for phase-number accuracy.
 
 ## §5 Cross-References
 
