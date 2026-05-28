@@ -329,20 +329,20 @@ Expanded PROJECT-CONTEXT (added as project matures or scope warrants):
 - History (project age, evolution, prior decisions)
 - Team and operational context
 
-For full project context, see `docs/PROJECT-CONTEXT.md` (if committed) or run `/tgf:project-context` to view or refresh.
+For full project context, see `PROJECT-CONTEXT.md` (if committed) or run `/tgf:project-context` to view or refresh.
 
-For domain-specific knowledge, see `docs/DOMAIN-CONTEXT.md` if generated for this project.
+For domain-specific knowledge, see `DOMAIN-CONTEXT.md` if generated for this project.
 
-For architectural decisions, see `docs/DECISIONS.md`.
+For architectural decisions, see `DECISIONS.md`.
 
-For roadmap and milestone tracking, see `docs/ROADMAP.md`.
+For roadmap and milestone tracking, see `ROADMAP.md`.
 
-For schema decisions, see `docs/SCHEMA-HISTORY.md` if applicable.
+For schema decisions, see `SCHEMA-HISTORY.md` if applicable.
 
 For active operational state:
-- `docs/ERROR-LOG.md` — known issues being worked
-- `docs/VENDOR-LOG.md` — out-of-codebase actions required
-- `docs/WAIVER-LOG.md` — formally accepted risks
+- `ERROR-LOG.md` — known issues being worked
+- `VENDOR-LOG.md` — out-of-codebase actions required
+- `WAIVER-LOG.md` — formally accepted risks
 
 For session continuity, session logs live in `.sessions/` (gitignored).
 

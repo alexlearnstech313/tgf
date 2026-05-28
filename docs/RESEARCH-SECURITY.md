@@ -1,6 +1,6 @@
 # RESEARCH-SECURITY.md
 
-> **Status:** v1.1 operational — design written 2026-05-22 session-01, implemented + refined + committed 2026-05-22 session-02 as commit `dc2b294` (on `origin/main`). Documents the as-built research-security infrastructure. Hook scripts live at `.claude/hooks/`, helpers at `.claude/hooks/lib/`, state at `.tgf/state/`, git pre-commit at `.claude/git-hooks/`, smoke tests at `tests/research-security-smoke-test.sh`. Pre-commit hook installed locally via `.git/hooks/pre-commit` symlink. Hooks activate on next session start via `.claude/settings.json` registration. Cross-references: `CLAUDE.md`, `docs/ARCHITECTURE.md`, `docs/WORKFLOW.md`, `docs/DECISIONS.md`, `docs/research-security-implementation-plan.md` (historical build plan), `docs/framework-hardening-plan.md` (workstream sequencing, §3.1 has Workstream 1 progress notes).
+> **Status:** v1.1 operational — design written 2026-05-22 session-01, implemented + refined + committed 2026-05-22 session-02 as commit `dc2b294` (on `origin/main`). Documents the as-built research-security infrastructure. Hook scripts live at `.claude/hooks/`, helpers at `.claude/hooks/lib/`, state at `.tgf/state/`, git pre-commit at `.claude/git-hooks/`, smoke tests at `tests/research-security-smoke-test.sh`. Pre-commit hook installed locally via `.git/hooks/pre-commit` symlink. Hooks activate on next session start via `.claude/settings.json` registration. Cross-references: `CLAUDE.md`, `docs/ARCHITECTURE.md`, `docs/WORKFLOW.md`, `DECISIONS.md`, `docs/research-security-implementation-plan.md` (historical build plan), `docs/framework-hardening-plan.md` (workstream sequencing, §3.1 has Workstream 1 progress notes).
 
 This document specifies the threat model and defense architecture for the framework's research stage. It exists because the framework's quality depends on authoritative-source verification, and authoritative-source verification depends on the framework being protected against attacks on its own information supply chain.
 
@@ -539,7 +539,7 @@ Per `CLAUDE.md` §14 closing discipline and `CLAUDE.md` §22 continual improveme
 - `docs/ARCHITECTURE.md` §18 (Hooks for enforcement) — Claude Code hook event details
 - `docs/ARCHITECTURE.md` §22 (Continual improvement) — how research-security learnings feed back
 - `docs/WORKFLOW.md` — the six-stage workflow with stage gates
-- `docs/DECISIONS.md` — `DEC-2026-05-17-004` citation discipline; `DEC-2026-05-17-005` hook event taxonomy; `DEC-2026-05-19-006` session state architecture
+- `DECISIONS.md` — `DEC-2026-05-17-004` citation discipline; `DEC-2026-05-17-005` hook event taxonomy; `DEC-2026-05-19-006` session state architecture
 - `skills/security-ai-prompt-injection/` (Phase 8) — application-layer prompt injection defenses (downstream concern)
 - `skills/security-supply-chain/` (Phase 6 commit 11/12) — supply-chain integrity for the framework's dependencies (related but distinct)
 

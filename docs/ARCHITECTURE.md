@@ -91,7 +91,7 @@ This isn't about authorship tracking. It's about not trusting AI-generated patte
 
 ## §17 Citation Verification
 
-The "authoritative sources only" discipline (§1) requires that every governance rule traces to a verifiable, current citation. Skills cite specific source identifiers — `OWASP ASVS 5.0 V6.2.2`, `NIST SP 800-63B §5.1.1.2`, `RFC 8725 §3.1`, `MITRE ATLAS AML.T0051` — that resolve to real rules in published documents. The full operating discipline is locked in `docs/DECISIONS.md` → `DEC-2026-05-17-004`. The six clauses summarized here.
+The "authoritative sources only" discipline (§1) requires that every governance rule traces to a verifiable, current citation. Skills cite specific source identifiers — `OWASP ASVS 5.0 V6.2.2`, `NIST SP 800-63B §5.1.1.2`, `RFC 8725 §3.1`, `MITRE ATLAS AML.T0051` — that resolve to real rules in published documents. The full operating discipline is locked in `DECISIONS.md` → `DEC-2026-05-17-004`. The six clauses summarized here.
 
 ### Live verification at skill-creation time
 
