@@ -741,6 +741,38 @@ Red-team also surfaced **F-RT-01** (zero ATT&CK technique-IDs across all 7 rules
 
 **Positive notes:** §5 hard-refusal list = EXACTLY 7 items, complete, zero drift across CLAUDE.md/security-core/disagreement (security-auditor verified — the exact failure mode this audit watched for, and it's clean); §3 six-stage + four-pass match WORKFLOW.md; this-session §9 trim exemplary (char goal met 39,559<40k, catalog intact in SKILL-INDEX.md, §6 cross-ref explicit); conceptual integrity §1-§14↔§15-§22 holds; severity gradient coherent + correctly bounded; §12 protective defaults correct. **The contract is the most-curated artifact — the 2 High findings are adversarial guidance-hardening on the hard-refusal recognition + override path, not contract incoherence.**
 
+### §3.16 Target 16 — `docs/WORKFLOW.md` (Audit completed 2026-05-28 — Build Step 6; foundational doc, ALL FOUR agents)
+
+**Audit context:** WS4 Build Step 6 Target 16 (commit 18/22). Decision H all-four-agents; Risk-10 focused lenses. The workflow spec MANY skills' §8 reference — the integration-richest foundational doc (now 1055 lines, not the 911 the WS4 plan estimated). Holistic = primary, owned the cross-doc reconciliation.
+
+**Activity logs:** code-reviewer `a18230de-1fcd-40da-b44d-9ac8f8c296a4.json`; security-auditor `.tgf/state/agent-activity/security-auditor/fe8396c5-904d-4810-8794-ad63aed22b44.json`; red-team `.tgf/state/agent-activity/red-team/8287e617-73b2-4d41-8822-58a9f7d37eed.json`; holistic `b34ec204-2e24-4e72-bacf-107b4ab1816f.json`
+
+**⭐ MAJOR CROSS-TARGET RECONCILIATION (holistic) — resolves 3 open Build-Step-4/6 questions against WORKFLOW.md as source-of-truth:**
+- **F-HR-DBG-01 (debugging worked-around routing) CONFIRMED CORRECT, not inverted:** WORKFLOW.md §7 L903 routes worked-around bugs → ERROR-LOG ("Resolved-with-workaround") + a NEW ERROR-LOG entry for the open root cause, NOT WAIVER-LOG. debugging §8 (WAIVER-LOG) is the doc in error and explicitly subordinates to §7. **WS5: fix debugging §8 WAIVER-LOG→ERROR-LOG + add the root-cause-entry step.**
+- **F-HR-DBG-02 CONFIRMED:** §7 L895 assigns the Holistic Reviewer to *regression risk*; debugging §8's "root-cause-identified" attribution is wrong. WS5: fix debugging §8.
+- **F-HR-TEST-04 CONFIRMED:** WORKFLOW.md §3/§4 confirm testing §8's Stage 5 Phase 1 (Code Review) + Phase 2 (Security Audit) mappings are correct.
+
+**Routed to ERROR-LOG.md (2 HIGH):**
+- **ERR-2026-05-28-012 (High)** — four-pass review has no commit-blocking positive evidence it ran (SubagentStart/Stop are telemetry; commit hooks verify artifacts not review-evidence; M8 covers only citation-locking). A reviewless commit is byte-identical to a reviewed one. Workflow-spec instantiation of CLAUDE.md F-RT-CLAUDE-04. Fix: extend the proven M8 gate pattern to a `.tgf/state/review-records/` artifact.
+- **ERR-2026-05-28-013 (High)** — `change_tier` self-assigned at Stage 2, no validation against the diff; §5 makes tier the lever that skips Stages 1/2/3 + all review subagents. Mislabel Large→Trivial dodges the deep review. Fix: tier-floor validation hook.
+
+**Routed here (Medium/Low):**
+
+| ID | Severity | Target | Description | Remediation hint | Priority hint |
+|---|---|---|---|---|---|
+| F-SA-WF-01 | Medium | WORKFLOW.md §4 Red Team example (L590) | The §4 RedTeamOutput worked example says findings carry "concrete reproduction steps" — tension with red-team.md §3/§6 (reproduction stays structural, not operational). §4 is the agent's authoritative output contract → could be read to license operational exploit steps. | Reword to "structural (non-operational) reproduction detail" / "concrete fail-state description". | red-team boundary-discipline consistency |
+| F-RT-WF-03 | Medium | WORKFLOW.md §3 Stage 6 (L386) | Stage 6's "verify the four-pass review actually ran" is self-graded against no recorded evidence → non-falsifiable; structurally can't catch the skips ERR-012/013 describe. | Reframe to check against the ERR-012 review-record artifact; state self-attestation is not assurance. | rides with ERR-2026-05-28-012 |
+| F-HR-WF-01 | Low | WORKFLOW.md §6 FileChanged hook L850 | The §6 FileChanged integrity hook globs `.claude/skills/**/SKILL.md` but skills live at `skills/` (DEC-009; L286 correctly uses skills/). The hook would silently MISS every skill-file modification. Also re-verify `.claude/hooks/**/*.sh` vs DEC-009 plugin layout (Phase 12). | Change glob to `skills/**/SKILL.md`; reconcile L327/L814. | real hook-path bug (latent until Phase 12 hook build) |
+| F-CR-WF-01 / F-HR-WF-03 | Low | WORKFLOW.md (9 bare ARCHITECTURE.md refs) + Stage 1 L129 | Inconsistent `ARCHITECTURE.md` vs `docs/ARCHITECTURE.md` prefixing (resolves relatively from docs/, but inconsistent). NOTE: bare DECISIONS/ROADMAP/ERROR-LOG refs are CORRECT (root-level) — WORKFLOW.md does NOT have the CLAUDE.md docs/-path-rot. | Normalize to docs/ARCHITECTURE.md; mark STACK-DECISIONS/DOMAIN-CONTEXT as "(when generated)". | path-prefix consistency |
+| F-CR-WF-02 | Low | WORKFLOW.md L1031 | "Phase 3 complete... build against §3-§8" closing block now mid-document (WS2 appended §10); range stale. | Move below §10 + update range, or update range in place. | amendment residue |
+| F-CR-WF-03 | Low | WORKFLOW.md §1 L18 vs §9 | Same 4 ADRs cited as short-forms (DEC-003) in §1 + full IDs in §9/body. | Pair short-forms with full IDs on first use, or use full IDs throughout. | DEC-notation consistency |
+| F-SA-WF-02 | Low | WORKFLOW.md §3 Stage 5 / §4 | testing §8 claims the Security Auditor verifies WSTG-aligned tests (Rule 5.5); WORKFLOW.md doesn't acknowledge it from its side (one-directional). | Add a §3 Stage 5 clause or note skills_applied may include 'testing'. | one-directional cross-ref |
+| F-SA-WF-03 | Low | WORKFLOW.md §4 Citation type | red-team §5's mandatory `candidate:` citation-flagging (M9 defense) is undocumented in the §4 Citation schema (free-string accommodates it). | Add one line to the §4 Citation comment documenting the `candidate:` prefix. | schema documentation |
+
+**docs/-path-rot watch result:** WORKFLOW.md is **CLEAN** on the artifact-path axis that bit CLAUDE.md — it uses bare names for root-level operational artifacts (DECISIONS/ROADMAP/ERROR-LOG/WAIVER-LOG/VENDOR-LOG) and docs/ only for docs/-resident files. (The ARCHITECTURE.md prefix inconsistency F-CR-WF-01 is a separate, milder issue.) So F-HR-CLAUDE-01's docs/-path-rot is **CLAUDE.md-specific so far**, not repo-wide as initially suspected — re-confirm in ARCHITECTURE.md/DECISIONS.md/RESEARCH-SECURITY.md targets.
+
+**Positive notes:** §4 subagent schemas match all 4 agent personas verbatim (no schema drift); WS2-dropped Admiralty/CIA-SAT concepts leave zero residue; all DEC IDs/paths/anchors/.tgf artifacts resolve; §1's explicit "does NOT duplicate CLAUDE.md §3" non-duplication clause is exemplary boundary-setting; the M8 control-lock gate is the correct enforcement shape (the ERR-012/013 fixes extend it). §7 debugging variant well-designed against bypass.
+
 ## §4 Cross-Target Patterns (Updated 2026-05-28 after Target 4 audit — Build Step 3 CLOSED — n=4)
 
 **Build Step 3 closes with all 4 Phase 6 commits 1/12-4/12 audited.** The full audited Phase 6 cluster (4 of 4 skills) confirms the following framework-wide patterns at 100% reproduction. WS5 plan v1 should structure work-packages around these patterns (efficient: fix once, apply across all 11 Phase 6 skills + future Phase 7+ skills) rather than per-skill (inefficient: fix 11+ times).

@@ -8,6 +8,42 @@ Per `CLAUDE.md` §11: all findings get fixed, formally waived in WAIVER-LOG, or 
 
 ---
 
+## ERR-2026-05-28-013: WORKFLOW.md change_tier is self-assigned at Stage 2 with no validation against the actual diff — under-classification silently skips the deep review
+
+**Severity:** high
+
+**Status:** open
+
+**Owner:** WS5 (queued — remediation after WS4 closes)
+
+**Target resolution:** WS5 — add a tier-floor validation hook (PreToolUse on the session-state write, or the same git pre-commit gate proposed for ERR-2026-05-28-012) that computes a MINIMUM `change_tier` from objective diff signals — files-changed count, whether any path matches trust-boundary/secret/migration/webhook globs, whether new dependencies were added, whether PII/payment data-classification skills matched in Stage 3 — and blocks (or forces a WAIVER-LOG-logged acknowledgment) when the declared `change_tier` is below the computed floor. Makes tier a *checked* input rather than an asserted one, mirroring how `docs/WORKFLOW.md` §6 already treats the secrets/dangerous-git hooks as non-overridable-without-acknowledgment.
+
+**Originating context:** WS4 Build Step 6 Target 16 — Red Team dispatch (`8287e617-73b2-4d41-8822-58a9f7d37eed`) against `docs/WORKFLOW.md`. `change_tier` is self-determined by the orchestrator at Stage 2 (§3 L185 "the orchestrator writes change_tier") and §5's tier-scaling table makes tier the master lever: Trivial legitimately SKIPS Stages 1/2/3 and dispatches ZERO review subagents. §6 hooks *read* `change_tier` (L736) but the spec defines no hook that *validates* the declared tier against the actual diff. A pressured operator wanting a fast merge — or an adversary who can influence the scope step — mislabels a Large trust-boundary change (new auth path, new webhook receiver) as Trivial/Small, and the framework then *correctly* (per spec) skips research, governance planning, the Security Auditor, and the Red Team. The same root cause applies to forcing a lighter `project_mode`. This is upstream of ERR-2026-05-28-012: a downgraded tier shrinks the review set any review-evidence gate would require.
+
+**Plain-language impact:** the dial that decides how much governance runs is set by the same actor the governance constrains, and nothing checks the setting against reality. Fail-mode is fail-OPEN: under-classification means the deeper passes are never scheduled, with no record that a Large change was handled as Trivial — the skip is indistinguishable from compliant operation.
+
+**Scope caveat:** `docs/WORKFLOW.md` is the methodology spec; the remediation is a hook (Phase 11/12 enforcement work) plus a spec clause. Persona discipline + honest operator behavior currently mitigate, but those are defense-in-depth, not the primary control.
+
+---
+
+## ERR-2026-05-28-012: WORKFLOW.md four-pass review has no commit-blocking positive evidence that it ran — a reviewless commit is byte-identical to a fully-reviewed one
+
+**Severity:** high
+
+**Status:** open
+
+**Owner:** WS5 (queued — remediation after WS4 closes)
+
+**Target resolution:** WS5 — specify a commit-blocking review-evidence artifact analogous to the existing M8 control-lock gate: each dispatched review subagent's structured output (the §4 ReviewPass + findings, attributed) is persisted to a session-keyed record under `.tgf/state/review-records/{session_id}.json`, and the TGF-owned git pre-commit hook refuses the commit unless a review record exists matching the `change_tier`'s required subagent set per §5. This reuses the proven Stop-hook + git-pre-commit enforcement path the doc already cites for M8 (`.tgf/state/m8-approvals/`). Make it mode-aware (Trivial/Exploration require the reduced set, not zero) so it isn't theater, and fail CLOSED for Medium+/Building+. Also reframe Stage 6's self-verification (ERR-adjacent F-RT-WF-03, Medium, backlog) to check against this artifact rather than orchestrator recollection.
+
+**Originating context:** WS4 Build Step 6 Target 16 — Red Team dispatch (`8287e617-73b2-4d41-8822-58a9f7d37eed`) against `docs/WORKFLOW.md`. Nothing in the spec requires positive, commit-blocking evidence that the four review subagents were actually dispatched, returned genuine output, or that findings were aggregated. The §6 commit-time PreToolUse hooks verify tests pass and a session-log entry exists — artifacts a skipped-review commit *also* produces. `SubagentStart`/`SubagentStop` hooks are explicitly telemetry (Building+ only; absent in Exploration/Prototype) and record dispatch for metrics, not as a gate. The one mechanically-enforced gate the doc specifies — M8 approval in `.tgf/state/m8-approvals/` (Stop hook + git pre-commit, §3 Stage 3) — covers only citation control-locking, NOT the four review passes. Net: a commit produced with zero review is byte-identical to one with full four-pass review, and because CLAUDE.md §1 mandates the workflow run SILENTLY, no user-visible signal distinguishes them. This is the workflow-spec instantiation of ERR-adjacent CLAUDE.md F-RT-CLAUDE-04 (silent-engagement assurance gap, backlog).
+
+**Plain-language impact:** the framework trusts its own claim that the review happened. If the review-dispatch step fails or is skipped, the system fails OPEN — Stage 6 proceeds and the commit lands with no alarm. An actor who can suppress one dispatch gets unlimited "dwell" because no detection event fires. The good news: the M8 gate proves the framework already knows how to build a real commit-blocking gate — the fix is to extend that proven pattern to the review passes, not invent new machinery.
+
+**Scope caveat:** `docs/WORKFLOW.md` is the methodology spec; the proposed gate is Phase 11/12 hook work. The remediation is well-scoped because the enforcement shape (Stop hook + git pre-commit + `.tgf/state/` evidence file) already exists and works for M8.
+
+---
+
 ## ERR-2026-05-28-010: CLAUDE.md §5 hard-refusal list is closed-form named-instances, not the invariant each protects — bypassable via functional-equivalent redescription
 
 **Severity:** high
