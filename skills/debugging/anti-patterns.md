@@ -312,7 +312,7 @@ caching, eliminating the entire cache-invalidation maintenance
 surface.]
 ```
 
-**Violates:** Rule 5.4 (Five Whys for root cause, not symptom patch). See `rules.md#rule-54-five-whys-for-root-cause`.
+**Violates:** Rule 5.4 (Five Whys for root cause, not symptom patch). See `rules.md#rule-54-five-whys-for-root-cause-not-symptom-patch`.
 
 **Why it fails:** Each fix addressed the immediate visible symptom — slowness, then staleness, then more staleness. The root cause (missing index) was never investigated because the cache "fixed" the slowness. Now the team maintains cache invalidation logic across the entire mutation surface forever, every new mutation path is a risk of staleness, and the root cause is still there waiting to surface again if the cache is ever bypassed or invalidated incorrectly.
 
@@ -416,7 +416,7 @@ again, see March 2026 entry.' (Still no detail.)]
 
 **Pattern:**
 
-```
+````
 March 2026 session log entry (after the fix):
 
 ## Production incident: payment processing intermittent failures (2026-03-15)
@@ -474,7 +474,7 @@ under load would catch a future regression.
 - [ ] Document the pool size choice in DECISIONS.md (will be ADR
   DEC-2026-03-15-001 — "Stripe HTTP agent maxSockets=50 due to
   observed connection pool exhaustion at default of 5").
-```
+````
 
 [September 2026: the same symptom returns. New developer searches
 session logs.]
@@ -498,7 +498,6 @@ silently."]
 
 [Total time: ~30 minutes. The prior audit trail saved 2 days of
 investigation.]
-```
 
 **Pairs with:** Anti-pattern AP-5
 
@@ -597,7 +596,7 @@ of debugging plus reduced risk of breaking unrelated things.]
 
 **Pattern:**
 
-```
+````
 Developer pastes a stack trace and code into AI:
 
 "This function is throwing a TypeError. Here's the code and the
@@ -625,9 +624,9 @@ was completely orthogonal to the actual bug. AI fabricated a
 plausible-sounding root cause that happened to be wrong.]
 
 [Real fix: add null check at line 47 for `preferences.notifications`.]
-```
+````
 
-**Violates:** Rule 5.7 (AI debug outputs are hypotheses, not conclusions) AND Rule 5.2 (quit thinking and look). See `rules.md#rule-57-ai-debug-outputs-are-hypotheses`.
+**Violates:** Rule 5.7 (AI debug outputs are hypotheses, not conclusions) AND Rule 5.2 (quit thinking and look). See `rules.md#rule-57-ai-debug-outputs-are-hypotheses-not-conclusions`.
 
 **Why it fails:** AI's explanation read confident and plausible. The developer accepted it as truth without verifying against the actual stack trace. The "fix" applied was orthogonal to the real bug — it might even be a defensive improvement, but it didn't address the TypeError. The bug remained; debugging time was wasted on a wrong cause; trust in AI debugging help may erode (when it could have been useful as a hypothesis-generator, just not as a conclusion-deliverer).
 

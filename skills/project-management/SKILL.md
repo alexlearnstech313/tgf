@@ -128,10 +128,10 @@ Six rules. Each summary: title + 1-line statement + source identifier.
 - **Rule 5.1: Start from Intent, Not from Patterns** — Planning begins with the user's actual goal, not with the standard architecture for the domain. Patterns inform the path; they don't define the destination. `TGF-SYNTHESIS — grounded in AGILE-MFTO + senior product practice` → [`rules.md#rule-51-start-from-intent-not-from-patterns`](rules.md)
 <!-- /RULE: 5.1 -->
 <!-- RULE: 5.2 -->
-- **Rule 5.2: Greenfield Mode — Plan from Intent Through MVP and Beyond** — Greenfield projects produce a roadmap that flows from project intent → validation-MVP → growth state. Each milestone is committed-to (not aspirational); the path is iterative per AGILE-MFTO. `TGF-SYNTHESIS — grounded in AGILE-MFTO + NIST-SSDF v1.1 PO.1` → [`rules.md#rule-52-greenfield-mode`](rules.md)
+- **Rule 5.2: Greenfield Mode — Plan from Intent Through MVP and Beyond** — Greenfield projects produce a roadmap that flows from project intent → validation-MVP → growth state. Each milestone is committed-to (not aspirational); the path is iterative per AGILE-MFTO. `TGF-SYNTHESIS — grounded in AGILE-MFTO + NIST-SSDF v1.1 PO.1` → [`rules.md#rule-52-greenfield-mode--plan-from-intent-through-mvp-and-beyond`](rules.md)
 <!-- /RULE: 5.2 -->
 <!-- RULE: 5.3 -->
-- **Rule 5.3: Brownfield Mode — Plan Around Existing Reality** — Brownfield projects start with the existing codebase as constraint. Plans operate AGAINST what's there, not WITH a fresh-greenfield assumption. Non-trivial brownfield work triggers BASELINE-AUDIT (Phase 11) before significant planning. `TGF-SYNTHESIS — grounded in senior practice on legacy-system planning` → [`rules.md#rule-53-brownfield-mode`](rules.md)
+- **Rule 5.3: Brownfield Mode — Plan Around Existing Reality** — Brownfield projects start with the existing codebase as constraint. Plans operate AGAINST what's there, not WITH a fresh-greenfield assumption. Non-trivial brownfield work triggers BASELINE-AUDIT (Phase 11) before significant planning. `TGF-SYNTHESIS — grounded in senior practice on legacy-system planning` → [`rules.md#rule-53-brownfield-mode--plan-around-existing-reality`](rules.md)
 <!-- /RULE: 5.3 -->
 <!-- RULE: 5.4 -->
 - **Rule 5.4: MVP Serves Users, Not Engineering Ego** — Minimum Viable Product is the smallest thing that delivers value to actual users — not the smallest thing engineers can ship. Over-scoping (gold-plating) and under-scoping (tech demo with no user value) are failures of the same rule. `TGF-SYNTHESIS — grounded in Lean Startup (2011, comparative) + senior product practice` → [`rules.md#rule-54-mvp-serves-users-not-engineering-ego`](rules.md)
@@ -158,16 +158,16 @@ Eight anti-pattern pairs covering the most common planning failures.
 - **AP-2: Aspirational ROADMAP** — Items added to ROADMAP that aren't committed-to (wish list, "would be cool"). Confidently misleads future readers. Violates principle "ROADMAP is committed-to, not aspirational" + CONTINUITY Rule 5.4. → [`anti-patterns.md#ap-2-aspirational-roadmap`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-2 -->
 <!-- ANTI-PATTERN: AP-3 -->
-- **AP-3: MVP defined for engineering convenience** — Smallest thing engineers can ship rather than smallest thing that delivers user value. Tech demo with no real user. Violates Rule 5.4. → [`anti-patterns.md#ap-3-mvp-for-engineering-convenience`](anti-patterns.md)
+- **AP-3: MVP defined for engineering convenience** — Smallest thing engineers can ship rather than smallest thing that delivers user value. Tech demo with no real user. Violates Rule 5.4. → [`anti-patterns.md#ap-3-mvp-defined-for-engineering-convenience`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-3 -->
 <!-- ANTI-PATTERN: AP-4 -->
-- **AP-4: Brownfield plan ignoring existing reality** — Greenfield-style plan applied to a brownfield codebase. Plans against what should exist, not what does. Violates Rule 5.3. → [`anti-patterns.md#ap-4-brownfield-ignoring-existing-reality`](anti-patterns.md)
+- **AP-4: Brownfield plan ignoring existing reality** — Greenfield-style plan applied to a brownfield codebase. Plans against what should exist, not what does. Violates Rule 5.3. → [`anti-patterns.md#ap-4-brownfield-plan-ignoring-existing-reality`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-4 -->
 <!-- ANTI-PATTERN: AP-5 -->
 - **AP-5: Hidden dependencies** — Milestone B silently requires milestone A to complete first; the dependency isn't surfaced until A slips and B blocks. Violates Rule 5.6. → [`anti-patterns.md#ap-5-hidden-dependencies`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-5 -->
 <!-- ANTI-PATTERN: AP-6 -->
-- **AP-6: Best-practice decomposition without constraint awareness** — "Always start with infrastructure" applied to a deadline-constrained project that needs user-facing functionality first. Abstract best-practice loses to real constraints. Violates Rule 5.5. → [`anti-patterns.md#ap-6-best-practice-without-constraints`](anti-patterns.md)
+- **AP-6: Best-practice decomposition without constraint awareness** — "Always start with infrastructure" applied to a deadline-constrained project that needs user-facing functionality first. Abstract best-practice loses to real constraints. Violates Rule 5.5. → [`anti-patterns.md#ap-6-best-practice-decomposition-without-constraint-awareness`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-6 -->
 <!-- ANTI-PATTERN: AP-7 -->
 - **AP-7: Stack-first selection** — Technology chosen before requirements are clear (e.g., "we'll use Kubernetes" before traffic estimates or deployment cadence are known). Violates Rule 5.1. → [`anti-patterns.md#ap-7-stack-first-selection`](anti-patterns.md)

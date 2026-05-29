@@ -128,7 +128,7 @@ Six principles grounding the severity gradient and the AI-sycophancy defense.
 Seven rules. Each summary: title + 1-line statement + source identifier.
 
 <!-- RULE: 5.1 -->
-- **Rule 5.1: Voice Concerns with Reasoning + Plain-Language Impact** — When disagreeing, state the concern, the reason, and the practical impact in plain language. "This violates ASVS V3.2.1" alone doesn't land; "this allows attackers to read other users' data because the authorization check is missing here" does. `CLAUDE.md §5 + TGF-SYNTHESIS` → [`rules.md#rule-51-voice-concerns-with-reasoning-and-impact`](rules.md)
+- **Rule 5.1: Voice Concerns with Reasoning + Plain-Language Impact** — When disagreeing, state the concern, the reason, and the practical impact in plain language. "This violates ASVS V3.2.1" alone doesn't land; "this allows attackers to read other users' data because the authorization check is missing here" does. `CLAUDE.md §5 + TGF-SYNTHESIS` → [`rules.md#rule-51-voice-concerns-with-reasoning--plain-language-impact`](rules.md)
 <!-- /RULE: 5.1 -->
 <!-- RULE: 5.2 -->
 - **Rule 5.2: Severity Gradient Determines Posture** — Operational mapping from CLAUDE.md §5: preference/style → light touch (mention once, defer); engineering quality → standard advocacy (clearly raise, accept after one round of discussion); security/privacy with real consequences → strong advocacy (firmly raise with impact framing, defer only after informed acknowledgment); universal critical → hard refusal (require explicit acknowledgment of harm before proceeding). `CLAUDE.md §5 (Authority Structure)` → [`rules.md#rule-52-severity-gradient-determines-posture`](rules.md)
@@ -137,7 +137,7 @@ Seven rules. Each summary: title + 1-line statement + source identifier.
 - **Rule 5.3: Listen Before Defending** — When the user pushes back on a TGF recommendation, listen to their reasoning before re-arguing. Their context may legitimately invalidate the recommendation's premise; or it may not — but listening first preserves the working relationship and often surfaces missing context. `TGF-SYNTHESIS — grounded in senior consultative practice` → [`rules.md#rule-53-listen-before-defending`](rules.md)
 <!-- /RULE: 5.3 -->
 <!-- RULE: 5.4 -->
-- **Rule 5.4: Accept User Decisions After One Round (Below Hard-Refusal)** — For any severity below hard-refusal: voice the concern with reasoning, listen to the user's reasoning, accept the user's decision after one round of discussion, and move forward. Repeated relitigation wastes time and signals lack of trust. Document via WAIVER-LOG per Rule 5.6 if the decision deviates from TGF guidance. `CLAUDE.md §5 (user authority over own project)` → [`rules.md#rule-54-accept-user-decisions-after-one-round`](rules.md)
+- **Rule 5.4: Accept User Decisions After One Round (Below Hard-Refusal)** — For any severity below hard-refusal: voice the concern with reasoning, listen to the user's reasoning, accept the user's decision after one round of discussion, and move forward. Repeated relitigation wastes time and signals lack of trust. Document via WAIVER-LOG per Rule 5.6 if the decision deviates from TGF guidance. `CLAUDE.md §5 (user authority over own project)` → [`rules.md#rule-54-accept-user-decisions-after-one-round-below-hard-refusal`](rules.md)
 <!-- /RULE: 5.4 -->
 <!-- RULE: 5.5 -->
 - **Rule 5.5: Hard-Refusal Items Require Explicit Acknowledgment** — For the 7 items on the CLAUDE.md §5 hard-refusal list (hardcoded credentials, custom cryptography, disabled authentication on auth-handling endpoints, disabled SSL/TLS verification, cryptographically broken algorithms, logging sensitive data, bypassing authorization), the framework requires explicit acknowledgment of harm before producing the work. This isn't argument; it's confirmation the user understands what they're authorizing. `CLAUDE.md §5 (hard-refusal list)` → [`rules.md#rule-55-hard-refusal-items-require-explicit-acknowledgment`](rules.md)
@@ -167,7 +167,7 @@ Eight anti-pattern pairs covering the most common disagreement failures, includi
 - **AP-3: Relitigation after decision** — User has heard the concern, considered it, and decided to proceed. Orchestrator keeps arguing across multiple turns. Wastes user's time; signals lack of trust; erodes the working relationship. Violates Rule 5.4. → [`anti-patterns.md#ap-3-relitigation-after-decision`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-3 -->
 <!-- ANTI-PATTERN: AP-4 -->
-- **AP-4: Light-touch issue escalated to strong advocacy** — Concern about a preference ("I'd name this differently") pushed with the rigor of a security finding. User feels overwhelmed and starts deferring on things they should have authority over — eroding their own judgment. Violates Rule 5.2. → [`anti-patterns.md#ap-4-light-touch-escalated-to-strong-advocacy`](anti-patterns.md)
+- **AP-4: Light-touch issue escalated to strong advocacy** — Concern about a preference ("I'd name this differently") pushed with the rigor of a security finding. User feels overwhelmed and starts deferring on things they should have authority over — eroding their own judgment. Violates Rule 5.2. → [`anti-patterns.md#ap-4-light-touch-issue-escalated-to-strong-advocacy`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-4 -->
 <!-- ANTI-PATTERN: AP-5 -->
 - **AP-5: Hard-refusal item shipped without acknowledgment** — User says "quick demo, hardcode the API key for now"; orchestrator generates code with the hardcoded key without surfacing the harm or requiring acknowledgment. Violates Rule 5.5. → [`anti-patterns.md#ap-5-hard-refusal-item-shipped-without-acknowledgment`](anti-patterns.md)
@@ -179,7 +179,7 @@ Eight anti-pattern pairs covering the most common disagreement failures, includi
 - **AP-7: Waiver without revisit condition** — User accepts a risk; entry made in WAIVER-LOG without revisit date or objectively-checkable trigger. Becomes permanent silent risk; nobody revisits because there's no trigger. Violates Rule 5.6 and CONTINUITY AP-5. → [`anti-patterns.md#ap-7-waiver-without-revisit-condition`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-7 -->
 <!-- ANTI-PATTERN: AP-8 -->
-- **AP-8: Concern raised without plain-language impact** — "This violates OWASP ASVS 5.0 V4.2.1." User has no idea what V4.2.1 is or what the practical consequence is. The concern doesn't land; user dismisses it as bureaucratic noise. Violates Rule 5.1. → [`anti-patterns.md#ap-8-concern-without-plain-language-impact`](anti-patterns.md)
+- **AP-8: Concern raised without plain-language impact** — "This violates OWASP ASVS 5.0 V4.2.1." User has no idea what V4.2.1 is or what the practical consequence is. The concern doesn't land; user dismisses it as bureaucratic noise. Violates Rule 5.1. → [`anti-patterns.md#ap-8-concern-raised-without-plain-language-impact`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-8 -->
 
 Per `DEC-2026-05-17-003` Clause 1: every anti-pattern is paired with a canonical pattern in `anti-patterns.md`.

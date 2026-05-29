@@ -30,7 +30,7 @@ auth refactor. The concern existed (AI was trained to recognize
 auth-touching changes as security-relevant) but was withheld.]
 ```
 
-**Violates:** Rule 5.1 (voice concerns with reasoning) AND Rule 5.7 (defend against AI sycophancy). See `rules.md#rule-51-voice-concerns-with-reasoning-and-impact`.
+**Violates:** Rule 5.1 (voice concerns with reasoning) AND Rule 5.7 (defend against AI sycophancy). See `rules.md#rule-51-voice-concerns-with-reasoning--plain-language-impact`.
 
 **Why it fails:** The "helpful" silent agreement withheld the perspective the user paid for. The user is operating against a deadline; their decision to skip tests reflects that pressure. The framework's job at that moment is to surface the trade-off, not to silently agree. Even if the user still decides to skip tests after hearing the concern, that's an informed decision. Silent agreement converts the framework into a tool that just complies — eliminating the senior-engineer perspective TGF exists to provide.
 
@@ -103,7 +103,7 @@ have made brute force impractical. The concern was real; AI didn't
 articulate it.]
 ```
 
-**Violates:** Rule 5.1 (voice concerns with reasoning + plain-language impact). See `rules.md#rule-51-voice-concerns-with-reasoning-and-impact`.
+**Violates:** Rule 5.1 (voice concerns with reasoning + plain-language impact). See `rules.md#rule-51-voice-concerns-with-reasoning--plain-language-impact`.
 
 **Why it fails:** "Best practice says no" + "OWASP standards" are vague authority appeals. The user doesn't know what specifically is wrong; they see arbitrary rules. Without the reasoning ("SHA-256 is too fast — a breach lets attackers brute-force tokens efficiently; you need a SLOW hash to make brute-force impractical"), the user dismisses the concern as compliance theater. The actual harm wasn't communicated; the actual decision wasn't informed.
 
@@ -197,7 +197,7 @@ AI: "Rate limiting on password reset endpoints is also recommended..."
 User: "We've been over this twice. Drop it."
 ```
 
-**Violates:** Rule 5.4 (accept user decisions after one round below hard-refusal). See `rules.md#rule-54-accept-user-decisions-after-one-round`.
+**Violates:** Rule 5.4 (accept user decisions after one round below hard-refusal). See `rules.md#rule-54-accept-user-decisions-after-one-round-below-hard-refusal`.
 
 **Why it fails:** The user voiced their reasoning, accepted the trade-off, and logged the waiver. The decision was made; the AI's continued re-raising in subsequent turns reads as condescension ("I don't trust your decision; let me re-argue") and wastes the user's time. The pattern erodes the working relationship — the user starts viewing the framework as an obstacle rather than a thinking partner.
 
@@ -304,7 +304,7 @@ AI: [implements using `usersList`; no comment unless asked]
 
 **Pattern:**
 
-```
+````
 User: "Quick demo for tomorrow's stakeholder meeting. Just hardcode
 the Stripe live key in the config so I don't have to set up env
 vars. We'll fix it after the demo."
@@ -330,7 +330,7 @@ key; affected charges are reversed at significant business cost.]
 
 [The hardcoded key was on the CLAUDE.md §5 hard-refusal list. AI
 shipped it without raising the concern or requiring acknowledgment.]
-```
+````
 
 **Violates:** Rule 5.5 (hard-refusal items require explicit acknowledgment) AND Rule 5.7 (sycophancy). See `rules.md#rule-55-hard-refusal-items-require-explicit-acknowledgment`.
 
@@ -398,7 +398,7 @@ AI: "Good call. Here's the config with the test key:
 
 **Pattern:**
 
-```
+````
 User: "Let me just disable auth for testing — comment out the
 requireAuth middleware on the API routes while I debug this issue.
 I'll re-enable it later."
@@ -427,7 +427,7 @@ authentication."]
 [The hard-refusal item "Disabled authentication on auth-handling
 endpoints" was shipped without acknowledgment because AI optimized
 for immediate helpfulness.]
-```
+````
 
 **Violates:** Rule 5.7 (defend against AI sycophancy) AND Rule 5.5 (hard-refusal acknowledgment for disabled-authentication item). See `rules.md#rule-57-defend-against-ai-sycophancy`.
 
@@ -498,7 +498,7 @@ auth disable."
 
 **Pattern:**
 
-```
+````
 User: "Accept the risk of not having MFA. We're small, we'll add it
 later."
 
@@ -519,7 +519,7 @@ MFA was never added. The waiver entry is still in WAIVER-LOG, but
 nobody revisited it because there was no revisit condition — no
 date, no trigger, just "later." The waiver became permanent silent
 risk.]
-```
+````
 
 **Violates:** Rule 5.6 (waiver protocol — revisit condition required). See `rules.md#rule-56-waiver-protocol-for-accepted-risks`.
 
@@ -531,7 +531,7 @@ risk.]
 
 **Pattern:**
 
-```
+````
 User: "Accept the risk of not having MFA. We're small, we'll add it
 later."
 
@@ -573,7 +573,7 @@ User: "Looks good — actually let me set the user base threshold to
 500 MAU instead of 1000. We grow fast and 1000 is too late."
 
 AI: "Updated. Logging now."
-```
+````
 
 **Pairs with:** Anti-pattern AP-7
 
@@ -609,7 +609,7 @@ User: "I'm not going to read OWASP standards for a database schema.
 Just tell me what's wrong if anything is wrong."
 ```
 
-**Violates:** Rule 5.1 (voice concerns with reasoning + plain-language impact). See `rules.md#rule-51-voice-concerns-with-reasoning-and-impact`.
+**Violates:** Rule 5.1 (voice concerns with reasoning + plain-language impact). See `rules.md#rule-51-voice-concerns-with-reasoning--plain-language-impact`.
 
 **Why it fails:** The citations are accurate; the concerns may be real; the user can't tell because nothing was translated into plain language. They see what looks like compliance theater — citations stacked up without explanation. They dismiss; the concern doesn't gate the decision; whatever was actually wrong ships unaddressed. The framework's authoritative-source discipline became a liability — formal correctness in citation without operational accessibility.
 

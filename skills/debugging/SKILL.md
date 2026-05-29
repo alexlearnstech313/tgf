@@ -143,7 +143,7 @@ Seven rules. Each summary: title + 1-line statement + source identifier.
 - **Rule 5.3: Change One Thing at a Time** — When testing fixes, change one variable per attempt. Multiple simultaneous changes destroy the audit trail — bug stops happening but you don't know which change mattered. Scientific method's control-variable discipline applied to debugging. `AGANS-9 rule #5 (Change one thing at a time) + SCIENTIFIC-METHOD` → [`rules.md#rule-53-change-one-thing-at-a-time`](rules.md)
 <!-- /RULE: 5.3 -->
 <!-- RULE: 5.4 -->
-- **Rule 5.4: Five Whys for Root Cause, Not Symptom Patch** — Reported symptom is typically the end of a chain. Patching the symptom leaves the cause to resurface elsewhere. Five Whys traces the chain back to the underlying cause — typically 3-7 levels deep. `TOYODA-5W (Five Whys methodology)` → [`rules.md#rule-54-five-whys-for-root-cause`](rules.md)
+- **Rule 5.4: Five Whys for Root Cause, Not Symptom Patch** — Reported symptom is typically the end of a chain. Patching the symptom leaves the cause to resurface elsewhere. Five Whys traces the chain back to the underlying cause — typically 3-7 levels deep. `TOYODA-5W (Five Whys methodology)` → [`rules.md#rule-54-five-whys-for-root-cause-not-symptom-patch`](rules.md)
 <!-- /RULE: 5.4 -->
 <!-- RULE: 5.5 -->
 - **Rule 5.5: Keep an Audit Trail** — Log what was tried, what worked, what didn't. Audit trail prevents repeating failed attempts, enables backtracking, and serves future debuggers. Per CONTINUITY Rule 5.1 — session logs capture this. `AGANS-9 rule #6 (Keep an audit trail) + cross-reference CONTINUITY Rule 5.1` → [`rules.md#rule-55-keep-an-audit-trail`](rules.md)
@@ -152,7 +152,7 @@ Seven rules. Each summary: title + 1-line statement + source identifier.
 - **Rule 5.6: Get a Fresh View When Stuck** — After extended time with no progress, get fresh eyes (ask someone; rubber-duck; step away and return). Long stares at the same problem stop yielding new information. The fresh view often catches what the stuck view can't. `AGANS-9 rule #8 (Get a fresh view)` → [`rules.md#rule-56-get-a-fresh-view-when-stuck`](rules.md)
 <!-- /RULE: 5.6 -->
 <!-- RULE: 5.7 -->
-- **Rule 5.7: AI Debug Outputs Are Hypotheses, Not Conclusions** — AI proposes root causes confidently. The output is a hypothesis to TEST, not a conclusion to ACT on. Especially dangerous: plausible-sounding AI explanations can derail entire debugging sessions toward the wrong cause. Verify against actual observation (Rule 5.2). `TGF-SYNTHESIS — grounded in MITRE-ATLAS observations on AI output failures + SCIENTIFIC-METHOD discipline` → [`rules.md#rule-57-ai-debug-outputs-are-hypotheses`](rules.md)
+- **Rule 5.7: AI Debug Outputs Are Hypotheses, Not Conclusions** — AI proposes root causes confidently. The output is a hypothesis to TEST, not a conclusion to ACT on. Especially dangerous: plausible-sounding AI explanations can derail entire debugging sessions toward the wrong cause. Verify against actual observation (Rule 5.2). `TGF-SYNTHESIS — grounded in MITRE-ATLAS observations on AI output failures + SCIENTIFIC-METHOD discipline` → [`rules.md#rule-57-ai-debug-outputs-are-hypotheses-not-conclusions`](rules.md)
 <!-- /RULE: 5.7 -->
 
 See `rules.md` for full rule text, citations, plain-language impact, and extended discussion.

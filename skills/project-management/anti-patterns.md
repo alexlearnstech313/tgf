@@ -237,7 +237,7 @@ is blocking the migration. Active users are frustrated by forced
 password resets. Estimated 3 weeks turns into estimated 4 months.]
 ```
 
-**Violates:** Rule 5.3 (brownfield mode — plan around existing reality). See `rules.md#rule-53-brownfield-mode`.
+**Violates:** Rule 5.3 (brownfield mode — plan around existing reality). See `rules.md#rule-53-brownfield-mode--plan-around-existing-reality`.
 
 **Why it fails:** The plan treats brownfield as greenfield. "Users re-create accounts" ignores 5,000 active users. "Migration will be straightforward" ignores 4 integration touch points and a custom SAML setup. The plan looks reasonable on paper because the existing reality isn't documented in the plan. When reality intrudes, the plan looks naive — but more critically, the migration becomes risky in ways the plan didn't account for (paying customer downtime, support burden from frustrated users, potential data loss).
 
@@ -316,7 +316,6 @@ schema for filter parameters and tenant context). M4 work
 to-date is partially wasted; rework begins. M5 was supposed
 to start after M4 but is now also blocked because M5's templates
 reference data shapes from M4 which was rebuilt mid-flight.]
-```
 
 **Violates:** Rule 5.6 (surface dependencies before committing). See `rules.md#rule-56-surface-dependencies-before-committing`.
 
@@ -346,7 +345,6 @@ M4/M5 in line with M3 slip, or extracts M3's schema decisions
 as a separate sub-milestone (M3a) to unblock M4 partially. The
 decision is conscious; the re-sequencing is documented; the
 slip history captures what changed and why.]
-```
 
 **Pairs with:** Anti-pattern AP-5
 
@@ -511,7 +509,6 @@ which wasn't in the original ROADMAP. Nobody has updated ROADMAP
 since 2025-09-10. New contributor opens ROADMAP, plans against
 "Phase 3 in progress" assumption. Conversation: "what do you mean
 we're on Phase 6?"]
-```
 
 **Violates:** Cross-references CONTINUITY Rule 5.4 (ROADMAP reflects current reality). See CONTINUITY `rules.md#rule-54-roadmap-reflects-current-reality`. Also violates principle "ROADMAP is committed-to, not aspirational" — but inverted: committed-to items diverge from reality without conscious revision.
 
@@ -549,7 +546,6 @@ we're on Phase 6?"]
 in the same commit per CONTINUITY Rule 5.4. New contributor opens
 ROADMAP today and sees actual current state. Stakeholder
 conversations are about real progress, not fiction.]
-```
 
 **Pairs with:** Anti-pattern AP-8
 
