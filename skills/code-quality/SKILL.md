@@ -181,7 +181,7 @@ Brief summaries point to `anti-patterns.md` for full content with code examples 
 - **AP-7: Clever one-liner that requires a comment to explain** — Code golf that compresses three readable statements into one unreadable line, then comments around it. Violates Rule 5.6 (and Rule 5.4). → [`anti-patterns.md#ap-7-clever-one-liner`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-7 -->
 <!-- ANTI-PATTERN: AP-8 -->
-- **AP-8: Dependency added for a single-use call** — A new package added to the dependency manifest for one function call that could be inlined in a few lines of standard library. Violates Rule 5.6. → [`anti-patterns.md#ap-8-dependency-for-single-use`](anti-patterns.md)
+- **AP-8: Dependency added for a single-use call** — A new package added to the dependency manifest for one function call that could be inlined in a few lines of standard library. Violates Rule 5.6. → [`anti-patterns.md#ap-8-dependency-for-single-use-call`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-8 -->
 
 Each anti-pattern is paired with a canonical pattern (CP-N) in `anti-patterns.md` — full content includes code examples for both, failure modes, and replacement guidance. Per `DEC-2026-05-17-003` Clause 1: standalone anti-patterns without paired canonical patterns are incomplete and do not ship.

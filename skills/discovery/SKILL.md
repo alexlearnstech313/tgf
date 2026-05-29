@@ -138,22 +138,22 @@ Eight anti-pattern pairs covering the most common DISCOVERY failures.
 - **AP-2: Serial open-ended questioning** — "What do you want to build?" → "What does it do?" → "Who uses it?" — re-traversing the same possibility space rather than narrowing. Violates Rule 5.2. → [`anti-patterns.md#ap-2-serial-open-ended-questioning`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-2 -->
 <!-- ANTI-PATTERN: AP-3 -->
-- **AP-3: Skipping Five Whys on a surface symptom** — User reports "the dashboard is slow"; AI optimizes the dashboard query without asking what the user is actually trying to do (e.g., understand a single customer's status — could be a different report entirely). Violates Rule 5.3. → [`anti-patterns.md#ap-3-skipping-five-whys`](anti-patterns.md)
+- **AP-3: Skipping Five Whys on a surface symptom** — User reports "the dashboard is slow"; AI optimizes the dashboard query without asking what the user is actually trying to do (e.g., understand a single customer's status — could be a different report entirely). Violates Rule 5.3. → [`anti-patterns.md#ap-3-skipping-five-whys-on-a-surface-symptom`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-3 -->
 <!-- ANTI-PATTERN: AP-4 -->
-- **AP-4: Over-questioning past scope-operational** — Scope is sufficient to begin Stage 2; AI continues asking edge-case questions, signaling indecision and wasting user time. Violates Rule 5.5. → [`anti-patterns.md#ap-4-over-questioning`](anti-patterns.md)
+- **AP-4: Over-questioning past scope-operational** — Scope is sufficient to begin Stage 2; AI continues asking edge-case questions, signaling indecision and wasting user time. Violates Rule 5.5. → [`anti-patterns.md#ap-4-over-questioning-past-scope-operational`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-4 -->
 <!-- ANTI-PATTERN: AP-5 -->
 - **AP-5: Buried assumption** — AI makes an assumption ("assuming TypeScript", "assuming Postgres") without stating it; user later discovers the assumption was wrong and rework cost is paid. Violates Rule 5.4. → [`anti-patterns.md#ap-5-buried-assumption`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-5 -->
 <!-- ANTI-PATTERN: AP-6 -->
-- **AP-6: Vague "tell me more" prompts** — Open-ended questions that put the burden of structure on the user rather than narrowing the possibility space. Violates Rule 5.2. → [`anti-patterns.md#ap-6-vague-tell-me-more`](anti-patterns.md)
+- **AP-6: Vague "tell me more" prompts** — Open-ended questions that put the burden of structure on the user rather than narrowing the possibility space. Violates Rule 5.2. → [`anti-patterns.md#ap-6-vague-tell-me-more-prompts`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-6 -->
 <!-- ANTI-PATTERN: AP-7 -->
 - **AP-7: Performative questioning** — Questions whose answers don't gate any branching ("just to confirm, you want this to work?"). Wastes a turn without narrowing. Violates Rule 5.2. → [`anti-patterns.md#ap-7-performative-questioning`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-7 -->
 <!-- ANTI-PATTERN: AP-8 -->
-- **AP-8: Discovery as a one-time pass** — Initial discovery done; mid-implementation a contradiction surfaces; no mechanism for re-discovery — work continues against now-wrong scope. Violates Rules 5.1 and 5.5. → [`anti-patterns.md#ap-8-discovery-as-one-time-pass`](anti-patterns.md)
+- **AP-8: Discovery as a one-time pass** — Initial discovery done; mid-implementation a contradiction surfaces; no mechanism for re-discovery — work continues against now-wrong scope. Violates Rules 5.1 and 5.5. → [`anti-patterns.md#ap-8-discovery-as-a-one-time-pass`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-8 -->
 
 Per `DEC-2026-05-17-003` Clause 1: every anti-pattern is paired with a canonical pattern in `anti-patterns.md`.

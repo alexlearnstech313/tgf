@@ -163,13 +163,13 @@ Eight anti-pattern pairs covering the most common design failures observed in AI
 - **AP-4: Rigid one-shot design** — Inverse of AP-3. Design has no seams where change is likely (e.g., hard-coded vendor choices, no abstraction over auth provider); the first change requires significant rewrite. Violates Rule 5.4. → [`anti-patterns.md#ap-4-rigid-one-shot-design`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-4 -->
 <!-- ANTI-PATTERN: AP-5 -->
-- **AP-5: AI-pattern adoption without constraint-fit check** — AI proposes a pattern from training data (e.g., "use Redux for state management"); team adopts without checking whether the pattern fits actual constraints (e.g., a small app where local component state would suffice). Violates Rule 5.5. → [`anti-patterns.md#ap-5-ai-pattern-without-constraint-fit-check`](anti-patterns.md)
+- **AP-5: AI-pattern adoption without constraint-fit check** — AI proposes a pattern from training data (e.g., "use Redux for state management"); team adopts without checking whether the pattern fits actual constraints (e.g., a small app where local component state would suffice). Violates Rule 5.5. → [`anti-patterns.md#ap-5-ai-pattern-adoption-without-constraint-fit-check`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-5 -->
 <!-- ANTI-PATTERN: AP-6 -->
 - **AP-6: Accessibility as afterthought** — Design proceeds; accessibility added at QA stage; significant rework because color choices, navigation patterns, content structure, and ARIA semantics all need revisiting. Violates Rule 5.6. → [`anti-patterns.md#ap-6-accessibility-as-afterthought`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-6 -->
 <!-- ANTI-PATTERN: AP-7 -->
-- **AP-7: Complexity for AI-resume rather than user value** — Adding patterns ("vector embeddings + RAG + multi-agent orchestration") that sound impressive but don't deliver user value beyond what simpler designs would. Often driven by "this is what serious AI projects do" pattern reproduction. Violates Rules 5.3 and 5.5. → [`anti-patterns.md#ap-7-complexity-for-ai-resume`](anti-patterns.md)
+- **AP-7: Complexity for AI-resume rather than user value** — Adding patterns ("vector embeddings + RAG + multi-agent orchestration") that sound impressive but don't deliver user value beyond what simpler designs would. Often driven by "this is what serious AI projects do" pattern reproduction. Violates Rules 5.3 and 5.5. → [`anti-patterns.md#ap-7-complexity-for-ai-resume-rather-than-user-value`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-7 -->
 <!-- ANTI-PATTERN: AP-8 -->
 - **AP-8: Best-practice transplant without context** — "Netflix uses microservices, so we should too." Pattern transplanted from a context with very different constraints (Netflix-scale traffic, 5,000 engineers) into a context where it doesn't fit. Violates Rules 5.1, 5.3, and 5.5. → [`anti-patterns.md#ap-8-best-practice-transplant-without-context`](anti-patterns.md)

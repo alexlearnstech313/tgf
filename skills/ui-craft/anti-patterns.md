@@ -231,7 +231,7 @@ module.exports = {
 /* font-family stays at system default sans-serif */
 ```
 
-**Violates:** Rule 5.3 (typography hierarchy is structural, not decorative). See `rules.md#rule-53-typography-hierarchy-is-structural`.
+**Violates:** Rule 5.3 (typography hierarchy is structural, not decorative). See `rules.md#rule-53-typography-hierarchy-is-structural-not-decorative`.
 
 **Why it fails:** Three things wrong: (1) no consistent type scale across the product — h1 is sometimes text-3xl, sometimes text-2xl, sometimes text-lg; (2) hierarchy compressed into the same narrow size range (text-sm through text-3xl, ~14px-30px) means h1 and body are too close to feel like distinct levels; (3) no typeface choice — system default sans-serif everywhere makes the product look like a wireframe.
 

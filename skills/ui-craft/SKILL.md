@@ -145,7 +145,7 @@ Seven rules. Each summary: title + 1-line statement + source identifier.
 - **Rule 5.2: Restrained Color Palette** — Approximately 3-5 colors total: primary brand color + 1-2 accents + neutral grays + semantic states (success/warning/error). 14 different blues across one screen signals palette accumulated through ad-hoc choices rather than a system. `MATERIAL-3 Color System + TGF-SYNTHESIS` → [`rules.md#rule-52-restrained-color-palette`](rules.md)
 <!-- /RULE: 5.2 -->
 <!-- RULE: 5.3 -->
-- **Rule 5.3: Typography Hierarchy Is Structural, Not Decorative** — Establish 4-6 type sizes/weights with clear purposes (display, h1, h2, body, caption). Hierarchy via combination of size, weight, and color — not all three independently. Custom or carefully-chosen typefaces over system defaults where the brand earns it. `APPLE-HIG Typography + TGF-SYNTHESIS` → [`rules.md#rule-53-typography-hierarchy-is-structural`](rules.md)
+- **Rule 5.3: Typography Hierarchy Is Structural, Not Decorative** — Establish 4-6 type sizes/weights with clear purposes (display, h1, h2, body, caption). Hierarchy via combination of size, weight, and color — not all three independently. Custom or carefully-chosen typefaces over system defaults where the brand earns it. `APPLE-HIG Typography + TGF-SYNTHESIS` → [`rules.md#rule-53-typography-hierarchy-is-structural-not-decorative`](rules.md)
 <!-- /RULE: 5.3 -->
 <!-- RULE: 5.4 -->
 - **Rule 5.4: Spacing Rhythm via Consistent Scale** — Spacing follows a consistent scale (typically 4px or 8px base with multiples: 4/8/12/16/24/32/48/64). Vertical rhythm is intentional. Default-margin everything (`p-4 m-4 gap-4` accumulating across components) signals absence of rhythm consideration. `MATERIAL-3 Foundations (8dp grid) + TGF-SYNTHESIS` → [`rules.md#rule-54-spacing-rhythm-via-consistent-scale`](rules.md)
@@ -169,7 +169,7 @@ See `rules.md` for full rule text, citations, plain-language impact, and extende
 Eight anti-pattern pairs covering the most common AI-slop failure modes. CP examples reference high-craft sites (Stripe, Vercel, Linear, Monogram, Kraken) per `DEC-2026-05-17-004` Clause 6 — comparative pattern references, not authoritative citations.
 
 <!-- ANTI-PATTERN: AP-1 -->
-- **AP-1: Default Tailwind/Bootstrap shapes everywhere** — `rounded-md bg-blue-500 text-white px-4 py-2` accumulating across components; the AI-generated-this-with-default-classes signal. Violates Rule 5.1. → [`anti-patterns.md#ap-1-default-tailwind-bootstrap-everywhere`](anti-patterns.md)
+- **AP-1: Default Tailwind/Bootstrap shapes everywhere** — `rounded-md bg-blue-500 text-white px-4 py-2` accumulating across components; the AI-generated-this-with-default-classes signal. Violates Rule 5.1. → [`anti-patterns.md#ap-1-default-tailwindbootstrap-shapes-everywhere`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-1 -->
 <!-- ANTI-PATTERN: AP-2 -->
 - **AP-2: Color sprawl** — 14 different blues, 8 grays, 6 reds across a single product; no color system; palette accumulated through ad-hoc choices. Violates Rule 5.2. → [`anti-patterns.md#ap-2-color-sprawl`](anti-patterns.md)
