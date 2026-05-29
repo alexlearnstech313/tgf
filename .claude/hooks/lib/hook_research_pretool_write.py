@@ -97,22 +97,39 @@ def _classify_citations(
     canonical_ids: list[str],
     session_id: str,
 ) -> tuple[list[str], list[str], dict[str, str]]:
-    """Bucket canonical citation IDs by research-log status this session.
+    """Bucket canonical citation IDs by whether their provenance backs a write.
 
-    Returns (verified_ids, unverified_ids, statuses) where statuses maps
-    source_id to the most-recent status string (or 'missing' if no entry).
+    A citation is *backed* if its source is verified in ANY session's research
+    log (provenance persists — the pin from when the skill was built carries
+    forward) AND it is not flagged/blocked by a re-fetch THIS session (a fresh
+    tamper finding overrides the old pin). See research_log.is_backed().
+
+    Returns (backed_ids, unbacked_ids, statuses) where statuses maps source_id
+    to a human-readable reason.
     """
-    verified: list[str] = []
-    unverified: list[str] = []
+    verified_union = research_log.all_verified_source_ids()
+    backed: list[str] = []
+    unbacked: list[str] = []
     statuses: dict[str, str] = {}
     for source_id in canonical_ids:
-        status = research_log.status_of(session_id, source_id)
-        statuses[source_id] = status or "missing"
-        if status == "verified":
-            verified.append(source_id)
+        current = research_log.status_of(session_id, source_id)
+        if research_log.is_backed(session_id, source_id, verified_union):
+            backed.append(source_id)
+            statuses[source_id] = (
+                "verified this session"
+                if current == "verified"
+                else "verified in a prior session (provenance persists)"
+            )
         else:
-            unverified.append(source_id)
-    return verified, unverified, statuses
+            unbacked.append(source_id)
+            if current in ("flagged", "blocked-pending-review"):
+                statuses[source_id] = (
+                    f"{current} by a re-fetch THIS session — the fresh finding "
+                    "overrides any prior verification"
+                )
+            else:
+                statuses[source_id] = "not verified in any session"
+    return backed, unbacked, statuses
 
 
 def _check_override(session_id: str, file_path: str) -> bool:
@@ -179,9 +196,9 @@ def main() -> int:
         )
         common.passthrough()
 
-    verified, unverified, statuses = _classify_citations(canonical_ids, session_id)
+    backed, unbacked, statuses = _classify_citations(canonical_ids, session_id)
 
-    if unverified:
+    if unbacked:
         common.log_debug(
             "pretool_write",
             "deny",
@@ -189,29 +206,34 @@ def main() -> int:
                 "session_id": session_id,
                 "file_path": file_path,
                 "tool_name": tool_name,
-                "unverified": unverified,
-                "verified": verified,
+                "unbacked": unbacked,
+                "backed": backed,
             },
         )
-        status_lines = [f"  - {sid}: {statuses[sid]}" for sid in unverified]
+        status_lines = [f"  - {sid}: {statuses[sid]}" for sid in unbacked]
         common.deny_pretool(
             "Write blocked by research-security §2-Sources traceability check (Stage 4).\n"
             f"File: {file_path}\n"
             f"Tool: {tool_name}\n"
-            f"Citations without 'verified' research-log status in this session:\n"
+            "Citations not backed by verified provenance:\n"
             + "\n".join(status_lines)
-            + "\n\nOptions:\n"
-              "  (1) Re-fetch each unverified source under hooks (PostToolUse-WebFetch "
-              "will record a 'verified' research-log entry on success)\n"
-              "  (2) Remove the citations from the file\n"
-              "  (3) Write a human override at "
+            + "\n\nProvenance persists across sessions — a source verified under hooks in "
+              "ANY prior session backs the citation without a re-fetch. A block here means "
+              "the source was either never verified anywhere, or a re-fetch THIS session "
+              "flagged it.\n\nOptions:\n"
+              "  (1) If never verified: fetch the source once under hooks (PostToolUse-WebFetch "
+              "records a 'verified' entry) — this is authoring-time provenance.\n"
+              "  (2) If flagged this session: investigate the tamper finding before citing; do "
+              "not blindly re-baseline a genuine flag.\n"
+              "  (3) Remove the citation from the file.\n"
+              "  (4) Write a human override at "
               f".tgf/state/hook-overrides/{session_id}-pretool-write.json "
               "with {\"active\": true, \"rationale\": \"...\", "
               "\"covers_files\": [\"<this path>\"], \"reviewer\": \"...\"} "
               "(audit-logged per impl plan §10.1)"
         )
 
-    for source_id in verified:
+    for source_id in backed:
         try:
             research_log.record_citation_use(session_id, source_id, file_path, None)
         except Exception:
@@ -224,7 +246,7 @@ def main() -> int:
             "session_id": session_id,
             "file_path": file_path,
             "tool_name": tool_name,
-            "verified": verified,
+            "backed": backed,
         },
     )
     common.passthrough()

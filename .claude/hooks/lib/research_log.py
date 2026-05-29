@@ -133,6 +133,59 @@ def status_of(session_id: str, source_id: str) -> str | None:
     return fetch.get("status") if fetch else None
 
 
+def all_verified_source_ids() -> set[str]:
+    """Union of source_ids with status='verified' across ALL session research logs.
+
+    Provenance persists across sessions: a source verified under hooks in any
+    session is pinned, and that pin backs a citation without a fresh fetch. This
+    is the cross-session standard the git pre-commit check already uses; the
+    in-session hooks call it via is_backed() so all three enforcement points
+    agree on what "backed" means.
+    """
+    verified: set[str] = set()
+    logs_dir = common.state_path(LOGS_DIR)
+    if not logs_dir.is_dir():
+        return verified
+    for path in logs_dir.glob("*.json"):
+        log = common.load_json(path, default=None)
+        if not isinstance(log, dict):
+            continue
+        for fetch in log.get("fetches", []) or []:
+            if fetch.get("status") == "verified" and fetch.get("source_id"):
+                verified.add(fetch["source_id"])
+    return verified
+
+
+def is_backed(
+    session_id: str,
+    source_id: str,
+    verified_union: set[str] | None = None,
+) -> bool:
+    """True if a cited source may be written/committed without a fresh fetch.
+
+    Provenance-at-authoring model (see docs/citation-provenance-hook-fix-plan.md):
+    a source verified in ANY session is backed — the pin persists, so editing a
+    skill that already cites it does not re-demand a fetch.
+
+    Safety override: a NEGATIVE finding for source_id in THIS session
+    ('flagged' or 'blocked-pending-review' from a re-fetch) overrides the
+    historical verification. So a deliberate staleness-audit re-fetch that
+    surfaces tampering still blocks the citation — the fresh signal wins over
+    the old pin.
+
+    Pass verified_union (from all_verified_source_ids()) to avoid rescanning all
+    logs per source when checking several citations.
+    """
+    current = status_of(session_id, source_id)
+    if current in ("flagged", "blocked-pending-review"):
+        return False
+    if current == "verified":
+        return True
+    if verified_union is None:
+        verified_union = all_verified_source_ids()
+    return source_id in verified_union
+
+
 def _cli() -> int:
     import argparse
     parser = argparse.ArgumentParser(prog="research_log")

@@ -21,6 +21,8 @@
 #   T10 Stop M8            — control-locking skill change without M8 approval → block
 #   T11 Two-stage block    — PostToolUse flags fetch → PreToolUse-Write blocks subsequent cite
 #   T12 Override           — hook-override active → PreToolUse-Write passes despite unverified cite
+#   T13 Cross-session prov — source verified in a PRIOR session backs the cite (no re-fetch)
+#   T14 Negative override  — source flagged THIS session blocks despite prior-session verify
 
 set -uo pipefail
 
@@ -309,24 +311,38 @@ print(json.dumps(payload))
 expect_block "T6" "M13 — pinned hash mismatch must block-pending-review" \
     "$HOOKS/research-posttool-webfetch.sh" "$T6_JSON" "BLOCKED-PENDING-REVIEW"
 
-# === T7: §2-Sources traceability — citation has no research-log entry ===
-T7_SKILL_PATH="$REPO_ROOT/skills/security-cryptography/SKILL.md"
-T7_CONTENT='| OWASP-CHEAT-XYZNOTREAL | [Fake](...) | Current | 2026-05-22 |'
-T7_JSON=$(python3 -c "
+# === T7: §2-Sources traceability — citation to a source verified in NO session must block ===
+# Pick a registered, parseable source absent from the cross-session verified union, so the
+# test stays valid as more sources get verified over time (the union grows during real work).
+T7_SOURCE=$(python3 -c "
+import json, sys
+sys.path.insert(0, '$HOOKS')
+from lib import research_log
+reg = json.load(open('$STATE/source-registry.json'))['sources']
+union = research_log.all_verified_source_ids()
+KNOWN = ('OWASP-','NIST-','FIPS-','RFC-','MITRE-','CWE-')
+print(next((sid for sid, m in reg.items()
+            if not m.get('reference_only') and sid.startswith(KNOWN) and sid not in union), ''))
+")
+if [[ -z "$T7_SOURCE" ]]; then
+    printf "${Y}SKIP${X}  T7 — every registered known-prefix source is currently verified; cannot build the negative case\n"
+else
+    T7_JSON=$(python3 -c "
 import json
 payload = {
     'session_id': 'smoke-t7',
     'hook_event_name': 'PreToolUse',
     'tool_name': 'Write',
     'tool_input': {
-        'file_path': '$T7_SKILL_PATH',
-        'content': '# Skill\n\n## §2 Authoritative Sources\n\n| Source ID | Reference | Version | Date Verified |\n|-----------|-----------|---------|---------------|\n| OWASP-CHEAT-EH | [...](...) | x | x |\n'
+        'file_path': '$REPO_ROOT/skills/security-cryptography/SKILL.md',
+        'content': '# Skill\n\n## §2 Authoritative Sources\n\n| Source ID | Reference | Version | Date Verified |\n|---|---|---|---|\n| $T7_SOURCE | [...](...) | x | x |\n'
     }
 }
 print(json.dumps(payload))
 ")
-expect_block "T7" "§2 traceability — citation with no research-log entry must block" \
-    "$HOOKS/research-pretool-write.sh" "$T7_JSON" "missing"
+    expect_block "T7" "§2 traceability — citation to a never-verified source must block" \
+        "$HOOKS/research-pretool-write.sh" "$T7_JSON" "not verified in any session"
+fi
 
 # === T8: M3 schema fail ===
 seed_pretool_context "smoke-t8" "OWASP-ASVS-V11" \
@@ -438,6 +454,64 @@ print(json.dumps(payload))
 ")
 expect_pass "T12" "override — active override file must let unverified cite pass" \
     "$HOOKS/research-pretool-write.sh" "$T12_JSON"
+
+# === T13: cross-session provenance — verified in a PRIOR session backs the cite (no re-fetch) ===
+# Seed a separate "prior session" log that verified OWASP-ASVS-V11, then Write from a fresh
+# session that has no fetches of its own. The pin must carry forward — no re-fetch demanded.
+python3 -c "
+import json
+from pathlib import Path
+Path('$STATE/research-logs/smoke-t13seed.json').write_text(json.dumps({
+    'session_id': 'smoke-t13seed', 'started_at': '2026-01-01T00:00:00Z',
+    'fetches': [{'timestamp': 't', 'url': 'u', 'source_id': 'OWASP-ASVS-V11', 'status': 'verified'}],
+    'citations_used': []}))
+"
+T13_JSON=$(python3 -c "
+import json
+payload = {
+    'session_id': 'smoke-t13',
+    'hook_event_name': 'PreToolUse',
+    'tool_name': 'Write',
+    'tool_input': {
+        'file_path': '$REPO_ROOT/skills/security-output-encoding/SKILL.md',
+        'content': '# Skill\n\n| Source ID | Reference | Version | Date Verified |\n|---|---|---|---|\n| OWASP-ASVS-V11 | [...](...) | 5.0 | 2026-05-22 |\n'
+    }
+}
+print(json.dumps(payload))
+")
+expect_pass "T13" "cross-session — source verified in a prior session backs the cite without re-fetch" \
+    "$HOOKS/research-pretool-write.sh" "$T13_JSON"
+
+# === T14: current-session negative finding overrides historical verification ===
+# Same source verified in a prior session (smoke-t14seed) but FLAGGED by a re-fetch this
+# session (smoke-t14). The fresh tamper signal must win over the old pin and block the cite.
+python3 -c "
+import json
+from pathlib import Path
+Path('$STATE/research-logs/smoke-t14seed.json').write_text(json.dumps({
+    'session_id': 'smoke-t14seed', 'started_at': '2026-01-01T00:00:00Z',
+    'fetches': [{'timestamp': 't', 'url': 'u', 'source_id': 'OWASP-ASVS-V12', 'status': 'verified'}],
+    'citations_used': []}))
+Path('$STATE/research-logs/smoke-t14.json').write_text(json.dumps({
+    'session_id': 'smoke-t14', 'started_at': '2026-05-29T00:00:00Z',
+    'fetches': [{'timestamp': 't', 'url': 'u', 'source_id': 'OWASP-ASVS-V12', 'status': 'flagged', 'findings': ['M4']}],
+    'citations_used': []}))
+"
+T14_JSON=$(python3 -c "
+import json
+payload = {
+    'session_id': 'smoke-t14',
+    'hook_event_name': 'PreToolUse',
+    'tool_name': 'Write',
+    'tool_input': {
+        'file_path': '$REPO_ROOT/skills/security-output-encoding/SKILL.md',
+        'content': '# Skill\n\n| Source ID | Reference | Version | Date Verified |\n|---|---|---|---|\n| OWASP-ASVS-V12 | [...](...) | 5.0 | 2026-05-22 |\n'
+    }
+}
+print(json.dumps(payload))
+")
+expect_block "T14" "negative override — source flagged this session blocks despite prior verify" \
+    "$HOOKS/research-pretool-write.sh" "$T14_JSON" "flagged"
 
 # === Results ===
 printf "\n"

@@ -105,8 +105,15 @@ def _missing_m8_approvals(changed_files: list[str], approvals: list[dict[str, An
 
 
 def _bad_cited_sources(session_id: str) -> list[tuple[str, str]]:
-    """Return (source_id, status) pairs for sources cited but not verified."""
+    """Return (source_id, reason) pairs for cited sources that are not backed.
+
+    "Backed" is the cross-session provenance rule (research_log.is_backed):
+    verified in any session AND not flagged/blocked by a re-fetch this session.
+    A source verified in a prior session is fine — its pin persists; only a
+    never-verified source or a fresh-this-session tamper flag blocks session end.
+    """
     log = research_log.load(session_id)
+    verified_union = research_log.all_verified_source_ids()
     bad: list[tuple[str, str]] = []
     seen: set[str] = set()
     for citation in log.get("citations_used", []):
@@ -114,9 +121,10 @@ def _bad_cited_sources(session_id: str) -> list[tuple[str, str]]:
         if not source_id or source_id in seen:
             continue
         seen.add(source_id)
-        status = research_log.status_of(session_id, source_id) or "missing"
-        if status != "verified":
-            bad.append((source_id, status))
+        if not research_log.is_backed(session_id, source_id, verified_union):
+            current = research_log.status_of(session_id, source_id)
+            reason = current if current in ("flagged", "blocked-pending-review") else "not verified in any session"
+            bad.append((source_id, reason))
     return bad
 
 

@@ -373,12 +373,12 @@ Before locking in a security control with specific parameters:
 This is where the framework's research-security enforcement actually blocks. Stage 1 fetches happened earlier; their findings are recorded in `.tgf/state/research-logs/`. When the AI attempts to write a skill file:
 
 1. `PreToolUse` on Write/Edit fires (matcher: `Write|Edit|MultiEdit`, with `if` filter limiting to `skills/**` targets)
-2. The hook parses the file content for §2 Sources table entries and rule-level citations
-3. For each citation, it looks up the corresponding research-log entry
-4. **If any citation has status `flagged` or `blocked-pending-review`, OR if no research-log entry exists for the citation, the write is BLOCKED** with a JSON-decision-deny response listing the unverified citations
-5. The AI receives clear feedback: "Cannot write — these citations lack verification provenance: [list]. Re-fetch and verify, or remove the citations."
+2. The hook parses the effective (post-edit) file content for §2 Sources table entries and rule-level citations
+3. For each citation, it evaluates **provenance** via `research_log.is_backed()` — a source is *backed* if it was verified under hooks in **any** session (the pin persists across sessions), **unless** a re-fetch in the **current** session flagged it
+4. **The write is BLOCKED if any citation is unbacked** — i.e., the source was never verified in any session, **or** it is `flagged`/`blocked-pending-review` by a re-fetch this session (a fresh tamper finding overrides the historical pin). The deny response lists each unbacked citation with its reason.
+5. The AI receives clear feedback distinguishing the two cases: a never-verified source needs a one-time fetch (authoring-time provenance); a this-session flag needs the tamper finding investigated before citing.
 
-This is the structural enforcement of the §2-Sources-traceability discipline that was missing on commit 4/12. It cannot be bypassed by AI vigilance because the hook is external.
+This enforces **provenance-at-authoring, not re-verification-at-edit** (`DEC-2026-05-28-013`): once a source is fetched + verified + pinned, editing a skill that cites it does not re-demand a fetch — that contradiction was the source of heavy re-fetch friction. Re-fetching a pinned source is a deliberate staleness-audit activity (CLAUDE.md §14 quarterly refresh), not an edit precondition. The same `is_backed` rule is shared by the `Stop` hook and the git pre-commit check (§7.6), so all three enforcement points agree. It is the structural enforcement of the §2-Sources-traceability discipline that was missing on commit 4/12, and it cannot be bypassed by AI vigilance because the hook is external.
 
 Implementation also runs the four-pass review (Stage 5), which adds additional checks against M1–M19.
 
@@ -552,4 +552,4 @@ Per `CLAUDE.md` §14 closing discipline and `CLAUDE.md` §22 continual improveme
 
 **Status note:** v1.1 operational. The M1–M19 design is locked. Implementation specifics (file paths, hook script names, schema formats, state file contents) are documented in §5.1 (as-built inventory table) and `docs/research-security-implementation-plan.md`. Future refinement happens as operational experience surfaces: per-cheat-sheet schema tightening (impl plan §11.5), parameter-history population (M17 — currently unused), citation_parser robustness (impl plan §11.1), and the quarterly source baseline re-fetch loop (CLAUDE.md §14).
 
-**12-test smoke suite passing as of 2026-05-22.** T1 (M15 URL allow-list), T2 (M19 HTML hidden), T3 (M14 homoglyph), T4 (M4 injection), T5 (M11 drift), T6 (M13 hash mismatch), T7 (§2 traceability), T8 (M3 schema), T9 (M18 exception clause), T10 (Stop M8 enforcement), T11 (two-stage block — PostToolUse flag → PreToolUse-Write block), T12 (override-active pass). Run via `tests/research-security-smoke-test.sh`.
+**14-test smoke suite passing as of 2026-05-28.** T1 (M15 URL allow-list), T2 (M19 HTML hidden), T3 (M14 homoglyph), T4 (M4 injection), T5 (M11 drift), T6 (M13 hash mismatch), T7 (§2 traceability — citation to a source verified in no session), T8 (M3 schema), T9 (M18 exception clause), T10 (Stop M8 enforcement), T11 (two-stage block — PostToolUse flag → PreToolUse-Write block), T12 (override-active pass), T13 (cross-session provenance — a prior-session-verified source backs the cite without re-fetch, per `DEC-2026-05-28-013`), T14 (negative override — a source flagged this session blocks despite prior-session verification). Run via `tests/research-security-smoke-test.sh`.

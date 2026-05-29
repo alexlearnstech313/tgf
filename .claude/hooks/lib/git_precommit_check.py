@@ -22,7 +22,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from . import citation_parser, common
+from . import citation_parser, common, research_log
 
 
 CONTROL_LOCKING_RE = re.compile(r"^skills/security-[^/]+/(rules|anti-patterns|SKILL)\.md$")
@@ -76,27 +76,6 @@ def _approval_covers(approval: dict[str, Any], rel_path: str) -> bool:
     return False
 
 
-def _all_verified_source_ids() -> set[str]:
-    """Union of source_ids with status='verified' across ALL session research logs.
-
-    Pre-commit is not bound to a session — any prior session's verified fetch
-    suffices for citation traceability at commit time. Stop hook (in-session)
-    is the stricter enforcement.
-    """
-    verified: set[str] = set()
-    logs_dir = common.state_path("research-logs")
-    if not logs_dir.is_dir():
-        return verified
-    for path in logs_dir.glob("*.json"):
-        log = common.load_json(path, default=None)
-        if not isinstance(log, dict):
-            continue
-        for fetch in log.get("fetches", []) or []:
-            if fetch.get("status") == "verified" and fetch.get("source_id"):
-                verified.add(fetch["source_id"])
-    return verified
-
-
 def main() -> int:
     project = common.project_dir()
     staged = _staged_files(project)
@@ -104,7 +83,7 @@ def main() -> int:
         return 0
 
     approvals = _load_m8_approvals()
-    verified_globally = _all_verified_source_ids()
+    verified_globally = research_log.all_verified_source_ids()
 
     missing_m8: list[str] = []
     bad_citations: list[tuple[str, list[str]]] = []

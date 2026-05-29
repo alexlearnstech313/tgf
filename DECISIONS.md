@@ -6,6 +6,25 @@ Each decision captures: what was decided, when, why, what alternatives were cons
 
 ---
 
+## DEC-2026-05-28-013: Citation verification is provenance-at-authoring (cross-session), not re-verification-at-edit
+
+**Decided:** The research-security citation gate enforces *provenance at authoring*, not *re-verification at edit*. A cited source is **backed** if it was verified under hooks in **any** session (the pin persists across sessions) **AND** it is not `flagged`/`blocked-pending-review` by a re-fetch in the **current** session (a fresh tamper finding overrides the old pin). Re-fetching a pinned source is a deliberate staleness-audit activity, not a precondition for editing a skill.
+
+**Date:** 2026-05-28
+
+**Context:** The PreToolUse-Write hook and the Stop hook scoped citation verification to the **current session**, so every fresh session re-demanded fetches of sources already verified and pinned in prior sessions — before allowing *any* edit, even edits touching no citation. This surfaced as heavy re-fetch friction during WS5 session-04 (re-verifying six sources just to fix anchor links and a phase-label typo). It also contradicts the framework's own model: CLAUDE.md §14 (quarterly refresh), the frontmatter `last_generated`/`refresh-recommended` dates, and the §2 "Date Verified" column all treat provenance as pinned-once and audited-periodically. The git pre-commit check already used the cross-session verified union; only the two in-session hooks were inconsistent.
+
+**Decision:** Introduce `research_log.all_verified_source_ids()` (cross-session union) and `research_log.is_backed(session, source)` (union membership, with the current-session negative override). The write-hook and Stop hook gate on `is_backed`; the pre-commit check is refactored onto the shared union helper (behavior unchanged). This pulls a slice of Phase-12 enforcement refinement forward — Checkpoint-1 had deferred executable hook work to Phase 12 — a conscious re-scope, because the over-firing was actively taxing the WS5 remediation it gated. Verified by smoke tests (T7 made robust under cross-session; new T13 cross-session-pass and T14 negative-override) and empirical synthetic-payload checks against the live hook.
+
+**Alternatives considered:**
+- *Keep per-session, add diff-awareness (gate only newly-introduced citations).* Also removes the friction, but leaves the write-hook inconsistent with the cross-session commit gate and still re-blocks adding a citation to an already-pinned source. Rejected — cross-session is simpler, faithful to the existing commit gate, and unifying; diff-awareness is unnecessary because a built skill's existing citations are already in the union.
+- *Pure cross-session union with no current-session override.* Unsafe: a deliberate re-fetch that surfaces tampering would be ignored because an old session had verified the source. Rejected (this is the T14 case).
+- *Fix the M11/M13 hash-of-AI-summary weakness (ERR-2026-05-28-015) instead.* Orthogonal. This fix makes re-fetch rare, so the hash weakness stops being a per-edit tax — but redesigning the staleness-audit re-fetch path (raw-byte hashing or retiring M11/M13) stays a Phase-12 item.
+
+**Consequences:** The three enforcement points (write-hook, Stop hook, pre-commit) now share one provenance rule. Editing a built skill no longer re-demands fetches for its existing citations; only a genuinely new, never-verified source — or a this-session tamper flag — blocks, which lightens the remaining WS5 security-bundle fetch load. Tamper-detection on deliberate re-fetch is preserved by the override. Staleness/freshness is explicitly *not* the write/stop hooks' job; it belongs to the periodic refresh audit, and the hash-of-summary redesign (ERR-2026-05-28-015) remains Phase-12. Plan: `docs/citation-provenance-hook-fix-plan.md`. Smoke suite is now 14 tests.
+
+---
+
 ## DEC-2026-05-28-012: Rule-numbering namespace + ADR-ID sequence conventions
 
 **Decided:** (1) The `5.x` rule-numbering namespace is **shared across all skills**, disambiguated by the skill name in every citation (e.g., `CONTINUITY Rule 5.1` vs `CODE-QUALITY Rule 5.6`). A rule citation without its skill name is ambiguous and not permitted. (2) ADR IDs (`DEC-YYYY-MM-DD-NNN`) use `NNN` as a **global monotonic counter** across the project's lifetime, not a within-day sequence.
