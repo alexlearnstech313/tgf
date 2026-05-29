@@ -86,7 +86,7 @@ def hash_password(password: str) -> str:
     return hex(result)[2:]
 ```
 
-**Violates:** Rule 5.3 (hard-refusal — custom cryptography). See `rules.md#rule-53-use-established-cryptography`.
+**Violates:** Rule 5.3 (hard-refusal — custom cryptography). See `rules.md#rule-53-use-established-cryptography-never-roll-your-own`.
 
 **Why it fails:** Both functions look plausible and produce different output for different input — the surface signs of "encryption" and "hashing." Neither provides any actual security:
 
@@ -166,7 +166,7 @@ def fetch_upstream_data(account_id: str) -> dict:
     return response.json()
 ```
 
-**Violates:** Rule 5.5 (hard-refusal — disabled SSL/TLS verification). See `rules.md#rule-55-tls-verification-always-enabled`.
+**Violates:** Rule 5.5 (hard-refusal — disabled SSL/TLS verification). See `rules.md#rule-55-tls-verification-always-enabled-strong-defaults`.
 
 **Why it fails:** `verify=False` tells the TLS library "accept any certificate, regardless of who signed it or for what hostname." This means anyone in the network path between this client and `upstream.example.com` (a coffee-shop Wi-Fi attacker, a malicious proxy, a compromised CDN edge, a state-level adversary on the routing path) can present their own certificate, intercept the request, read the bearer token, AND modify the response. The encryption still happens — but to whoever happens to be on the network, not specifically to the intended upstream.
 
@@ -224,7 +224,7 @@ def verify_password(password: str, stored_hash: str) -> bool:
     return hashlib.md5(password.encode("utf-8")).hexdigest() == stored_hash
 ```
 
-**Violates:** Rule 5.3 (hard-refusal — cryptographically broken algorithms for security purposes). See `rules.md#rule-53-use-established-cryptography`.
+**Violates:** Rule 5.3 (hard-refusal — cryptographically broken algorithms for security purposes). See `rules.md#rule-53-use-established-cryptography-never-roll-your-own`.
 
 **Why it fails:** MD5 is broken for security purposes for two compounding reasons:
 

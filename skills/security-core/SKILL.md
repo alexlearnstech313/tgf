@@ -149,13 +149,13 @@ Seven rules. Each summary: title + 1-line statement + source identifier. Coverag
 - **Rule 5.2: Authorize Every Action, Default Deny** — Every operation touching protected data verifies caller authorization at the operation site; default deny, explicit allow rules grant access. `OWASP-TOP10 A01:2025 (Broken Access Control)` + `OWASP-ASVS 5.0 V8 (Authorization)` → [`rules.md#rule-52-authorize-every-action-default-deny`](rules.md)
 <!-- /RULE: 5.2 -->
 <!-- RULE: 5.3 -->
-- **Rule 5.3: Use Established Cryptography; Never Roll Your Own** — Crypto operations use well-vetted libraries with current algorithms; no custom crypto, no MD5/SHA-1 for security, no DES/RC4. Hard-refusal items per `CLAUDE.md` §5. `OWASP-TOP10 A04:2025 (Cryptographic Failures)` + `OWASP-ASVS 5.0 V11 (Cryptography)` → [`rules.md#rule-53-use-established-cryptography`](rules.md)
+- **Rule 5.3: Use Established Cryptography; Never Roll Your Own** — Crypto operations use well-vetted libraries with current algorithms; no custom crypto, no MD5/SHA-1 for security, no DES/RC4. Hard-refusal items per `CLAUDE.md` §5. `OWASP-TOP10 A04:2025 (Cryptographic Failures)` + `OWASP-ASVS 5.0 V11 (Cryptography)` → [`rules.md#rule-53-use-established-cryptography-never-roll-your-own`](rules.md)
 <!-- /RULE: 5.3 -->
 <!-- RULE: 5.4 -->
 - **Rule 5.4: Secrets Never in Code, Logs, or Version Control** — Credentials, API keys, tokens, encryption keys in environment variables or secret managers — never in code, logs, or commits. Hard-refusal items per `CLAUDE.md` §5. `OWASP-TOP10 A02:2025 (Security Misconfiguration)` + `OWASP-ASVS 5.0 V11 (Cryptography)` → [`rules.md#rule-54-secrets-never-in-code-logs-or-version-control`](rules.md)
 <!-- /RULE: 5.4 -->
 <!-- RULE: 5.5 -->
-- **Rule 5.5: TLS Verification Always Enabled, Strong Defaults** — Outbound HTTPS verifies certificates; servers enforce minimum TLS 1.2 (prefer 1.3); HSTS for browsers. Hard-refusal item per `CLAUDE.md` §5: disabled TLS verification. `OWASP-TOP10 A02:2025 (Security Misconfiguration)` + `OWASP-ASVS 5.0 V12 (Secure Communication)` → [`rules.md#rule-55-tls-verification-always-enabled`](rules.md)
+- **Rule 5.5: TLS Verification Always Enabled, Strong Defaults** — Outbound HTTPS verifies certificates; servers enforce minimum TLS 1.2 (prefer 1.3); HSTS for browsers. Hard-refusal item per `CLAUDE.md` §5: disabled TLS verification. `OWASP-TOP10 A02:2025 (Security Misconfiguration)` + `OWASP-ASVS 5.0 V12 (Secure Communication)` → [`rules.md#rule-55-tls-verification-always-enabled-strong-defaults`](rules.md)
 <!-- /RULE: 5.5 -->
 <!-- RULE: 5.6 -->
 - **Rule 5.6: Output Encoding Matches Context** — Output to HTML, JSON, SQL, shell, etc. encoded for the target context; no string concatenation of untrusted data into query/markup/command strings. `OWASP-TOP10 A05:2025 (Injection)` + `OWASP-ASVS 5.0 V1 (Encoding and Sanitization)` → [`rules.md#rule-56-output-encoding-matches-context`](rules.md)
@@ -177,7 +177,7 @@ Seven rules. Each summary: title + 1-line statement + source identifier. Coverag
 | A07:2025 Authentication Failures | Rule 5.2 (authorization implies authentication context); depth in `security-iam-authentication` (Phase 6) |
 | A08:2025 Software or Data Integrity Failures | Principle "defense in depth"; depth in `security-data-encryption` + `security-supply-chain` skills (Phase 7) |
 | A09:2025 Security Logging and Alerting Failures | Rule 5.7 |
-| A10:2025 Mishandling of Exceptional Conditions | Principle "fail closed, log what failed"; depth in CODE-QUALITY Rule 5.2 + `security-error-handling` skill (Phase 7) |
+| A10:2025 Mishandling of Exceptional Conditions | Principle "fail closed, log what failed"; depth in CODE-QUALITY Rule 5.2 + `security-error-handling` skill (Phase 6) |
 
 See `rules.md` for full rule text, citations, plain-language impact, and extended discussion.
 <!-- /SECTION: rules -->
@@ -197,13 +197,13 @@ Nine anti-pattern pairs covering the `CLAUDE.md` §5 hard-refusal list (seven it
 - **AP-3: Disabled TLS verification** — `rejectUnauthorized: false`, `verify=False`, `InsecureSkipVerify: true` on production network calls. Violates Rule 5.5 (hard-refusal). → [`anti-patterns.md#ap-3-disabled-tls-verification`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-3 -->
 <!-- ANTI-PATTERN: AP-4 -->
-- **AP-4: MD5 or SHA-1 for security purposes** — Using MD5 to hash passwords, SHA-1 to sign tokens, or either for authenticity. Violates Rule 5.3 (hard-refusal). → [`anti-patterns.md#ap-4-md5-or-sha-1-for-security`](anti-patterns.md)
+- **AP-4: MD5 or SHA-1 for security purposes** — Using MD5 to hash passwords, SHA-1 to sign tokens, or either for authenticity. Violates Rule 5.3 (hard-refusal). → [`anti-patterns.md#ap-4-md5-or-sha-1-for-security-purposes`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-4 -->
 <!-- ANTI-PATTERN: AP-5 -->
 - **AP-5: Logging sensitive data** — `logger.info(request.body)` where body includes a password, token, or full PII payload. Violates Rule 5.7 (hard-refusal). → [`anti-patterns.md#ap-5-logging-sensitive-data`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-5 -->
 <!-- ANTI-PATTERN: AP-6 -->
-- **AP-6: SQL injection via string concatenation** — Query built with `"SELECT … WHERE id = " + userInput` or f-string interpolation of untrusted values. Violates Rules 5.1 and 5.6. → [`anti-patterns.md#ap-6-sql-injection`](anti-patterns.md)
+- **AP-6: SQL injection via string concatenation** — Query built with `"SELECT … WHERE id = " + userInput` or f-string interpolation of untrusted values. Violates Rules 5.1 and 5.6. → [`anti-patterns.md#ap-6-sql-injection-via-string-concatenation`](anti-patterns.md)
 <!-- /ANTI-PATTERN: AP-6 -->
 <!-- ANTI-PATTERN: AP-7 -->
 - **AP-7: Authorization by obscurity** — Relying on "hard-to-guess" UUIDs or URL slugs to gate access without an actual authorization check. Violates Rule 5.2 (hard-refusal: bypassing authorization for convenience). → [`anti-patterns.md#ap-7-authorization-by-obscurity`](anti-patterns.md)
